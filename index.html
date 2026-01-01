@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameNative Config Converter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1 {
+            color: #4ec9b0;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            color: #858585;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+
+        textarea {
+            width: 100%;
+            flex: 1;
+            min-height: 400px;
+            padding: 15px;
+            background-color: #252526;
+            color: #d4d4d4;
+            border: 2px solid #3e3e42;
+            border-radius: 5px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #4ec9b0;
+        }
+
+        textarea::placeholder {
+            color: #6a6a6a;
+        }
+
+        .button-container {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 12px 24px;
+            background-color: #0e639c;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #1177bb;
+        }
+
+        button:active {
+            background-color: #0d5a8f;
+        }
+
+        .error-message {
+            color: #f48771;
+            margin-top: 10px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .success-message {
+            color: #4ec9b0;
+            margin-top: 10px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .info {
+            background-color: #2d2d30;
+            padding: 15px;
+            border-left: 3px solid #4ec9b0;
+            margin-bottom: 20px;
+            border-radius: 3px;
+        }
+
+        .info h3 {
+            color: #4ec9b0;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+
+        .info p {
+            color: #b0b0b0;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .info code {
+            background-color: #1e1e1e;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #ce9178;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>GameNative Config Converter</h1>
+        <p class="subtitle">Converts raw configurations into usable game configurations</p>
+        
+        <div class="info">
+            <h3>How to use:</h3>
+            <p>
+                Enter your configuration with alternating key-value pairs on separate lines.<br>
+                Line N = Key, Line N+1 = Value<br>
+                Values like <code>true</code>/<code>false</code> will be converted to booleans, and numeric strings will be converted to numbers.
+            </p>
+        </div>
+
+        <textarea id="inputText" placeholder="Example:&#10;enableFeature&#10;true&#10;maxScore&#10;100&#10;playerName&#10;John Doe"></textarea>
+        
+        <div class="button-container">
+            <button id="downloadBtn" onclick="convertAndDownload()">Download JSON</button>
+        </div>
+        
+        <div id="errorMessage" class="error-message"></div>
+        <div id="successMessage" class="success-message"></div>
+    </div>
+
+    <script>
+        function parseValue(value) {
+            // Trim whitespace
+            const trimmedValue = value.trim();
+            
+            // Convert "true" to boolean true
+            if (trimmedValue === 'true') {
+                return true;
+            }
+            
+            // Convert "false" to boolean false
+            if (trimmedValue === 'false') {
+                return false;
+            }
+            
+            // Check if it's a number
+            if (/^-?\d+\.?\d*$/.test(trimmedValue)) {
+                const numValue = Number(trimmedValue);
+                // Only convert if it's a valid number (not NaN or Infinity)
+                if (!isNaN(numValue) && isFinite(numValue)) {
+                    return numValue;
+                }
+            }
+            
+            // Return as string if no conversion applies
+            return trimmedValue;
+        }
+
+        function convertToJSON(inputText) {
+            const lines = inputText.split('\n').filter(line => line.trim() !== '');
+            
+            if (lines.length === 0) {
+                throw new Error('Input is empty. Please provide key-value pairs.');
+            }
+            
+            if (lines.length % 2 !== 0) {
+                throw new Error('Input must have an even number of lines (key-value pairs).');
+            }
+            
+            const containerData = {};
+            
+            for (let i = 0; i < lines.length; i += 2) {
+                const key = lines[i].trim();
+                const value = lines[i + 1];
+                
+                if (!key) {
+                    throw new Error(`Key at line ${i + 1} is empty.`);
+                }
+                
+                containerData[key] = parseValue(value);
+            }
+            
+            return {
+                version: 1,
+                containerData: containerData
+            };
+        }
+
+        function convertAndDownload() {
+            const inputText = document.getElementById('inputText').value;
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            
+            // Hide previous messages
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+            
+            try {
+                const jsonData = convertToJSON(inputText);
+                const jsonString = JSON.stringify(jsonData, null, 2);
+                
+                // Create a blob and download
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'config.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                // Show success message
+                successMessage.textContent = 'JSON file downloaded successfully!';
+                successMessage.style.display = 'block';
+            } catch (error) {
+                // Show error message
+                errorMessage.textContent = 'Error: ' + error.message;
+                errorMessage.style.display = 'block';
+            }
+        }
+
+        // Allow Enter key in textarea (default behavior)
+        document.getElementById('inputText').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                convertAndDownload();
+            }
+        });
+    </script>
+</body>
+</html>
