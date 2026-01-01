@@ -148,10 +148,10 @@
             </p>
         </div>
 
-        <textarea id="inputText" placeholder="id&#10;12345&#10;wineVersion&#10;8.0&#10;graphicsDriverAdreno&#10;avg fps&#10;60&#10;session length sec&#10;120"></textarea>
+        <textarea id="inputText" placeholder="wineVersion&#10;8.0&#10;graphicsDriverAdreno&#10;turnip&#10;showFPS&#10;true&#10;envVars&#10;WINE_DEBUG=warn"></textarea>
         
         <div class="button-container">
-            <button id="downloadBtn" onclick="convertAndDownload()">Download JSON</button>
+            <button id="downloadBtn" onclick="convertAndDownload()">Download Clean Config</button>
         </div>
         
         <div id="errorMessage" class="error-message"></div>
@@ -162,6 +162,12 @@
         const BUTTON_KEYS = new Set([
             "A", "B", "X", "Y", "L1", "L2", "L3", "R1", "R2", "R3", "START", "SELECT", 
             "DPAD UP", "DPAD DOWN", "DPAD LEFT", "DPAD RIGHT"
+        ]);
+
+        const EXCLUDED_KEYS = new Set([
+            "avg fps", "session length sec", "sessionMetadata", "appVersion", 
+            "imgVersion", "config changed", "discord support prompt shown", 
+            "id", "rcfileId", "profileId"
         ]);
 
         const KNOWN_KEYS = new Set([
@@ -265,19 +271,36 @@
                         }
                     } else {
                         // Regular key handling
-                        // Peek at the next line
-                        const nextLine = i + 1 < lines.length ? lines[i + 1].trim() : undefined;
-                        const nextLineIsKnownKey = nextLine !== undefined && KNOWN_KEYS.has(nextLine);
-                        const nextLineIsButtonKey = nextLine !== undefined && BUTTON_KEYS.has(nextLine);
-                        
-                        // If next line is also a known key, button key, or undefined, current key has empty value
-                        if (nextLine === undefined || nextLineIsKnownKey || nextLineIsButtonKey) {
-                            config[key] = "";
-                            i++; // Move to next line
+                        // Skip excluded keys (junk metadata)
+                        if (EXCLUDED_KEYS.has(key)) {
+                            // Peek at the next line to determine if we need to skip a value
+                            const nextLine = i + 1 < lines.length ? lines[i + 1].trim() : undefined;
+                            const nextLineIsKnownKey = nextLine !== undefined && KNOWN_KEYS.has(nextLine);
+                            const nextLineIsButtonKey = nextLine !== undefined && BUTTON_KEYS.has(nextLine);
+                            
+                            // If next line is also a known key, button key, or undefined, skip only current line
+                            if (nextLine === undefined || nextLineIsKnownKey || nextLineIsButtonKey) {
+                                i++; // Skip the excluded key
+                            } else {
+                                // Skip both the excluded key and its value
+                                i += 2;
+                            }
                         } else {
-                            // Next line is the value for this key
-                            config[key] = parseValue(nextLine);
-                            i += 2; // Skip both key and value
+                            // Process non-excluded keys
+                            // Peek at the next line
+                            const nextLine = i + 1 < lines.length ? lines[i + 1].trim() : undefined;
+                            const nextLineIsKnownKey = nextLine !== undefined && KNOWN_KEYS.has(nextLine);
+                            const nextLineIsButtonKey = nextLine !== undefined && BUTTON_KEYS.has(nextLine);
+                            
+                            // If next line is also a known key, button key, or undefined, current key has empty value
+                            if (nextLine === undefined || nextLineIsKnownKey || nextLineIsButtonKey) {
+                                config[key] = "";
+                                i++; // Move to next line
+                            } else {
+                                // Next line is the value for this key
+                                config[key] = parseValue(nextLine);
+                                i += 2; // Skip both key and value
+                            }
                         }
                     }
                 } else {
