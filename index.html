@@ -159,6 +159,11 @@
     </div>
 
     <script>
+        const BUTTON_KEYS = new Set([
+            "A", "B", "X", "Y", "L1", "L2", "L3", "R1", "R2", "R3", "START", "SELECT", 
+            "DPAD UP", "DPAD DOWN", "DPAD LEFT", "DPAD RIGHT"
+        ]);
+
         const KNOWN_KEYS = new Set([
             "id", "name", "drives", "lc all", "cpuList", "envVars", "showFPS", 
             "useDRI3", "emulator", "execArgs", "forceDlc", "language", "rcfileId", 
@@ -175,13 +180,7 @@
             "sdlControllerAPI", "allowSteamUpdates", "controllerMapping", "disableMouseInput", 
             "primaryController", "emulateKeyboardMouse", "graphicsDriverConfig", 
             "graphicsDriverVersion", "controllerEmulationBindings",
-            "A", "B", "X", "Y", "L1", "L2", "L3", "R1", "R2", "R3", "START", "SELECT", 
-            "DPAD UP", "DPAD DOWN", "DPAD LEFT", "DPAD RIGHT"
-        ]);
-
-        const BUTTON_KEYS = new Set([
-            "A", "B", "X", "Y", "L1", "L2", "L3", "R1", "R2", "R3", "START", "SELECT", 
-            "DPAD UP", "DPAD DOWN", "DPAD LEFT", "DPAD RIGHT"
+            ...BUTTON_KEYS
         ]);
 
         function parseValue(value) {
@@ -211,6 +210,43 @@
             return trimmedValue;
         }
 
+        function parseButtonBindings(lines, startIndex) {
+            const bindings = {};
+            let i = startIndex;
+            
+            // Collect all button key-value pairs
+            while (i < lines.length) {
+                const buttonKey = lines[i].trim();
+                
+                // Check if this is a button key
+                if (BUTTON_KEYS.has(buttonKey)) {
+                    // Get the value for this button
+                    if (i + 1 < lines.length) {
+                        const buttonValue = lines[i + 1].trim();
+                        
+                        // If the next line is NOT a known key, it's the value for this button
+                        if (!KNOWN_KEYS.has(buttonValue)) {
+                            bindings[buttonKey] = parseValue(buttonValue);
+                            i += 2; // Skip both button key and its value
+                        } else {
+                            // Next line is a key, so this button has no value (shouldn't happen normally)
+                            bindings[buttonKey] = "";
+                            i++;
+                        }
+                    } else {
+                        // No more lines, button has no value
+                        bindings[buttonKey] = "";
+                        i++;
+                    }
+                } else {
+                    // Not a button key, we're done collecting bindings
+                    break;
+                }
+            }
+            
+            return { bindings, nextIndex: i };
+        }
+
         function convertToJSON(inputText) {
             const lines = inputText.split('\n').filter(line => line.trim() !== '');
             
@@ -230,40 +266,10 @@
                     
                     // Special handling for controllerEmulationBindings
                     if (key === "controllerEmulationBindings") {
-                        const bindings = {};
                         i++; // Move past the controllerEmulationBindings key
-                        
-                        // Collect all button key-value pairs
-                        while (i < lines.length) {
-                            const buttonKey = lines[i].trim();
-                            
-                            // Check if this is a button key
-                            if (BUTTON_KEYS.has(buttonKey)) {
-                                // Get the value for this button
-                                if (i + 1 < lines.length) {
-                                    const buttonValue = lines[i + 1].trim();
-                                    
-                                    // If the next line is NOT a known key, it's the value for this button
-                                    if (!KNOWN_KEYS.has(buttonValue)) {
-                                        bindings[buttonKey] = parseValue(buttonValue);
-                                        i += 2; // Skip both button key and its value
-                                    } else {
-                                        // Next line is a key, so this button has no value (shouldn't happen normally)
-                                        bindings[buttonKey] = "";
-                                        i++;
-                                    }
-                                } else {
-                                    // No more lines, button has no value
-                                    bindings[buttonKey] = "";
-                                    i++;
-                                }
-                            } else {
-                                // Not a button key, we're done collecting bindings
-                                break;
-                            }
-                        }
-                        
-                        containerData[key] = bindings;
+                        const result = parseButtonBindings(lines, i);
+                        containerData[key] = result.bindings;
+                        i = result.nextIndex;
                     } else {
                         // Regular key handling
                         // Peek at the next line
