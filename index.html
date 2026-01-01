@@ -287,6 +287,12 @@
                             }
                         } else {
                             // Process non-excluded keys
+                            // Rename "lc all" to "lc_all" for Android compatibility
+                            let configKey = key;
+                            if (key === "lc all") {
+                                configKey = "lc_all";
+                            }
+                            
                             // Peek at the next line
                             const nextLine = i + 1 < lines.length ? lines[i + 1].trim() : undefined;
                             const nextLineIsKnownKey = nextLine !== undefined && KNOWN_KEYS.has(nextLine);
@@ -294,11 +300,11 @@
                             
                             // If next line is also a known key, button key, or undefined, current key has empty value
                             if (nextLine === undefined || nextLineIsKnownKey || nextLineIsButtonKey) {
-                                config[key] = "";
+                                config[configKey] = "";
                                 i++; // Move to next line
                             } else {
                                 // Next line is the value for this key
-                                config[key] = parseValue(nextLine);
+                                config[configKey] = parseValue(nextLine);
                                 i += 2; // Skip both key and value
                             }
                         }
