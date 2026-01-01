@@ -179,8 +179,7 @@
             "session length sec", "touchscreenMode", "containerVariant", "dinputMapperType", 
             "sdlControllerAPI", "allowSteamUpdates", "controllerMapping", "disableMouseInput", 
             "primaryController", "emulateKeyboardMouse", "graphicsDriverConfig", 
-            "graphicsDriverVersion", "controllerEmulationBindings",
-            ...BUTTON_KEYS
+            "graphicsDriverVersion"
         ]);
 
         function parseValue(value) {
@@ -210,51 +209,6 @@
             return trimmedValue;
         }
 
-        function parseButtonBindings(lines, startIndex) {
-            const bindings = {};
-            let i = startIndex;
-            
-            // Collect all button key-value pairs
-            while (i < lines.length) {
-                const buttonKey = lines[i].trim();
-                
-                // Check if this is a button key
-                if (BUTTON_KEYS.has(buttonKey)) {
-                    // Get the value for this button
-                    if (i + 1 < lines.length) {
-                        const buttonValue = lines[i + 1].trim();
-                        
-                        // Check if next line is another button key or a non-button known key
-                        // If it's another button key, current button has no value
-                        // If it's a non-button known key, we're done with bindings
-                        if (BUTTON_KEYS.has(buttonValue)) {
-                            // Next line is another button, so this button has empty value
-                            bindings[buttonKey] = "";
-                            i++; // Move to next button
-                        } else if (KNOWN_KEYS.has(buttonValue)) {
-                            // Next line is a non-button key, we're done collecting bindings
-                            bindings[buttonKey] = "";
-                            i++; // Move past this button, outer loop will handle the key
-                            break;
-                        } else {
-                            // Next line is a value for this button
-                            bindings[buttonKey] = parseValue(buttonValue);
-                            i += 2; // Skip both button key and its value
-                        }
-                    } else {
-                        // No more lines, button has no value
-                        bindings[buttonKey] = "";
-                        i++;
-                    }
-                } else {
-                    // Not a button key, we're done collecting bindings
-                    break;
-                }
-            }
-            
-            return { bindings, nextIndex: i };
-        }
-
         function convertToJSON(inputText) {
             const lines = inputText.split('\n').filter(line => line.trim() !== '');
             
@@ -262,35 +216,67 @@
                 throw new Error('Input is empty. Please provide key-value pairs.');
             }
             
-            const containerData = {};
+            const config = {};
+            const bindings = {};
+            let containerName = "Imported Config";
             let i = 0;
             
             while (i < lines.length) {
                 const currentLine = lines[i].trim();
                 
+                // Check if current line is a button key
+                if (BUTTON_KEYS.has(currentLine)) {
+                    const buttonKey = currentLine;
+                    
+                    // Peek at the next line
+                    const nextLine = i + 1 < lines.length ? lines[i + 1].trim() : undefined;
+                    const nextLineIsKnownKey = nextLine !== undefined && KNOWN_KEYS.has(nextLine);
+                    const nextLineIsButtonKey = nextLine !== undefined && BUTTON_KEYS.has(nextLine);
+                    
+                    // If next line is also a known key, button key, or undefined, current button has empty value
+                    if (nextLine === undefined || nextLineIsKnownKey || nextLineIsButtonKey) {
+                        bindings[buttonKey] = "";
+                        i++; // Move to next line
+                    } else {
+                        // Next line is the value for this button
+                        bindings[buttonKey] = parseValue(nextLine);
+                        i += 2; // Skip both button key and value
+                    }
+                }
                 // Check if current line is a known key
-                if (KNOWN_KEYS.has(currentLine)) {
+                else if (KNOWN_KEYS.has(currentLine)) {
                     const key = currentLine;
                     
-                    // Special handling for controllerEmulationBindings
-                    if (key === "controllerEmulationBindings") {
-                        i++; // Move past the controllerEmulationBindings key
-                        const result = parseButtonBindings(lines, i);
-                        containerData[key] = result.bindings;
-                        i = result.nextIndex;
+                    // Special handling for "name" key - move it to containerName
+                    if (key === "name") {
+                        // Peek at the next line
+                        const nextLine = i + 1 < lines.length ? lines[i + 1].trim() : undefined;
+                        const nextLineIsKnownKey = nextLine !== undefined && KNOWN_KEYS.has(nextLine);
+                        const nextLineIsButtonKey = nextLine !== undefined && BUTTON_KEYS.has(nextLine);
+                        
+                        // If next line is also a known key, button key, or undefined, use default name
+                        if (nextLine === undefined || nextLineIsKnownKey || nextLineIsButtonKey) {
+                            containerName = "Imported Config";
+                            i++; // Move to next line
+                        } else {
+                            // Next line is the value for name
+                            containerName = parseValue(nextLine);
+                            i += 2; // Skip both key and value
+                        }
                     } else {
                         // Regular key handling
                         // Peek at the next line
                         const nextLine = i + 1 < lines.length ? lines[i + 1].trim() : undefined;
-                        const nextLineIsKey = nextLine !== undefined && KNOWN_KEYS.has(nextLine);
+                        const nextLineIsKnownKey = nextLine !== undefined && KNOWN_KEYS.has(nextLine);
+                        const nextLineIsButtonKey = nextLine !== undefined && BUTTON_KEYS.has(nextLine);
                         
-                        // If next line is also a known key or undefined, current key has empty value
-                        if (nextLine === undefined || nextLineIsKey) {
-                            containerData[key] = "";
+                        // If next line is also a known key, button key, or undefined, current key has empty value
+                        if (nextLine === undefined || nextLineIsKnownKey || nextLineIsButtonKey) {
+                            config[key] = "";
                             i++; // Move to next line
                         } else {
                             // Next line is the value for this key
-                            containerData[key] = parseValue(nextLine);
+                            config[key] = parseValue(nextLine);
                             i += 2; // Skip both key and value
                         }
                     }
@@ -299,9 +285,15 @@
                 }
             }
             
+            // Add bindings to config if any were collected
+            if (Object.keys(bindings).length > 0) {
+                config.controllerEmulationBindings = bindings;
+            }
+            
             return {
                 version: 1,
-                containerData: containerData
+                containerName: containerName,
+                config: config
             };
         }
 
