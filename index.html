@@ -167,7 +167,12 @@
         const EXCLUDED_KEYS = new Set([
             "avg fps", "session length sec", "sessionMetadata", "appVersion", 
             "imgVersion", "config changed", "discord support prompt shown", 
-            "id", "rcfileId", "profileId"
+            "id", "profileId"
+        ]);
+
+        const STRING_ONLY_KEYS = new Set([
+            "wineVersion", "box86Version", "box64Version", "fexcoreVersion", 
+            "graphicsDriverVersion", "graphicsDriverConfig", "dxwrapperConfig"
         ]);
 
         const KNOWN_KEYS = new Set([
@@ -188,9 +193,14 @@
             "graphicsDriverVersion", "controllerEmulationBindings"
         ]);
 
-        function parseValue(value) {
+        function parseValue(value, key) {
             // Trim whitespace
             const trimmedValue = value.trim();
+            
+            // Skip conversion for version-related keys
+            if (key && STRING_ONLY_KEYS.has(key)) {
+                return trimmedValue;
+            }
             
             // Convert "true" to boolean true
             if (trimmedValue === 'true') {
@@ -245,7 +255,7 @@
                         i++; // Move to next line
                     } else {
                         // Next line is the value for this button
-                        bindings[buttonKey] = parseValue(nextLine);
+                        bindings[buttonKey] = parseValue(nextLine, buttonKey);
                         i += 2; // Skip both button key and value
                     }
                 }
@@ -266,7 +276,7 @@
                             i++; // Move to next line
                         } else {
                             // Next line is the value for name
-                            containerName = parseValue(nextLine);
+                            containerName = parseValue(nextLine, "name");
                             i += 2; // Skip both key and value
                         }
                     } else {
@@ -304,7 +314,7 @@
                                 i++; // Move to next line
                             } else {
                                 // Next line is the value for this key
-                                config[configKey] = parseValue(nextLine);
+                                config[configKey] = parseValue(nextLine, key);
                                 i += 2; // Skip both key and value
                             }
                         }
