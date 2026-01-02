@@ -320,12 +320,24 @@ export default function ConfigConverterPage() {
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-            GameNative Config Converter
-          </h1>
-          <p className="text-gray-400 text-sm">
-            Converts raw configurations into usable game configurations
-          </p>
+          <div className="flex items-start justify-between">
+            <div>
+              <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+                GameNative Config Converter
+              </h1>
+              <p className="text-gray-400 text-sm">
+                Converts raw configurations into usable game configurations
+              </p>
+            </div>
+            <a
+              href="https://gamenative.app/compatibility/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-semibold rounded-lg shadow-lg shadow-green-500/30 transition-all transform hover:scale-105 active:scale-95 whitespace-nowrap"
+            >
+              Compatibility List
+            </a>
+          </div>
         </div>
 
         {/* Info Box */}
