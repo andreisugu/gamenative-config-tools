@@ -539,21 +539,6 @@ export default function ConfigConverterPage() {
           </p>
         </div>
 
-        {/* Options */}
-        <div className="bg-gray-800/50 border border-gray-700 p-4 rounded-lg mb-6 backdrop-blur-sm">
-          <label className="flex items-center cursor-pointer group">
-            <input
-              type="checkbox"
-              checked={convertSteamId}
-              onChange={(e) => setConvertSteamId(e.target.checked)}
-              className="w-4 h-4 text-cyan-500 bg-gray-900 border-gray-600 rounded focus:ring-cyan-500 focus:ring-2 cursor-pointer"
-            />
-            <span className="ml-3 text-sm text-gray-300 group-hover:text-gray-100 transition-colors">
-              Convert Steam ID to game name (fetches game name from Steam API)
-            </span>
-          </label>
-        </div>
-
         {/* Main Content - Split View */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           {/* Input Section */}
@@ -581,18 +566,31 @@ export default function ConfigConverterPage() {
               <label className="text-sm font-semibold text-cyan-400">
                 JSON Preview
               </label>
-              <button
-                onClick={handleCopyToClipboard}
-                disabled={!jsonPreview}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none ${
-                  copySuccess 
-                    ? 'bg-green-600 text-white' 
-                    : 'protected-button-cyan text-white shadow-md shadow-cyan-500/20'
-                }`}
-                title={jsonPreview ? 'Copy JSON to clipboard' : 'Convert configuration first'}
-              >
-                {copySuccess ? '✓ Copied!' : 'Copy to Clipboard'}
-              </button>
+              <div className="flex items-center gap-3">
+                <label className="flex items-center cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={convertSteamId}
+                    onChange={(e) => setConvertSteamId(e.target.checked)}
+                    className="w-4 h-4 text-cyan-500 bg-gray-900 border-gray-600 rounded focus:ring-cyan-500 focus:ring-2 cursor-pointer"
+                  />
+                  <span className="ml-2 text-xs text-gray-300 group-hover:text-gray-100 transition-colors whitespace-nowrap">
+                    Convert Steam ID
+                  </span>
+                </label>
+                <button
+                  onClick={handleCopyToClipboard}
+                  disabled={!jsonPreview}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none ${
+                    copySuccess 
+                      ? 'bg-green-600 text-white' 
+                      : 'protected-button-cyan text-white shadow-md shadow-cyan-500/20'
+                  }`}
+                  title={jsonPreview ? 'Copy JSON to clipboard' : 'Convert configuration first'}
+                >
+                  {copySuccess ? '✓ Copied!' : 'Copy to Clipboard'}
+                </button>
+              </div>
             </div>
             <div className="flex-1 min-h-[500px] max-h-[500px] p-4 bg-gray-900/80 border-2 border-gray-700 rounded-lg overflow-auto backdrop-blur-sm">
               <pre className="font-mono text-sm whitespace-pre-wrap break-words">
