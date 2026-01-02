@@ -476,6 +476,18 @@ export default function ConfigConverterPage() {
           >
             {isConverting ? 'Converting...' : 'Convert & Download'}
           </button>
+          <button
+            onClick={handleCopyToClipboard}
+            disabled={!jsonPreview}
+            className={`px-6 py-3 text-white font-semibold rounded-lg shadow-lg transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none ${
+              copySuccess 
+                ? 'bg-green-600 shadow-green-500/30' 
+                : 'protected-button-cyan shadow-cyan-500/30'
+            }`}
+            title={jsonPreview ? 'Copy JSON to clipboard' : 'Convert configuration first'}
+          >
+            {copySuccess ? '✓ Copied!' : 'Copy to Clipboard'}
+          </button>
         </div>
 
         {/* Messages */}
