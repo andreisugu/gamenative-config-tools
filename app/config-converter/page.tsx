@@ -511,6 +511,14 @@ export default function ConfigConverterPage() {
               >
                 DiffCheck.io
               </a>
+              <a
+                href="https://andreisugu.github.io/gamenative-config-converter/config-editor"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 protected-button-cyan text-white font-semibold rounded-lg shadow-lg shadow-cyan-500/30 transition-all transform hover:scale-105 active:scale-95 whitespace-nowrap"
+              >
+                Config Editor
+              </a>
             </div>
           </div>
         </div>
@@ -604,7 +612,7 @@ export default function ConfigConverterPage() {
             disabled={isConverting}
             className="px-6 py-3 protected-button-cyan text-white font-semibold rounded-lg shadow-lg shadow-cyan-500/30 transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
-            {isConverting ? 'Converting...' : 'Preview JSON'}
+            {isConverting ? 'Converting...' : 'Convert to JSON'}
           </button>
           <button
             onClick={handleDownload}
