@@ -58,6 +58,19 @@ const KNOWN_KEYS = new Set([
   "graphicsDriverVersion", "controllerEmulationBindings"
 ]);
 
+/**
+ * Parse a raw string value according to key-specific rules.
+ *
+ * @param value - The raw input string to parse; leading and trailing whitespace will be trimmed.
+ * @param key - The configuration key that determines parsing behavior (e.g., special handling for "drives", "extraData", "sessionMetadata", or keys in STRING_ONLY_KEYS).
+ * @returns `string`, `number`, `boolean`, `object`, or `null` depending on key and content:
+ * - For key `"drives"`, returns the trimmed string with all whitespace removed.
+ * - For `"extraData"` and `"sessionMetadata"`, returns the parsed JSON object, or `null` for empty/"null"/invalid JSON.
+ * - For keys in STRING_ONLY_KEYS, returns the trimmed string.
+ * - The literals `"true"` and `"false"` return `boolean` values.
+ * - Numeric strings (integer or float) return `number` if finite.
+ * - Otherwise returns the trimmed string.
+ */
 function parseValue(value: string, key: string): string | number | boolean | object | null {
   const trimmedValue = value.trim();
   
@@ -104,6 +117,18 @@ function parseValue(value: string, key: string): string | number | boolean | obj
   return trimmedValue;
 }
 
+/**
+ * Parse a line-based key/value configuration into a structured Config object.
+ *
+ * Parses the provided multiline input (ignoring blank lines) where keys and values appear on alternating lines,
+ * recognizes known keys and controller button labels, converts values to appropriate types, and aggregates
+ * controller button bindings under `controllerEmulationBindings`.
+ *
+ * @param inputText - Raw multiline text containing key lines and optional value lines (blank lines are ignored).
+ * @returns The constructed `Config` object with parsed keys and an optional `controllerEmulationBindings` map.
+ * @throws If the input contains no non-empty lines.
+ * @throws If an unrecognized key is encountered; the thrown error includes the offending key and its 1-based line position.
+ */
 function convertToJSON(inputText: string): Config {
   const lines = inputText.split('\n').filter(line => line.trim() !== '');
   
@@ -185,6 +210,12 @@ function convertToJSON(inputText: string): Config {
   return config;
 }
 
+/**
+ * Resolve the Steam store name for a given app ID and return it with HTML characters escaped.
+ *
+ * @param appId - The Steam application ID to look up.
+ * @returns The game's name with HTML characters escaped, or `null` if the name cannot be retrieved.
+ */
 async function fetchSteamGameName(appId: string): Promise<string | null> {
   try {
     const proxies = [
@@ -235,6 +266,14 @@ async function fetchSteamGameName(appId: string): Promise<string | null> {
   }
 }
 
+/**
+ * Page component that provides a UI to convert line-based key/value configurations into a downloadable JSON export.
+ *
+ * Renders an input area for raw configuration text, a JSON preview, and actions to preview or download the converted configuration;
+ * when the input contains a Steam ID, attempts to resolve the app name to use as the export container name.
+ *
+ * @returns The rendered React element for the Config Converter page.
+ */
 export default function ConfigConverterPage() {
   const [inputText, setInputText] = useState('');
   const [jsonPreview, setJsonPreview] = useState('');
