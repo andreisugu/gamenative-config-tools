@@ -258,6 +258,125 @@ async function getContainerName(config: Config): Promise<string> {
   return containerName;
 }
 
+// Component to render JSON with syntax highlighting
+function JsonHighlight({ json }: { json: string }) {
+  const highlightJson = (jsonString: string) => {
+    // Regex patterns for different JSON elements
+    const patterns = [
+      { pattern: /"([^"]+)":/g, className: 'text-cyan-400' }, // Keys
+      { pattern: /:\s*"([^"]*)"/g, className: 'text-green-400' }, // String values
+      { pattern: /:\s*(true|false)/g, className: 'text-orange-400' }, // Booleans
+      { pattern: /:\s*(-?\d+\.?\d*)/g, className: 'text-yellow-400' }, // Numbers
+      { pattern: /:\s*(null)/g, className: 'text-purple-400' }, // Null
+    ];
+
+    // Split JSON into lines for processing
+    const lines = jsonString.split('\n');
+    
+    return lines.map((line, lineIndex) => {
+      const parts: JSX.Element[] = [];
+      let lastIndex = 0;
+      let processed = false;
+
+      // Check for keys (property names)
+      const keyMatch = /"([^"]+)":\s*/.exec(line);
+      if (keyMatch) {
+        const keyStart = keyMatch.index;
+        const keyEnd = keyStart + keyMatch[0].length;
+        
+        // Add text before key
+        if (keyStart > 0) {
+          parts.push(<span key={`${lineIndex}-pre`}>{line.substring(0, keyStart)}</span>);
+        }
+        
+        // Add colored key
+        parts.push(
+          <span key={`${lineIndex}-key`} className="text-cyan-400">
+            {keyMatch[0].substring(0, keyMatch[0].indexOf(':') + 1)}
+          </span>
+        );
+        
+        lastIndex = keyEnd;
+        
+        // Process the value part
+        const valuePart = line.substring(keyEnd);
+        
+        // String values
+        if (valuePart.match(/^\s*".*"[,}]?$/)) {
+          const stringMatch = /^\s*(".*?")/g.exec(valuePart);
+          if (stringMatch) {
+            parts.push(<span key={`${lineIndex}-ws`}>{valuePart.substring(0, stringMatch.index)}</span>);
+            parts.push(
+              <span key={`${lineIndex}-str`} className="text-green-400">
+                {stringMatch[1]}
+              </span>
+            );
+            parts.push(<span key={`${lineIndex}-end`}>{valuePart.substring(stringMatch.index + stringMatch[1].length)}</span>);
+            processed = true;
+          }
+        }
+        // Boolean values
+        else if (valuePart.match(/^\s*(true|false)/)) {
+          const boolMatch = /^\s*(true|false)/g.exec(valuePart);
+          if (boolMatch) {
+            parts.push(<span key={`${lineIndex}-ws`}>{valuePart.substring(0, boolMatch.index)}</span>);
+            parts.push(
+              <span key={`${lineIndex}-bool`} className="text-orange-400">
+                {boolMatch[1]}
+              </span>
+            );
+            parts.push(<span key={`${lineIndex}-end`}>{valuePart.substring(boolMatch.index + boolMatch[1].length)}</span>);
+            processed = true;
+          }
+        }
+        // Number values
+        else if (valuePart.match(/^\s*-?\d+\.?\d*/)) {
+          const numMatch = /^\s*(-?\d+\.?\d*)/g.exec(valuePart);
+          if (numMatch) {
+            parts.push(<span key={`${lineIndex}-ws`}>{valuePart.substring(0, numMatch.index)}</span>);
+            parts.push(
+              <span key={`${lineIndex}-num`} className="text-yellow-400">
+                {numMatch[1]}
+              </span>
+            );
+            parts.push(<span key={`${lineIndex}-end`}>{valuePart.substring(numMatch.index + numMatch[1].length)}</span>);
+            processed = true;
+          }
+        }
+        // Null values
+        else if (valuePart.match(/^\s*null/)) {
+          const nullMatch = /^\s*(null)/g.exec(valuePart);
+          if (nullMatch) {
+            parts.push(<span key={`${lineIndex}-ws`}>{valuePart.substring(0, nullMatch.index)}</span>);
+            parts.push(
+              <span key={`${lineIndex}-null`} className="text-purple-400">
+                {nullMatch[1]}
+              </span>
+            );
+            parts.push(<span key={`${lineIndex}-end`}>{valuePart.substring(nullMatch.index + nullMatch[1].length)}</span>);
+            processed = true;
+          }
+        }
+        
+        if (!processed) {
+          parts.push(<span key={`${lineIndex}-val`}>{valuePart}</span>);
+        }
+      } else {
+        // Line without key-value (brackets, braces, etc.)
+        parts.push(<span key={`${lineIndex}-plain`} className="text-gray-400">{line}</span>);
+      }
+
+      return (
+        <div key={lineIndex}>
+          {parts}
+        </div>
+      );
+    });
+  };
+
+  return <>{highlightJson(json)}</>;
+}
+
 export default function ConfigConverterPage() {
   const [inputText, setInputText] = useState('');
   const [jsonPreview, setJsonPreview] = useState('');
@@ -446,6 +565,7 @@ export default function ConfigConverterPage() {
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               placeholder="wineVersion&#10;8.0&#10;graphicsDriverAdreno&#10;turnip&#10;showFPS&#10;true&#10;envVars&#10;WINE_DEBUG=warn"
+              autoComplete="off"
               className="flex-1 min-h-[500px] p-4 bg-gray-900/80 border-2 border-gray-700 rounded-lg font-mono text-sm text-gray-100 placeholder-gray-600 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all resize-none backdrop-blur-sm"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && e.ctrlKey) {
@@ -475,8 +595,10 @@ export default function ConfigConverterPage() {
               </button>
             </div>
             <div className="flex-1 min-h-[500px] max-h-[500px] p-4 bg-gray-900/80 border-2 border-gray-700 rounded-lg overflow-auto backdrop-blur-sm">
-              <pre className="font-mono text-sm text-gray-100 whitespace-pre-wrap break-words">
-                {jsonPreview || (
+              <pre className="font-mono text-sm whitespace-pre-wrap break-words">
+                {jsonPreview ? (
+                  <JsonHighlight json={jsonPreview} />
+                ) : (
                   <span className="text-gray-600">
                     JSON output will appear here after conversion...
                   </span>
@@ -501,18 +623,6 @@ export default function ConfigConverterPage() {
             className="px-6 py-3 protected-button-blue-purple text-white font-semibold rounded-lg shadow-lg shadow-blue-500/30 transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
             {isConverting ? 'Converting...' : 'Convert & Download'}
-          </button>
-          <button
-            onClick={handleCopyToClipboard}
-            disabled={!jsonPreview}
-            className={`px-6 py-3 text-white font-semibold rounded-lg shadow-lg transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none ${
-              copySuccess 
-                ? 'bg-green-600 shadow-green-500/30' 
-                : 'protected-button-cyan shadow-cyan-500/30'
-            }`}
-            title={jsonPreview ? 'Copy JSON to clipboard' : 'Convert configuration first'}
-          >
-            {copySuccess ? '✓ Copied!' : 'Copy to Clipboard'}
           </button>
         </div>
 
