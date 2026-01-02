@@ -167,10 +167,8 @@
             "DPAD LEFT": "15", "DPAD RIGHT": "16"
         };
 
-        const BUTTON_KEYS = new Set([
-            "A", "B", "X", "Y", "L1", "L2", "L3", "R1", "R2", "R3", "START", "SELECT", "MENU",
-            "DPAD UP", "DPAD DOWN", "DPAD LEFT", "DPAD RIGHT"
-        ]);
+        // Derive BUTTON_KEYS from BUTTON_INDEX_MAP to maintain consistency
+        const BUTTON_KEYS = new Set(Object.keys(BUTTON_INDEX_MAP));
 
         const EXCLUDED_KEYS = new Set([
             "avg fps", "session length sec", "appVersion", 
@@ -274,6 +272,12 @@
                 if (BUTTON_KEYS.has(currentLine)) {
                     const buttonKey = currentLine;
                     const buttonIndex = BUTTON_INDEX_MAP[buttonKey];
+                    
+                    // Skip if button index mapping is missing (defensive check)
+                    if (buttonIndex === undefined) {
+                        i++;
+                        continue;
+                    }
                     
                     // Peek at the next line
                     const nextLine = i + 1 < lines.length ? lines[i + 1].trim() : undefined;
