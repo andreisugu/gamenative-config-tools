@@ -339,7 +339,7 @@ export default function ConfigConverterPage() {
         <div className="mb-8">
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold mb-2 protected-gradient-title">
                 GameNative Config Converter
               </h1>
               <p className="text-gray-400 text-sm">
@@ -350,7 +350,7 @@ export default function ConfigConverterPage() {
               href="https://gamenative.app/compatibility/"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-semibold rounded-lg shadow-lg shadow-green-500/30 transition-all transform hover:scale-105 active:scale-95 whitespace-nowrap"
+              className="px-4 py-2 protected-button-green text-white font-semibold rounded-lg shadow-lg shadow-green-500/30 transition-all transform hover:scale-105 active:scale-95 whitespace-nowrap"
             >
               Compatibility List
             </a>
@@ -414,14 +414,14 @@ export default function ConfigConverterPage() {
           <button
             onClick={handleConvert}
             disabled={isConverting}
-            className="px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold rounded-lg shadow-lg shadow-cyan-500/30 transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            className="px-6 py-3 protected-button-cyan text-white font-semibold rounded-lg shadow-lg shadow-cyan-500/30 transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
             {isConverting ? 'Converting...' : 'Preview JSON'}
           </button>
           <button
             onClick={handleDownload}
             disabled={isConverting}
-            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold rounded-lg shadow-lg shadow-blue-500/30 transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            className="px-6 py-3 protected-button-blue-purple text-white font-semibold rounded-lg shadow-lg shadow-blue-500/30 transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
             {isConverting ? 'Converting...' : 'Convert & Download'}
           </button>
