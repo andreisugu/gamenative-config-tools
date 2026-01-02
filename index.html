@@ -167,7 +167,7 @@
         const EXCLUDED_KEYS = new Set([
             "avg fps", "session length sec", "sessionMetadata", "appVersion", 
             "imgVersion", "config changed", "discord support prompt shown", 
-            "profileId"
+            "profileId"  // Junk metadata fields excluded from config output
         ]);
 
         const STRING_ONLY_KEYS = new Set([
@@ -278,7 +278,7 @@
                         }
                     } else {
                         // Process non-excluded keys
-                        // Rename "lc all" to "lc_all" for Android compatibility
+                        // Rename "lc all" to "lc_all" for property name compatibility
                         let configKey = key;
                         if (key === "lc all") {
                             configKey = "lc_all";
