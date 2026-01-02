@@ -10,6 +10,8 @@ Built with **Next.js**, **TypeScript**, and **Tailwind CSS** for a modern, type-
 [![Status: Active](https://img.shields.io/badge/Status-Active-brightgreen.svg)](https://andreisugu.github.io/gamenative-config-converter/)
 [![Platform: Web](https://img.shields.io/badge/Platform-Web-blue.svg)](https://andreisugu.github.io/gamenative-config-converter/)
 
+---
+
 ## 🚨 The Problem
 
 The GameNative/Winlator community is amazing. Users rigorously test games and upload configuration data (FPS, drivers, environment variables) to community databases.
@@ -26,7 +28,7 @@ The GameNative/Winlator community is amazing. Users rigorously test games and up
 
 **Stop typing. Start playing.**
 
------
+---
 
 ## ✨ Features
 
@@ -35,30 +37,15 @@ The GameNative/Winlator community is amazing. Users rigorously test games and up
 * **Complex Data Handling:** Detects and correctly parses nested JSON strings found in fields like `extraData` and `sessionMetadata`.
 * **Data Normalization:** Automatically fixes property naming inconsistencies (e.g., converting `lc all` to `lc_all`).
 * **Junk Filtration:** Automatically strips out useless runtime metadata (e.g., `avg fps`, `session length`, `profileId`) that clogs up config files.
-* **Android-Ready Structure:** Outputs the exact nested JSON structure (`containerName`, `exportedFrom`, `config`) required by the GameNative Import/Export source code.
+* **Android-Ready Structure:** Outputs the exact nested JSON structure required by the GameNative Import/Export source code.
 
------
+---
 
 ## 🚀 How to Use
 
 ### 1. Get the Raw Data
 
 Go to your preferred GameNative/Winlator config database or spreadsheet. Click "View" on a config report and copy **all** the text.
-
-> **The text usually looks like this mess:**
->
-> ```text
-> wineVersion
-> 8.0
-> graphicsDriverAdreno
-> turnip
-> showFPS
-> true
-> envVars
-> WINE_DEBUG=warn
-> avg fps
-> 60
-> ```
 
 ### 2. Paste & Convert
 
@@ -72,9 +59,8 @@ Go to your preferred GameNative/Winlator config database or spreadsheet. Click "
 2.  Open **GameNative**.
 3.  Go to the **Containers** tab.
 4.  Select **Import Config** and choose your file.
-5.  Launch your game!
 
------
+---
 
 ## 🧩 Technical Details
 
@@ -83,57 +69,30 @@ This tool was built to support the **Import/Export JSON Schema** defined in the 
 ### The Conversion Logic
 
 The tool performs a "Lookahead" parse:
+1. It iterates through the raw text line by line.
+2. It checks a strictly defined `KNOWN_KEYS` set to differentiate between a Key and a Value.
+3. It gathers individual controller buttons (`A`, `B`, `DPAD UP`) and nests them into a `controllerEmulationBindings` object.
 
-1.  It iterates through the raw text line by line.
-2.  It checks a strictly defined `KNOWN_KEYS` set to differentiate between a Key and a Value.
-3.  It handles empty values (where a Key is immediately followed by another Key) without shifting the data alignment.
-4.  It gathers individual controller buttons (`A`, `B`, `DPAD UP`) and nests them into a `controllerEmulationBindings` object.
+---
 
-### Comparison
+## 🌍 Community & Support
 
-| Raw Input (Messy) | Output JSON (Clean) |
-| :--- | :--- |
-| `graphicsDriver`<br>`vortek-2.1`<br>`avg fps`<br>`60`<br>`A`<br>`KEY_SPACE` | <pre lang="json">{<br>  "version": 1,<br>  "exportedFrom": "GameNative",<br>  "timestamp": 1704200000000,<br>  "containerName": "Imported Config",<br>  "config": {<br>    "graphicsDriver": "vortek-2.1",<br>    "controllerEmulationBindings": {<br>      "A": "KEY_SPACE"<br>    }<br>  }<br>}</pre> |
+This tool is designed to support the incredible work done by the GameNative developers and community. While this converter is an unofficial utility, you can find the official project and community hubs below:
 
------
+* **Official Website:** [GameNative.app](https://gamenative.app/)
+* **Source Code:** [GameNative GitHub Repository](https://github.com/utkarshdalal/GameNative)
+* **Discord Community:** [Join the GameNative Discord](https://discord.gg/2hKv4VfZfE)
+
+---
 
 ## ⚠️ Compatibility Note
 
-This tool generates JSON files compatible with GameNative builds that include the **Import/Export PR (#232)**. If you are using an older version of the app, you may need to update or build from source to see the "Import" button.
-
------
-
-## 🛠️ Development
-
-This project is built with **Next.js**, **TypeScript**, and **Tailwind CSS**.
-
-### Local Development
-
-```bash
-# Install dependencies
-npm install
-
-# Run development server
-npm run dev
-
-# Build for production
-npm run build
-```
-
-The converter is available at `/config-converter` route.
-
-## 🤝 Contributing
-
-Found a new configuration key that the parser misses?
-
-1.  Fork the repo.
-2.  Add the key to the `KNOWN_KEYS` set in `app/config-converter/page.tsx`.
-3.  Submit a Pull Request.
+This tool generates JSON files compatible with GameNative builds that include the **Import/Export PR (#232)**. If you are using an older version of the app, you may need to update to the latest release to use the "Import" button.
 
 ## 📄 License
 
-This project is licensed under the [MIT License](https://opensource.org/licenses/MIT) - free to use, modify, and host.
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
 
------
+---
 
-*Not affiliated with the official GameNative/Winlator development team. Built by the community, for the community.*
+*Not affiliated with the official GameNative development team. Built by the community, for the community.*
