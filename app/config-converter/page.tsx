@@ -474,7 +474,7 @@ export default function ConfigConverterPage() {
                 {copySuccess ? '✓ Copied!' : 'Copy to Clipboard'}
               </button>
             </div>
-            <div className="flex-1 min-h-[500px] p-4 bg-gray-900/80 border-2 border-gray-700 rounded-lg overflow-auto backdrop-blur-sm">
+            <div className="flex-1 min-h-[500px] max-h-[500px] p-4 bg-gray-900/80 border-2 border-gray-700 rounded-lg overflow-auto backdrop-blur-sm">
               <pre className="font-mono text-sm text-gray-100 whitespace-pre-wrap break-words">
                 {jsonPreview || (
                   <span className="text-gray-600">
