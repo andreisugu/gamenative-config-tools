@@ -332,7 +332,41 @@
             return config;
         }
 
-        function convertAndDownload() {
+        async function fetchSteamGameName(appId) {
+            try {
+                // Try multiple CORS proxy services in case one is blocked
+                const proxies = [
+                    `https://api.allorigins.win/raw?url=`,
+                    `https://corsproxy.io/?`,
+                ];
+                
+                const apiUrl = `https://store.steampowered.com/api/appdetails?appids=${appId}`;
+                
+                for (const proxy of proxies) {
+                    try {
+                        const response = await fetch(proxy + encodeURIComponent(apiUrl));
+                        if (!response.ok) continue;
+                        
+                        const data = await response.json();
+                        
+                        // Check if the API returned valid data
+                        if (data && data[appId] && data[appId].success && data[appId].data && data[appId].data.name) {
+                            return data[appId].data.name;
+                        }
+                    } catch (proxyError) {
+                        console.log(`Proxy ${proxy} failed, trying next...`);
+                        continue;
+                    }
+                }
+                
+                return null;
+            } catch (error) {
+                console.error('Failed to fetch Steam game name:', error);
+                return null;
+            }
+        }
+
+        async function convertAndDownload() {
             const inputText = document.getElementById('inputText').value;
             const errorMessage = document.getElementById('errorMessage');
             const successMessage = document.getElementById('successMessage');
@@ -344,12 +378,22 @@
             try {
                 const jsonData = convertToJSON(inputText);
                 
+                // Extract Steam App ID from the id field and fetch game name
+                let containerName = "Imported Config";
+                if (jsonData.id && typeof jsonData.id === 'string' && jsonData.id.startsWith('STEAM_')) {
+                    const appId = jsonData.id.replace('STEAM_', '');
+                    const gameName = await fetchSteamGameName(appId);
+                    if (gameName) {
+                        containerName = gameName;
+                    }
+                }
+                
                 // Wrap the config in the required metadata structure for Import feature
                 const finalOutput = {
                     "version": 1,
                     "exportedFrom": "GameNative",
                     "timestamp": Date.now(),
-                    "containerName": "Imported Config",
+                    "containerName": containerName,
                     "config": jsonData
                 };
                 
