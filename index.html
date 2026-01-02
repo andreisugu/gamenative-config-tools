@@ -204,16 +204,16 @@
             
             // Handle extraData and sessionMetadata: parse as JSON objects
             if (key === "extraData" || key === "sessionMetadata") {
-                // Handle "null" string
-                if (trimmedValue === "null") {
+                // Handle empty string or "null" string
+                if (trimmedValue === "" || trimmedValue === "null") {
                     return null;
                 }
                 // Try to parse as JSON
                 try {
                     return JSON.parse(trimmedValue);
                 } catch (e) {
-                    // If parsing fails, return as string
-                    return trimmedValue;
+                    // If parsing fails, return null to maintain Object type
+                    return null;
                 }
             }
             
@@ -311,7 +311,7 @@
                         
                         // If next line is also a known key, button key, or undefined, current key has empty value
                         if (nextLine === undefined || nextLineIsKnownKey || nextLineIsButtonKey) {
-                            config[configKey] = "";
+                            config[configKey] = parseValue("", key);
                             i++; // Move to next line
                         } else {
                             // Next line is the value for this key
