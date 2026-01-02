@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 // TypeScript interface for the Config object
 interface Config {
@@ -264,6 +264,17 @@ export default function ConfigConverterPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isConverting, setIsConverting] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false);
+  const copyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (copyTimeoutRef.current) {
+        clearTimeout(copyTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleConvert = async () => {
     setError('');
@@ -290,6 +301,32 @@ export default function ConfigConverterPage() {
       setJsonPreview('');
     } finally {
       setIsConverting(false);
+    }
+  };
+
+  const handleCopyToClipboard = async () => {
+    if (!jsonPreview) {
+      setError('No JSON to copy. Please convert your configuration first.');
+      return;
+    }
+    
+    try {
+      await navigator.clipboard.writeText(jsonPreview);
+      setCopySuccess(true);
+      
+      // Clear any existing timeout
+      if (copyTimeoutRef.current) {
+        clearTimeout(copyTimeoutRef.current);
+      }
+      
+      // Set new timeout
+      copyTimeoutRef.current = setTimeout(() => {
+        setCopySuccess(false);
+        copyTimeoutRef.current = null;
+      }, 2000);
+    } catch (err) {
+      setError('Failed to copy to clipboard. Please try again.');
+      console.error('Copy failed:', err);
     }
   };
 
@@ -394,9 +431,23 @@ export default function ConfigConverterPage() {
 
           {/* JSON Preview Section */}
           <div className="flex flex-col">
-            <label className="text-sm font-semibold text-cyan-400 mb-2">
-              JSON Preview
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-sm font-semibold text-cyan-400">
+                JSON Preview
+              </label>
+              <button
+                onClick={handleCopyToClipboard}
+                disabled={!jsonPreview}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none ${
+                  copySuccess 
+                    ? 'bg-green-600 text-white' 
+                    : 'protected-button-cyan text-white shadow-md shadow-cyan-500/20'
+                }`}
+                title={jsonPreview ? 'Copy JSON to clipboard' : 'Convert configuration first'}
+              >
+                {copySuccess ? '✓ Copied!' : 'Copy to Clipboard'}
+              </button>
+            </div>
             <div className="flex-1 min-h-[500px] p-4 bg-gray-900/80 border-2 border-gray-700 rounded-lg overflow-auto backdrop-blur-sm">
               <pre className="font-mono text-sm text-gray-100 whitespace-pre-wrap break-words">
                 {jsonPreview || (
