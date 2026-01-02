@@ -13,9 +13,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <meta name="color-scheme" content="dark" />
-      </head>
       <body className="antialiased">
         {children}
       </body>
