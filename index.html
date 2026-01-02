@@ -273,7 +273,7 @@
                     const buttonKey = currentLine;
                     const buttonIndex = BUTTON_INDEX_MAP[buttonKey];
                     
-                    // Skip if button index mapping is missing (defensive check)
+                    // Defensive check for future extensibility (currently unreachable since BUTTON_KEYS is derived from BUTTON_INDEX_MAP)
                     if (buttonIndex === undefined) {
                         i++;
                         continue;
