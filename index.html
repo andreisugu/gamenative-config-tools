@@ -343,7 +343,17 @@
             
             try {
                 const jsonData = convertToJSON(inputText);
-                const jsonString = JSON.stringify(jsonData, null, 2);
+                
+                // Wrap the config in the required metadata structure for Import feature
+                const finalOutput = {
+                    "version": 1,
+                    "exportedFrom": "GameNative",
+                    "timestamp": Date.now(),
+                    "containerName": "Imported Config",
+                    "config": jsonData
+                };
+                
+                const jsonString = JSON.stringify(finalOutput, null, 2);
                 
                 // Create a blob and download
                 const blob = new Blob([jsonString], { type: 'application/json' });
