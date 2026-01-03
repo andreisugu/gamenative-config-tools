@@ -494,7 +494,7 @@ export default function App() {
             <>
             {config.containerVariant === 'glibc' ? (
                 <>
-                <InputField label="Box64 Version" value={config.box64Version} onChange={(v: any) => updateField('box64Version', v)} />
+                <InputField label="Box64 Version" description="Wrongly Reported" value={config.box64Version} onChange={(v: any) => updateField('box64Version', v)} />
                 <Select label="Box64 Preset" value={config.box64Preset} options={BOX64_BOX86_PRESETS} onChange={(v: any) => updateField('box64Preset', v)} />
                 </>
             ) : (
@@ -502,7 +502,7 @@ export default function App() {
                 <InputField label="FEXCore Version" value={config.fexcoreVersion} onChange={(v: any) => updateField('fexcoreVersion', v)} />
                 <Select label="64-bit Emulator" value={config.wineVersion.includes('arm64ec') ? 'FEXCore' : 'Box64'} options={['FEXCore', 'Box64']} disabled={true} />
                 <Select label="32-bit Emulator" value={config.emulator} options={['FEXCore', 'Box64']} onChange={(v: any) => updateField('emulator', v)} />
-                <InputField label="Box64 Version" value={config.box64Version} onChange={(v: any) => updateField('box64Version', v)} />
+                <InputField label="Box64 Version" description="Wrongly Reported" value={config.box64Version} onChange={(v: any) => updateField('box64Version', v)} />
                 <Select label="Box64 Preset" value={config.box64Preset} options={BOX64_BOX86_PRESETS} onChange={(v: any) => updateField('box64Preset', v)} />
                 <Select label="FEXCore Preset" value={config.fexcorePreset} options={FEXCORE_PRESETS} onChange={(v: any) => updateField('fexcorePreset', v)} />
                 </>
@@ -547,7 +547,7 @@ export default function App() {
             <Select label="Offscreen Mode" value={config.offScreenRenderingMode || 'fbo'} options={['fbo', 'backbuffer']} onChange={(v: any) => updateField('offScreenRenderingMode', v)} />
             <Select label="Video Memory" value={config.videoMemorySize || '2048'} options={['32', '64', '128', '256', '512', '1024', '2048', '4096', '6144', '8192', '10240', '12288']} onChange={(v: any) => updateField('videoMemorySize', v)} />
             <Toggle label="Enable CSMT" checked={config.csmt} onChange={(v: any) => updateField('csmt', v)} />
-            <Toggle label="Strict Shader Math" checked={config.strictShaderMath} onChange={(v: any) => updateField('strictShaderMath', v)} />
+            <Toggle label="Strict Shader Math" checked={parseKV(config.dxwrapperConfig).strictShaderMath === '1'} onChange={(v: any) => updateNestedKV('dxwrapperConfig', 'strictShaderMath', v ? '1' : '0')} />
             <Select label="Mouse Warp" value={config.mouseWarpOverride || 'disable'} options={['enable', 'disable', 'force']} onChange={(v: any) => updateField('mouseWarpOverride', v)} />
             </>
         )}
