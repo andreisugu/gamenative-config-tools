@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Search, Star, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -62,7 +62,7 @@ export default function ConfigBrowserClient({ configs }: ConfigBrowserClientProp
   const paginatedConfigs = filteredConfigs.slice(startIndex, endIndex);
 
   // Reset to page 1 when filters change
-  useMemo(() => {
+  useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery, gpuFilter]);
 
@@ -238,7 +238,7 @@ export default function ConfigBrowserClient({ configs }: ConfigBrowserClientProp
                 if (!showPage) {
                   if (page === currentPage - 2 || page === currentPage + 2) {
                     return (
-                      <span key={page} className="px-3 py-2 text-slate-500">
+                      <span key={`ellipsis-${page}`} className="px-3 py-2 text-slate-500">
                         ...
                       </span>
                     );
