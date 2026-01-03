@@ -242,7 +242,7 @@ export default function ConfigBrowserClient({ configs }: ConfigBrowserClientProp
                     // Add ellipsis if there's a gap
                     if (lastPage > 0 && page - lastPage > 1) {
                       pages.push(
-                        <span key={`ellipsis-${lastPage}`} className="px-3 py-2 text-slate-500">
+                        <span key={`ellipsis-before-${page}`} className="px-3 py-2 text-slate-500">
                           ...
                         </span>
                       );
