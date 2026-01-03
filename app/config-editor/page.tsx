@@ -144,7 +144,6 @@ function JsonHighlight({ json }: { json: string }) {
     
     return lines.map((line, lineIndex) => {
       const parts: React.JSX.Element[] = [];
-      let lastIndex = 0;
       let processed = false;
 
       // Check for keys (property names)
@@ -164,8 +163,6 @@ function JsonHighlight({ json }: { json: string }) {
             {keyMatch[0].substring(0, keyMatch[0].indexOf(':') + 1)}
           </span>
         );
-        
-        lastIndex = keyEnd;
         
         // Process the value part
         const valuePart = line.substring(keyEnd);
