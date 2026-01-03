@@ -86,6 +86,48 @@ export default function ConfigBrowserClient({ configs }: ConfigBrowserClientProp
     }
   };
 
+  // Generate pagination buttons with ellipsis
+  const renderPageButtons = () => {
+    const pages = [];
+    let lastPage = 0;
+    
+    for (let page = 1; page <= totalPages; page++) {
+      // Show first page, last page, current page, and pages around current
+      const showPage = page === 1 || 
+                      page === totalPages || 
+                      Math.abs(page - currentPage) <= 1;
+      
+      if (showPage) {
+        // Add ellipsis if there's a gap
+        if (lastPage > 0 && page - lastPage > 1) {
+          pages.push(
+            <span key={`ellipsis-before-${page}`} className="px-3 py-2 text-slate-500">
+              ...
+            </span>
+          );
+        }
+        
+        pages.push(
+          <button
+            key={page}
+            onClick={() => setCurrentPage(page)}
+            className={`px-4 py-2 rounded-lg font-medium transition-all ${
+              currentPage === page
+                ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white'
+                : 'bg-slate-900/50 border border-slate-700/50 text-slate-300 hover:bg-slate-800/50'
+            }`}
+          >
+            {page}
+          </button>
+        );
+        
+        lastPage = page;
+      }
+    }
+    
+    return pages;
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-950 via-slate-950 to-cyan-950">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -228,46 +270,7 @@ export default function ConfigBrowserClient({ configs }: ConfigBrowserClientProp
 
             {/* Page Numbers */}
             <div className="flex gap-2">
-              {(() => {
-                const pages = [];
-                let lastPage = 0;
-                
-                for (let page = 1; page <= totalPages; page++) {
-                  // Show first page, last page, current page, and pages around current
-                  const showPage = page === 1 || 
-                                  page === totalPages || 
-                                  Math.abs(page - currentPage) <= 1;
-                  
-                  if (showPage) {
-                    // Add ellipsis if there's a gap
-                    if (lastPage > 0 && page - lastPage > 1) {
-                      pages.push(
-                        <span key={`ellipsis-before-${page}`} className="px-3 py-2 text-slate-500">
-                          ...
-                        </span>
-                      );
-                    }
-                    
-                    pages.push(
-                      <button
-                        key={page}
-                        onClick={() => setCurrentPage(page)}
-                        className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                          currentPage === page
-                            ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white'
-                            : 'bg-slate-900/50 border border-slate-700/50 text-slate-300 hover:bg-slate-800/50'
-                        }`}
-                      >
-                        {page}
-                      </button>
-                    );
-                    
-                    lastPage = page;
-                  }
-                }
-                
-                return pages;
-              })()}
+              {renderPageButtons()}
             </div>
 
             {/* Next Button */}
