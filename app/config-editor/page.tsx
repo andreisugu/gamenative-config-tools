@@ -475,7 +475,7 @@ export default function App() {
 
             {config.containerVariant === 'bionic' && (
                 <>
-                <Toggle label="Adrenotools Turnip" checked={(parseKV(config.graphicsDriverConfig).adrenotoolsTurnip ?? '1') === '1'} onChange={(v: any) => updateNestedKV('graphicsDriverConfig', 'adrenotoolsTurnip', v ? '1' : '0')} />
+                <Toggle label="Adrenotools Turnip" description="Unreported by GameNative" checked={(parseKV(config.graphicsDriverConfig).adrenotoolsTurnip ?? '1') === '1'} onChange={(v: any) => updateNestedKV('graphicsDriverConfig', 'adrenotoolsTurnip', v ? '1' : '0')} />
                 <Select label="Present Modes" value={parseKV(config.graphicsDriverConfig).presentMode || 'mailbox'} options={['Never', 'mailbox', 'Normal', 'fifo', 'Always', 'immediate', 'relaxed']} onChange={(v: any) => updateNestedKV('graphicsDriverConfig', 'presentMode', v)} />
                 <Select label="Memory Resource" value={parseKV(config.graphicsDriverConfig).resourceType || 'ato'} options={[{value: 'ato', label: 'auto'}, 'dmabuf', 'ahb', 'opaque']} onChange={(v: any) => updateNestedKV('graphicsDriverConfig', 'resourceType', v)} />
                 <Select label="BCn Emulation" value={parseKV(config.graphicsDriverConfig).bcnEmulation || 'auto'} options={['none', 'partial', 'full', 'auto']} onChange={(v: any) => updateNestedKV('graphicsDriverConfig', 'bcnEmulation', v)} />
@@ -513,8 +513,8 @@ export default function App() {
         {activeTab === 'controller' && config && (
             <>
             <Toggle label="SDL Controller API" checked={config.sdlControllerAPI} onChange={(v: any) => updateField('sdlControllerAPI', v)} />
-            <Toggle label="Enable XInput" checked={config.enableXInput} onChange={(v: any) => updateField('enableXInput', v)} />
-            <Toggle label="Enable DirectInput" checked={config.enableDInput} onChange={(v: any) => updateField('enableDInput', v)} />
+            <Toggle label="Enable XInput" description="Unreported by GameNative" checked={config.enableXInput} onChange={(v: any) => updateField('enableXInput', v)} />
+            <Toggle label="Enable DirectInput" description="Unreported by GameNative" checked={config.enableDInput} onChange={(v: any) => updateField('enableDInput', v)} />
             <Select label="DInput Mapper" value={config.dinputMapperType} options={[{ value: 1, label: 'Standard' }, { value: 2, label: 'XInput Mapper' }]} onChange={(v: any) => updateField('dinputMapperType', parseInt(v))} />
             <Toggle label="Disable Mouse" checked={config.disableMouseInput} onChange={(v: any) => updateField('disableMouseInput', v)} />
             <Toggle label="Touchscreen Mode" checked={config.touchscreenMode} onChange={(v: any) => updateField('touchscreenMode', v)} />
