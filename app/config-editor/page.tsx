@@ -133,6 +133,25 @@ const stringifyDrives = (arr: { letter: string; path: string }[]) => {
     return arr.map(d => `${d.letter}:${d.path}`).join('');
 };
 
+// --- PRESET HELPERS ---
+
+// Preset options with display labels and internal values (all caps)
+const BOX64_BOX86_PRESETS = [
+    { value: 'STABILITY', label: 'Stability' },
+    { value: 'COMPATIBILITY', label: 'Compatibility' },
+    { value: 'INTERMEDIATE', label: 'Intermediate' },
+    { value: 'PERFORMANCE', label: 'Performance' },
+    { value: 'UNITY', label: 'Unity' },
+    { value: 'UNITY MONO BLEEDING EDGE', label: 'Unity Mono Bleeding Edge' }
+];
+
+const FEXCORE_PRESETS = [
+    { value: 'STABILITY', label: 'Stability' },
+    { value: 'COMPATIBILITY', label: 'Compatibility' },
+    { value: 'INTERMEDIATE', label: 'Intermediate' },
+    { value: 'PERFORMANCE', label: 'Performance' }
+];
+
 // --- STANDARDIZED UI COMPONENTS ---
 
 const Card = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
@@ -412,7 +431,6 @@ export default function App() {
         <div className="divide-y divide-slate-900">
         {activeTab === 'general' && config && (
             <>
-            <InputField label="Container Name" value={config.containerName || ''} onChange={(v: any) => updateField('containerName', v)} placeholder="e.g. Imported Config" />
             <Select label="Container Variant" value={config.containerVariant} options={['glibc', 'bionic']} onChange={(v: any) => updateField('containerVariant', v)} />
             <InputField label="Wine Version" value={config.wineVersion} onChange={(v: any) => updateField('wineVersion', v)} />
             <InputField label="Executable Path" value={config.executablePath} onChange={(v: any) => updateField('executablePath', v)} placeholder="e.g. SlayTheSpire.exe" />
@@ -457,7 +475,7 @@ export default function App() {
 
             {config.containerVariant === 'bionic' && (
                 <>
-                <Toggle label="Adrenotools Turnip" checked={parseKV(config.graphicsDriverConfig).adrenotoolsTurnip === '1'} onChange={(v: any) => updateNestedKV('graphicsDriverConfig', 'adrenotoolsTurnip', v ? '1' : '0')} />
+                <Toggle label="Adrenotools Turnip" checked={(parseKV(config.graphicsDriverConfig).adrenotoolsTurnip ?? '1') === '1'} onChange={(v: any) => updateNestedKV('graphicsDriverConfig', 'adrenotoolsTurnip', v ? '1' : '0')} />
                 <Select label="Present Modes" value={parseKV(config.graphicsDriverConfig).presentMode || 'mailbox'} options={['Never', 'mailbox', 'Normal', 'fifo', 'Always', 'immediate', 'relaxed']} onChange={(v: any) => updateNestedKV('graphicsDriverConfig', 'presentMode', v)} />
                 <Select label="Memory Resource" value={parseKV(config.graphicsDriverConfig).resourceType || 'ato'} options={[{value: 'ato', label: 'auto'}, 'dmabuf', 'ahb', 'opaque']} onChange={(v: any) => updateNestedKV('graphicsDriverConfig', 'resourceType', v)} />
                 <Select label="BCn Emulation" value={parseKV(config.graphicsDriverConfig).bcnEmulation || 'auto'} options={['none', 'partial', 'full', 'auto']} onChange={(v: any) => updateNestedKV('graphicsDriverConfig', 'bcnEmulation', v)} />
@@ -477,7 +495,7 @@ export default function App() {
             {config.containerVariant === 'glibc' ? (
                 <>
                 <InputField label="Box64 Version" value={config.box64Version} onChange={(v: any) => updateField('box64Version', v)} />
-                <Select label="Box64 Preset" value={config.box64Preset} options={['Stability', 'Compatibility', 'Intermediate', 'Performance', 'Unity', 'Unity Mono Bleeding Edge']} onChange={(v: any) => updateField('box64Preset', v)} />
+                <Select label="Box64 Preset" value={config.box64Preset} options={BOX64_BOX86_PRESETS} onChange={(v: any) => updateField('box64Preset', v)} />
                 </>
             ) : (
                 <>
@@ -485,9 +503,8 @@ export default function App() {
                 <Select label="64-bit Emulator" value={config.wineVersion.includes('arm64ec') ? 'FEXCore' : 'Box64'} options={['FEXCore', 'Box64']} disabled={true} />
                 <Select label="32-bit Emulator" value={config.emulator} options={['FEXCore', 'Box64']} onChange={(v: any) => updateField('emulator', v)} />
                 <InputField label="Box64 Version" value={config.box64Version} onChange={(v: any) => updateField('box64Version', v)} />
-                <Select label="Box64 Preset" value={config.box64Preset} options={['Stability', 'Compatibility', 'Intermediate', 'Performance', 'Unity', 'Unity Mono Bleeding Edge']} onChange={(v: any) => updateField('box64Preset', v)} />
-                <Select label="FEXCore Preset" value={config.fexcorePreset} options={['Stability', 'Compatibility', 'Intermediate', 'Performance']} onChange={(v: any) => updateField('fexcorePreset', v)} />
-                <Toggle label="Enable WoW64" checked={config.wow64Mode} onChange={(v: any) => updateField('wow64Mode', v)} />
+                <Select label="Box64 Preset" value={config.box64Preset} options={BOX64_BOX86_PRESETS} onChange={(v: any) => updateField('box64Preset', v)} />
+                <Select label="FEXCore Preset" value={config.fexcorePreset} options={FEXCORE_PRESETS} onChange={(v: any) => updateField('fexcorePreset', v)} />
                 </>
             )}
             </>
@@ -628,6 +645,13 @@ export default function App() {
         {activeTab === 'hidden' && config && (
             <>
             <InputField
+            label="Container Name"
+            value={config.containerName || ''}
+            onChange={(v: any) => updateField('containerName', v)}
+            placeholder="e.g. Imported Config"
+            description="Display name for this container configuration."
+            />
+            <InputField
             label="Container Identifier (ID)"
             value={config.id}
             onChange={(v: any) => updateField('id', v)}
@@ -668,10 +692,16 @@ export default function App() {
             />
             <Select
             label="Box86 Preset"
-            value={config.box86Preset || 'Compatibility'}
-            options={['Stability', 'Compatibility', 'Intermediate', 'Performance']}
+            value={config.box86Preset || 'COMPATIBILITY'}
+            options={BOX64_BOX86_PRESETS.slice(0, 4)}
             onChange={(v: any) => updateField('box86Preset', v)}
             description="Optimization profile for the 32-bit Box86 engine."
+            />
+            <Toggle
+            label="Enable WoW64"
+            checked={config.wow64Mode}
+            onChange={(v: any) => updateField('wow64Mode', v)}
+            description="Enable Windows-on-Windows 64-bit mode for running 32-bit apps on 64-bit Wine."
             />
             </>
         )}
