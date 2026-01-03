@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Search, Star, Zap } from 'lucide-react';
+import { Search, Star, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 interface GameConfig {
@@ -25,18 +25,46 @@ interface ConfigBrowserClientProps {
   configs: GameConfig[];
 }
 
+const ITEMS_PER_PAGE = 15;
+
 export default function ConfigBrowserClient({ configs }: ConfigBrowserClientProps) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [gpuFilter, setGpuFilter] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
 
   const filteredConfigs = useMemo(() => {
-    if (!searchQuery.trim()) return configs;
+    let filtered = configs;
     
-    const query = searchQuery.toLowerCase();
-    return configs.filter(config => 
-      config.game?.name?.toLowerCase().includes(query)
-    );
-  }, [configs, searchQuery]);
+    // Filter by game name
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(config => 
+        config.game?.name?.toLowerCase().includes(query)
+      );
+    }
+    
+    // Filter by GPU
+    if (gpuFilter.trim()) {
+      const gpu = gpuFilter.toLowerCase();
+      filtered = filtered.filter(config =>
+        config.device?.gpu?.toLowerCase().includes(gpu)
+      );
+    }
+    
+    return filtered;
+  }, [configs, searchQuery, gpuFilter]);
+
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredConfigs.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const paginatedConfigs = filteredConfigs.slice(startIndex, endIndex);
+
+  // Reset to page 1 when filters change
+  useMemo(() => {
+    setCurrentPage(1);
+  }, [searchQuery, gpuFilter]);
 
   const handleOpenInEditor = (config: GameConfig) => {
     // Save config to localStorage
@@ -70,32 +98,54 @@ export default function ConfigBrowserClient({ configs }: ConfigBrowserClientProp
             Browse high-rated community configurations from GameNative
           </p>
           
-          {/* Search Bar */}
-          <div className="relative max-w-2xl">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-500" size={20} />
-            <input
-              type="text"
-              placeholder="Search games..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 bg-slate-900/50 backdrop-blur-md border border-slate-700/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition-all"
-            />
+          {/* Search Bars */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
+            {/* Game Search */}
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-500" size={20} />
+              <input
+                type="text"
+                placeholder="Search games..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-12 pr-4 py-4 bg-slate-900/50 backdrop-blur-md border border-slate-700/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20 transition-all"
+              />
+            </div>
+            
+            {/* GPU Filter */}
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-500" size={20} />
+              <input
+                type="text"
+                placeholder="Filter by GPU (e.g., Adreno 750)..."
+                value={gpuFilter}
+                onChange={(e) => setGpuFilter(e.target.value)}
+                className="w-full pl-12 pr-4 py-4 bg-slate-900/50 backdrop-blur-md border border-slate-700/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all"
+              />
+            </div>
           </div>
         </div>
 
-        {/* Results Count */}
-        <div className="mb-4 text-slate-400 text-sm">
-          Showing {filteredConfigs.length} {filteredConfigs.length === 1 ? 'config' : 'configs'}
+        {/* Results Count and Pagination Info */}
+        <div className="mb-4 flex items-center justify-between text-slate-400 text-sm">
+          <div>
+            Showing {paginatedConfigs.length > 0 ? startIndex + 1 : 0}-{Math.min(endIndex, filteredConfigs.length)} of {filteredConfigs.length} {filteredConfigs.length === 1 ? 'config' : 'configs'}
+          </div>
+          {totalPages > 1 && (
+            <div>
+              Page {currentPage} of {totalPages}
+            </div>
+          )}
         </div>
 
         {/* Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredConfigs.length === 0 ? (
+          {paginatedConfigs.length === 0 ? (
             <div className="col-span-full text-center py-16">
               <p className="text-slate-500 text-lg">No configs found matching your search.</p>
             </div>
           ) : (
-            filteredConfigs.map((config) => (
+            paginatedConfigs.map((config) => (
               <div
                 key={config.id}
                 className="group relative bg-slate-900/30 backdrop-blur-md border border-slate-700/50 rounded-xl p-6 hover:border-cyan-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-cyan-500/10"
@@ -162,6 +212,67 @@ export default function ConfigBrowserClient({ configs }: ConfigBrowserClientProp
             ))
           )}
         </div>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="mt-8 flex items-center justify-center gap-2">
+            {/* Previous Button */}
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-800/50 transition-all flex items-center gap-2"
+            >
+              <ChevronLeft size={20} />
+              Previous
+            </button>
+
+            {/* Page Numbers */}
+            <div className="flex gap-2">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => {
+                // Show first page, last page, current page, and pages around current
+                const showPage = page === 1 || 
+                                page === totalPages || 
+                                Math.abs(page - currentPage) <= 1;
+                
+                // Show ellipsis
+                if (!showPage) {
+                  if (page === currentPage - 2 || page === currentPage + 2) {
+                    return (
+                      <span key={page} className="px-3 py-2 text-slate-500">
+                        ...
+                      </span>
+                    );
+                  }
+                  return null;
+                }
+
+                return (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                      currentPage === page
+                        ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white'
+                        : 'bg-slate-900/50 border border-slate-700/50 text-slate-300 hover:bg-slate-800/50'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Next Button */}
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 bg-slate-900/50 border border-slate-700/50 rounded-lg text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-800/50 transition-all flex items-center gap-2"
+            >
+              Next
+              <ChevronRight size={20} />
+            </button>
+          </div>
+        )}
 
         {/* Empty State for no configs at all */}
         {configs.length === 0 && (

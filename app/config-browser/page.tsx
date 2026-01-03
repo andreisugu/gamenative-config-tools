@@ -40,10 +40,14 @@ async function getConfigs(): Promise<GameConfig[]> {
       .select(GAME_RUNS_QUERY)
       .order('rating', { ascending: false })
       .order('avg_fps', { ascending: false })
-      .limit(50);
+      .limit(100); // Increased limit to get more data
 
     if (error) {
       console.error('Error fetching configs:', error);
+      return [];
+    }
+
+    if (!data) {
       return [];
     }
 
