@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { supabase } from '@/lib/supabase';
 import ConfigBrowserClient from './ConfigBrowserClient';
 
@@ -103,5 +104,13 @@ export default async function ConfigSearchPage({
 }) {
   const configs = await getConfigs(searchParams.search, searchParams.gpu);
 
-  return <ConfigBrowserClient configs={configs} initialSearch={searchParams.search} initialGpu={searchParams.gpu} />;
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-purple-950 via-slate-950 to-cyan-950 flex items-center justify-center">
+        <div className="text-slate-400 text-lg">Loading...</div>
+      </div>
+    }>
+      <ConfigBrowserClient configs={configs} initialSearch={searchParams.search} initialGpu={searchParams.gpu} />
+    </Suspense>
+  );
 }
