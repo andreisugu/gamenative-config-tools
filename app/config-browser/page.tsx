@@ -18,6 +18,18 @@ interface GameConfig {
   } | null;
 }
 
+// Supabase raw return type (joins return arrays)
+interface SupabaseGameRun {
+  id: number;
+  rating: number;
+  avg_fps: number;
+  notes: string | null;
+  configs: any;
+  created_at: string;
+  game: Array<{ name: string }>;
+  device: Array<{ model: string; gpu: string; android_ver: string }>;
+}
+
 async function getConfigs(): Promise<GameConfig[]> {
   try {
     const { data, error } = await supabase
@@ -32,7 +44,23 @@ async function getConfigs(): Promise<GameConfig[]> {
       return [];
     }
 
-    return data || [];
+    // Transform the data to match our interface
+    const transformedData: GameConfig[] = (data as SupabaseGameRun[] || []).map(item => ({
+      id: item.id,
+      rating: item.rating,
+      avg_fps: item.avg_fps,
+      notes: item.notes,
+      configs: item.configs,
+      created_at: item.created_at,
+      game: item.game && item.game.length > 0 ? { name: item.game[0].name } : null,
+      device: item.device && item.device.length > 0 ? {
+        model: item.device[0].model,
+        gpu: item.device[0].gpu,
+        android_ver: item.device[0].android_ver
+      } : null
+    }));
+
+    return transformedData;
   } catch (error) {
     console.error('Exception fetching configs:', error);
     return [];
