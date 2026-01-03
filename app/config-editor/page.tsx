@@ -134,8 +134,6 @@ const stringifyDrives = (arr: { letter: string; path: string }[]) => {
     return arr.map(d => `${d.letter}:${d.path}`).join('');
 };
 
-// --- PRESET HELPERS ---
-
 // Component to render JSON with syntax highlighting
 function JsonHighlight({ json }: { json: string }) {
   const highlightJson = (jsonString: string) => {
