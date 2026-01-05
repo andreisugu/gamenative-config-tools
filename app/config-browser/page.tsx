@@ -50,14 +50,14 @@ async function getConfigs(searchQuery?: string, gpuFilter?: string): Promise<Gam
     // Limit input length to prevent abuse
     const trimmedSearch = searchQuery?.trim().slice(0, 100);
     if (trimmedSearch) {
-      query = query.ilike('games.name', `%${trimmedSearch}%`);
+      query = query.ilike('game.name', `%${trimmedSearch}%`);
     }
 
     // Apply server-side filtering for GPU
     // Limit input length to prevent abuse
     const trimmedGpu = gpuFilter?.trim().slice(0, 100);
     if (trimmedGpu) {
-      query = query.ilike('devices.gpu', `%${trimmedGpu}%`);
+      query = query.ilike('device.gpu', `%${trimmedGpu}%`);
     }
 
     // Limit to SERVER_QUERY_LIMIT after filtering
