@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "GameNative Config Converter",
-  description: "Convert raw configurations into usable GameNative game configurations",
+  title: "GameNative Config Tools",
+  description: "Complete configuration management tools for your GameNative emulator",
 };
 
 export default function RootLayout({
