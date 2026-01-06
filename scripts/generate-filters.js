@@ -5,8 +5,25 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SER
 
 async function generate() {
   try {
-    // Fetch distinct games
-    const { data: games } = await supabase.from('games').select('id, name');
+    // Fetch Steam games from API
+    const steamResponse = await fetch('https://api.steampowered.com/ISteamApps/GetAppList/v2/');
+    const steamData = await steamResponse.json();
+    
+    // Filter and clean Steam games
+    const steamGames = steamData.applist.apps
+      .filter(app => {
+        const name = app.name.toLowerCase();
+        // Filter out DLC, soundtracks, demos, trailers, etc.
+        return !name.includes('dlc') && 
+               !name.includes('soundtrack') && 
+               !name.includes('demo') && 
+               !name.includes('trailer') && 
+               !name.includes('beta') && 
+               !name.includes('test') && 
+               name.length > 2;
+      })
+      .map(app => ({ id: app.appid, name: app.name }))
+      .slice(0, 50000); // Limit for performance
     
     // Fetch distinct GPUs from devices
     const { data: devices } = await supabase.from('devices').select('id, model, gpu');
@@ -40,7 +57,7 @@ async function generate() {
       .filter(d => d && d.name && d.model && d.name.length > 3);
 
     const filterData = {
-      games: games || [],
+      games: steamGames,
       gpus: [...new Set((devices || []).map(d => d.gpu).filter(Boolean))],
       devices: playDevices,
       updatedAt: new Date().toISOString()
