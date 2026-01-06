@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { Search, Star, Zap, ChevronLeft, ChevronRight, Cpu, Filter, Download, X, ChevronDown, Check } from 'lucide-react';
+import { Search, Star, Zap, ChevronLeft, ChevronRight, Cpu, Filter, Download, X, ChevronDown } from 'lucide-react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
@@ -139,14 +139,14 @@ export default function ConfigBrowserClient({ initialSearch, initialGpu }: Confi
 
       // Filter by Game (ID if selected, otherwise fuzzy text search)
       if (selectedGame) {
-        query = query.eq('game.id', selectedGame.id);
+        query = query.eq('games.id', selectedGame.id);
       } else if (debouncedSearchTerm) {
-        query = query.ilike('game.name', `%${debouncedSearchTerm}%`);
+        query = query.ilike('games.name', `%${debouncedSearchTerm}%`);
       }
 
       // Filter by GPU
       if (debouncedGpu) {
-        query = query.ilike('device.gpu', `%${debouncedGpu}%`);
+        query = query.ilike('devices.gpu', `%${debouncedGpu}%`);
       }
 
       // Sorting Logic
@@ -213,12 +213,12 @@ export default function ConfigBrowserClient({ initialSearch, initialGpu }: Confi
 
 
   // --- 3. Pagination Logic ---
-  const { totalPages, paginatedConfigs, startIndex, endIndex } = useMemo(() => {
+  const { totalPages, paginatedConfigs } = useMemo(() => {
     const total = Math.ceil(configs.length / ITEMS_PER_PAGE);
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
     const end = start + ITEMS_PER_PAGE;
     const paginated = configs.slice(start, end);
-    return { totalPages: total, paginatedConfigs: paginated, startIndex: start, endIndex: end };
+    return { totalPages: total, paginatedConfigs: paginated };
   }, [configs, currentPage]);
 
 
@@ -333,6 +333,7 @@ export default function ConfigBrowserClient({ initialSearch, initialGpu }: Confi
                 >
                   <option value="rating_desc">Highest Rated</option>
                   <option value="fps_desc">Highest FPS</option>
+                  <option value="fps_asc">Lowest FPS</option>
                   <option value="newest">Newest First</option>
                 </select>
                 <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" size={16} />

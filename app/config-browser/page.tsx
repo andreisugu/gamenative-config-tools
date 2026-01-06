@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import ConfigBrowserClient from '@/components/ConfigBrowserClient';
+import ConfigBrowserClient from './ConfigBrowserClient';
 
 export const metadata = {
   title: 'Community Configs | GameNative',
