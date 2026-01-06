@@ -96,7 +96,7 @@ export default function Sidebar() {
 
       {/* Sidebar */}
       <aside 
-        className={`fixed left-0 top-0 h-screen bg-gray-900/95 backdrop-blur-sm border-r border-gray-800 transition-all duration-300 ease-in-out z-50 ${
+        className={`fixed left-0 top-0 h-screen bg-gray-900/95 backdrop-blur-sm border-r border-gray-800 transition-all duration-300 ease-in-out z-50 overflow-hidden ${
           isMobile 
             ? (isExpanded ? 'w-64' : 'w-0 -translate-x-full') 
             : (isExpanded ? 'w-64' : 'w-16')
