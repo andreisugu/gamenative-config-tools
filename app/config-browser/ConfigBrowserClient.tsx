@@ -49,7 +49,7 @@ const SERVER_QUERY_LIMIT = 100;
 
 export default function ConfigBrowserClient({ initialSearch, initialGpu }: ConfigBrowserClientProps) {
   const [configs, setConfigs] = useState<GameConfig[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState(initialSearch || '');
   const [gpuFilter, setGpuFilter] = useState(initialGpu || '');
   const [currentPage, setCurrentPage] = useState(1);
@@ -120,13 +120,12 @@ export default function ConfigBrowserClient({ initialSearch, initialGpu }: Confi
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, []); // No dependencies - function is stable and doesn't use any external values
 
   // Fetch configs on mount with initial parameters
   useEffect(() => {
     fetchConfigs(initialSearch, initialGpu);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Only run on mount - initialSearch and initialGpu are from props and don't change
+  }, [fetchConfigs, initialSearch, initialGpu]);
 
   // Update URL and fetch configs when search changes (with debounce)
   useEffect(() => {
