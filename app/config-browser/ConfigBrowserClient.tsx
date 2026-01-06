@@ -232,8 +232,10 @@ export default function ConfigBrowserClient() {
 
         case 'fps_asc': // Lowest FPS
           dataQuery = dataQuery
+            // We strictly use nullsFirst: false. 
+            // This ensures valid low numbers (e.g. 5 FPS) appear at the top, 
+            // and empty/null configs appear at the bottom.
             .order('avg_fps', { ascending: true, nullsFirst: false })
-            // Tie-breaker: If FPS is equal, show higher Rating first
             .order('rating', { ascending: false, nullsFirst: false });
           break;
       }
@@ -596,11 +598,21 @@ export default function ConfigBrowserClient() {
                   <div className="px-5 py-3 bg-slate-900/30 border-y border-slate-700/30 flex-grow">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
-                        <div className={`p-1.5 rounded-md ${config.avg_fps >= 30 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                        {/* Dynamic color for icon: Grey if null, Red if low, Green if high */}
+                        <div className={`p-1.5 rounded-md ${
+                          config.avg_fps === null 
+                            ? 'bg-slate-700/50 text-slate-500' // Style for NULL
+                            : config.avg_fps >= 30 
+                              ? 'bg-green-500/20 text-green-400' 
+                              : 'bg-red-500/20 text-red-400'
+                        }`}>
                           <Zap size={14} />
                         </div>
                         <div>
-                          <span className="block text-sm font-bold text-slate-200 leading-none">{Math.round(config.avg_fps)} FPS</span>
+                          {/* Check for NULL explicitly. Math.round(null) === 0, which is misleading. */}
+                          <span className={`block text-sm font-bold leading-none ${config.avg_fps === null ? 'text-slate-500' : 'text-slate-200'}`}>
+                            {config.avg_fps !== null ? `${Math.round(config.avg_fps)} FPS` : 'N/A'}
+                          </span>
                           <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Average</span>
                         </div>
                       </div>
