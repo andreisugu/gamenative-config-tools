@@ -211,25 +211,21 @@ export default function ConfigBrowserClient() {
         .select(GAME_RUNS_QUERY);
 
       // Apply filters
-      // Filter by Game (ID if selected, otherwise fuzzy text search)
+      // Filter by Game (ID if selected, otherwise no filter)
       if (selectedGame) {
         dataQuery = dataQuery.eq('game.id', selectedGame.id);
-      } else if (debouncedSearchTerm) {
-        dataQuery = dataQuery.ilike('game.name', `%${debouncedSearchTerm}%`);
       }
 
-      // Filter by GPU (exact match if selected, otherwise fuzzy text search)
+      // Filter by GPU (exact match if selected, otherwise no filter)
       if (selectedGpu) {
         dataQuery = dataQuery.eq('device.gpu', selectedGpu.gpu);
-      } else if (debouncedGpu) {
-        dataQuery = dataQuery.ilike('device.gpu', `%${debouncedGpu}%`);
       }
 
       // Filter by Device (exact match if selected, otherwise fuzzy text search)
       if (selectedDevice) {
         dataQuery = dataQuery.eq('device.model', selectedDevice.model);
-      } else if (debouncedDevice) {
-        dataQuery = dataQuery.ilike('device.model', `%${debouncedDevice}%`);
+      } else if (debouncedDevice && selectedDevice) {
+        dataQuery = dataQuery.eq('device.model', selectedDevice.model);
       }
 
       // Apply sorting to data query
