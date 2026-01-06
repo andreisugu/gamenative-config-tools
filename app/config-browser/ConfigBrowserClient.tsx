@@ -211,21 +211,20 @@ export default function ConfigBrowserClient() {
         .select(GAME_RUNS_QUERY);
 
       // Apply filters
-      // Filter by Game (ID if selected, otherwise no filter)
       if (selectedGame) {
-        dataQuery = dataQuery.eq('game.id', selectedGame.id);
+        if (selectedGame.id === -1) {
+          dataQuery = dataQuery.ilike('game.name', `%${selectedGame.name}%`);
+        } else {
+          dataQuery = dataQuery.eq('game.id', selectedGame.id);
+        }
       }
 
-      // Filter by GPU (exact match if selected, otherwise no filter)
       if (selectedGpu) {
-        dataQuery = dataQuery.eq('device.gpu', selectedGpu.gpu);
+        dataQuery = dataQuery.ilike('device.gpu', `%${selectedGpu.gpu}%`);
       }
 
-      // Filter by Device (exact match if selected, otherwise fuzzy text search)
       if (selectedDevice) {
-        dataQuery = dataQuery.eq('device.model', selectedDevice.model);
-      } else if (debouncedDevice && selectedDevice) {
-        dataQuery = dataQuery.eq('device.model', selectedDevice.model);
+        dataQuery = dataQuery.ilike('device.model', `%${selectedDevice.model}%`);
       }
 
       // Apply sorting to data query
@@ -289,21 +288,19 @@ export default function ConfigBrowserClient() {
 
         // Apply same filters to count query
         if (selectedGame) {
-          countQuery = countQuery.eq('game.id', selectedGame.id);
-        } else if (debouncedSearchTerm) {
-          countQuery = countQuery.ilike('game.name', `%${debouncedSearchTerm}%`);
+          if (selectedGame.id === -1) {
+            countQuery = countQuery.ilike('game.name', `%${selectedGame.name}%`);
+          } else {
+            countQuery = countQuery.eq('game.id', selectedGame.id);
+          }
         }
 
         if (selectedGpu) {
-          countQuery = countQuery.eq('device.gpu', selectedGpu.gpu);
-        } else if (debouncedGpu) {
-          countQuery = countQuery.ilike('device.gpu', `%${debouncedGpu}%`);
+          countQuery = countQuery.ilike('device.gpu', `%${selectedGpu.gpu}%`);
         }
 
         if (selectedDevice) {
-          countQuery = countQuery.eq('device.model', selectedDevice.model);
-        } else if (debouncedDevice) {
-          countQuery = countQuery.ilike('device.model', `%${debouncedDevice}%`);
+          countQuery = countQuery.ilike('device.model', `%${selectedDevice.model}%`);
         }
 
         countResult = await countQuery;
@@ -341,12 +338,12 @@ export default function ConfigBrowserClient() {
 
   // Fetch with count when filters or sort changes - memoized to prevent re-renders
   const filterKey = useMemo(() => 
-    `${debouncedSearchTerm}-${debouncedGpu}-${debouncedDevice}-${selectedGame?.id || ''}-${selectedGpu?.gpu || ''}-${selectedDevice?.model || ''}-${sortOption}`,
-    [debouncedSearchTerm, debouncedGpu, debouncedDevice, selectedGame?.id, selectedGpu?.gpu, selectedDevice?.model, sortOption]
+    `${selectedGame?.id || ''}-${selectedGpu?.gpu || ''}-${selectedDevice?.model || ''}-${sortOption}`,
+    [selectedGame?.id, selectedGpu?.gpu, selectedDevice?.model, sortOption]
   );
 
   useEffect(() => {
-    const hasFilters = debouncedSearchTerm || debouncedGpu || debouncedDevice || selectedGame || selectedGpu || selectedDevice;
+    const hasFilters = selectedGame || selectedGpu || selectedDevice;
     if (!hasFilters) {
       setConfigs([]);
       setTotalCount(0);
@@ -358,7 +355,7 @@ export default function ConfigBrowserClient() {
 
   // Fetch without count when only page changes
   useEffect(() => {
-    const hasFilters = debouncedSearchTerm || debouncedGpu || debouncedDevice || selectedGame || selectedGpu || selectedDevice;
+    const hasFilters = selectedGame || selectedGpu || selectedDevice;
     if (!hasFilters || currentPage === 1) return;
     
     fetchConfigs(false, currentPage);
@@ -422,6 +419,27 @@ export default function ConfigBrowserClient() {
     setDeviceFilter(device.name);
     setSelectedDevice(device);
     setShowDeviceSuggestions(false);
+  };
+
+  const handleGameKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && debouncedSearchTerm.length >= 2) {
+      setSelectedGame({ id: -1, name: debouncedSearchTerm });
+      setShowSuggestions(false);
+    }
+  };
+
+  const handleGpuKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && debouncedGpu.length >= 2) {
+      setSelectedGpu({ gpu: debouncedGpu });
+      setShowGpuSuggestions(false);
+    }
+  };
+
+  const handleDeviceKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && debouncedDevice.length >= 2) {
+      setSelectedDevice({ name: debouncedDevice, model: debouncedDevice });
+      setShowDeviceSuggestions(false);
+    }
   };
 
   const clearDeviceSearch = () => {
@@ -502,6 +520,7 @@ export default function ConfigBrowserClient() {
                   onFocus={() => {
                     if (gameSuggestions.length > 0) setShowSuggestions(true);
                   }}
+                  onKeyDown={handleGameKeyDown}
                   className="w-full pl-11 pr-10 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 focus:bg-slate-800 focus:ring-1 focus:ring-cyan-500/20 transition-all"
                 />
                 {searchTerm && (
@@ -544,6 +563,7 @@ export default function ConfigBrowserClient() {
                   onFocus={() => {
                     if (gpuSuggestions.length > 0) setShowGpuSuggestions(true);
                   }}
+                  onKeyDown={handleGpuKeyDown}
                   className="w-full pl-11 pr-10 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:bg-slate-800 focus:ring-1 focus:ring-purple-500/20 transition-all"
                 />
                 {gpuFilter && (
@@ -586,6 +606,7 @@ export default function ConfigBrowserClient() {
                   onFocus={() => {
                     if (deviceSuggestions.length > 0) setShowDeviceSuggestions(true);
                   }}
+                  onKeyDown={handleDeviceKeyDown}
                   className="w-full pl-11 pr-10 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 focus:bg-slate-800 focus:ring-1 focus:ring-green-500/20 transition-all"
                 />
                 {deviceFilter && (
