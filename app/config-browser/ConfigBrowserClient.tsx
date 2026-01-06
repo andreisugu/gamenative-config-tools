@@ -153,10 +153,18 @@ export default function ConfigBrowserClient() {
   const deviceSuggestions = useMemo(() => {
     if (debouncedDevice.length < 2 || selectedDevice) return [];
     return snapshot.devices
-      .filter(device => 
-        device.name.toLowerCase().includes(debouncedDevice.toLowerCase()) ||
-        device.model.toLowerCase().includes(debouncedDevice.toLowerCase())
-      )
+      .filter(device => {
+        const searchTerm = debouncedDevice.toLowerCase();
+        const deviceName = device.name.toLowerCase();
+        const deviceModel = device.model.toLowerCase();
+        
+        // Search in both name and model, and also try to match partial brand + model combinations
+        return deviceName.includes(searchTerm) ||
+               deviceModel.includes(searchTerm) ||
+               // Allow searching like "Samsung S25" to match "Samsung Galaxy S25 Ultra"
+               deviceName.split(' ').some(word => word.startsWith(searchTerm.split(' ')[0])) &&
+               deviceName.includes(searchTerm.split(' ').slice(1).join(' '));
+      })
       .slice(0, SUGGESTION_LIMIT);
   }, [debouncedDevice, selectedDevice, snapshot.devices]);
 
