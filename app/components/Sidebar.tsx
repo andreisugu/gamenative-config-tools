@@ -54,9 +54,7 @@ export default function Sidebar() {
   };
 
   const closeSidebar = () => {
-    if (isMobile) {
-      setIsExpanded(false);
-    }
+    setIsExpanded(false);
   };
 
   const navItems = [
