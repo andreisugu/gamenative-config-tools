@@ -46,7 +46,7 @@ interface GpuSuggestion {
   gpu: string;
 }
 
-type SortOption = 'newest' | 'rating_desc' | 'fps_desc' | 'fps_asc';
+type SortOption = 'newest' | 'oldest' | 'rating_desc' | 'rating_asc' | 'fps_desc' | 'fps_asc';
 
 interface ConfigBrowserClientProps {
   initialSearch?: string;
@@ -202,8 +202,14 @@ export default function ConfigBrowserClient({ initialSearch, initialGpu }: Confi
         case 'newest':
           dataQuery = dataQuery.order('created_at', { ascending: false });
           break;
+        case 'oldest':
+          dataQuery = dataQuery.order('created_at', { ascending: true });
+          break;
         case 'rating_desc':
           dataQuery = dataQuery.order('rating', { ascending: false }).order('avg_fps', { ascending: false });
+          break;
+        case 'rating_asc':
+          dataQuery = dataQuery.order('rating', { ascending: true }).order('avg_fps', { ascending: true });
           break;
         case 'fps_desc':
           dataQuery = dataQuery.order('avg_fps', { ascending: false }).order('rating', { ascending: false });
@@ -390,7 +396,7 @@ export default function ConfigBrowserClient({ initialSearch, initialGpu }: Confi
         </div>
 
         {/* --- Control Bar (Search, Sort, Filter) --- */}
-        <div className="sticky top-4 z-30 mb-8 bg-slate-900/80 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-4 shadow-2xl shadow-black/20">
+        <div className="md:static sticky top-4 z-30 mb-8 bg-slate-900/80 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-4 shadow-2xl shadow-black/20">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
             
             {/* 1. Game Autocomplete Search */}
@@ -487,7 +493,9 @@ export default function ConfigBrowserClient({ initialSearch, initialGpu }: Confi
                   className="w-full pl-11 pr-10 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white appearance-none cursor-pointer focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all"
                 >
                   <option value="newest">Newest First</option>
+                  <option value="oldest">Oldest First</option>
                   <option value="rating_desc">Highest Rated</option>
+                  <option value="rating_asc">Lowest Rated</option>
                   <option value="fps_desc">Highest FPS</option>
                   <option value="fps_asc">Lowest FPS</option>
                 </select>
