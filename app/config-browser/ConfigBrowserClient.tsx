@@ -51,13 +51,14 @@ interface GpuSuggestion {
 }
 
 interface DeviceSuggestion {
+  name: string;
   model: string;
 }
 
 interface FilterSnapshot {
   games: GameSuggestion[];
   gpus: string[];
-  devices: string[];
+  devices: DeviceSuggestion[];
   updatedAt: string;
 }
 
@@ -152,9 +153,11 @@ export default function ConfigBrowserClient() {
   const deviceSuggestions = useMemo(() => {
     if (debouncedDevice.length < 2 || selectedDevice) return [];
     return snapshot.devices
-      .filter(device => device.toLowerCase().includes(debouncedDevice.toLowerCase()))
-      .slice(0, SUGGESTION_LIMIT)
-      .map(model => ({ model }));
+      .filter(device => 
+        device.name.toLowerCase().includes(debouncedDevice.toLowerCase()) ||
+        device.model.toLowerCase().includes(debouncedDevice.toLowerCase())
+      )
+      .slice(0, SUGGESTION_LIMIT);
   }, [debouncedDevice, selectedDevice, snapshot.devices]);
 
   // --- Show/Hide Suggestions Based on Results ---
@@ -412,7 +415,7 @@ export default function ConfigBrowserClient() {
   };
 
   const handleDeviceSelect = (device: DeviceSuggestion) => {
-    setDeviceFilter(device.model);
+    setDeviceFilter(device.name);
     setSelectedDevice(device);
     setShowDeviceSuggestions(false);
   };
@@ -598,7 +601,10 @@ export default function ConfigBrowserClient() {
                       onClick={() => handleDeviceSelect(device)}
                       className="w-full text-left px-4 py-3 hover:bg-green-900/20 text-slate-200 hover:text-green-400 transition-colors flex items-center justify-between group"
                     >
-                      <span>{device.model}</span>
+                      <div className="flex flex-col">
+                        <span className="font-medium">{device.name}</span>
+                        <span className="text-xs text-slate-500">{device.model}</span>
+                      </div>
                       <ChevronRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                     </button>
                   ))}

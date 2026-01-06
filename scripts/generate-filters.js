@@ -8,13 +8,30 @@ async function generate() {
     // Fetch distinct games
     const { data: games } = await supabase.from('games').select('id, name');
     
-    // Fetch distinct devices with GPU info
+    // Fetch distinct GPUs from devices
     const { data: devices } = await supabase.from('devices').select('id, model, gpu');
+    
+    // Fetch Google Play supported devices CSV
+    const csvResponse = await fetch('http://storage.googleapis.com/play_public/supported_devices.csv');
+    const csvText = await csvResponse.text();
+    
+    // Parse CSV and create device entries
+    const csvLines = csvText.split('\n').slice(1); // Skip header
+    const playDevices = csvLines
+      .filter(line => line.trim())
+      .map(line => {
+        const [retailBranding, marketingName, device, model] = line.split(',').map(s => s.trim().replace(/"/g, ''));
+        return {
+          name: `${retailBranding} ${marketingName}`.trim(),
+          model: `${retailBranding} ${model}`.trim() // Match database format: Retail Branding + Device Model
+        };
+      })
+      .filter(d => d.name && d.model);
 
     const filterData = {
       games: games || [],
       gpus: [...new Set((devices || []).map(d => d.gpu).filter(Boolean))],
-      devices: [...new Set((devices || []).map(d => d.model).filter(Boolean))],
+      devices: playDevices,
       updatedAt: new Date().toISOString()
     };
 
