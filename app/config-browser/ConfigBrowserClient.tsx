@@ -174,34 +174,26 @@ export default function ConfigBrowserClient({ initialSearch, initialGpu }: Confi
   }, [debouncedGpu, selectedGpu]);
 
   // --- 2. Main Data Fetching ---
-  const fetchConfigs = useCallback(async () => {
+  const fetchConfigs = useCallback(async (needsCount: boolean) => {
     setIsLoading(true);
     try {
-      // Build base query for both count and data fetch
-      let countQuery = supabase
-        .from('game_runs')
-        .select('id', { count: 'exact', head: true });
-
+      // Build base query for data fetch
       let dataQuery = supabase
         .from('game_runs')
         .select(GAME_RUNS_QUERY);
 
-      // Apply filters to both queries
+      // Apply filters
       // Filter by Game (ID if selected, otherwise fuzzy text search)
       if (selectedGame) {
-        countQuery = countQuery.eq('games.id', selectedGame.id);
         dataQuery = dataQuery.eq('games.id', selectedGame.id);
       } else if (debouncedSearchTerm) {
-        countQuery = countQuery.ilike('games.name', `%${debouncedSearchTerm}%`);
         dataQuery = dataQuery.ilike('games.name', `%${debouncedSearchTerm}%`);
       }
 
       // Filter by GPU (exact match if selected, otherwise fuzzy text search)
       if (selectedGpu) {
-        countQuery = countQuery.eq('devices.gpu', selectedGpu.gpu);
         dataQuery = dataQuery.eq('devices.gpu', selectedGpu.gpu);
       } else if (debouncedGpu) {
-        countQuery = countQuery.ilike('devices.gpu', `%${debouncedGpu}%`);
         dataQuery = dataQuery.ilike('devices.gpu', `%${debouncedGpu}%`);
       }
 
@@ -226,17 +218,35 @@ export default function ConfigBrowserClient({ initialSearch, initialGpu }: Confi
       const to = from + ITEMS_PER_PAGE - 1;
       dataQuery = dataQuery.range(from, to);
 
-      // Execute both queries
-      const [countResult, dataResult] = await Promise.all([
-        countQuery,
-        dataQuery
-      ]);
+      // Fetch count only when filters change, not on every page change
+      let countResult = null;
+      if (needsCount) {
+        // Build count query with same filters
+        let countQuery = supabase
+          .from('game_runs')
+          .select('*', { count: 'exact', head: true });
 
-      if (countResult.error) throw countResult.error;
+        // Apply same filters to count query
+        if (selectedGame) {
+          countQuery = countQuery.eq('games.id', selectedGame.id);
+        } else if (debouncedSearchTerm) {
+          countQuery = countQuery.ilike('games.name', `%${debouncedSearchTerm}%`);
+        }
+
+        if (selectedGpu) {
+          countQuery = countQuery.eq('devices.gpu', selectedGpu.gpu);
+        } else if (debouncedGpu) {
+          countQuery = countQuery.ilike('devices.gpu', `%${debouncedGpu}%`);
+        }
+
+        countResult = await countQuery;
+        if (countResult.error) throw countResult.error;
+        setTotalCount(countResult.count || 0);
+      }
+
+      // Execute data query
+      const dataResult = await dataQuery;
       if (dataResult.error) throw dataResult.error;
-
-      // Update total count
-      setTotalCount(countResult.count || 0);
 
       // Transform Data
       const transformedData: GameConfig[] = (dataResult.data as unknown as SupabaseGameRun[] || []).map(item => ({
@@ -260,15 +270,16 @@ export default function ConfigBrowserClient({ initialSearch, initialGpu }: Confi
     }
   }, [debouncedSearchTerm, debouncedGpu, selectedGame, selectedGpu, sortOption, currentPage]);
 
-  // Trigger fetch when dependencies change
+  // Fetch with count when filters or sort changes
   useEffect(() => {
-    fetchConfigs();
-  }, [fetchConfigs]);
-
-  // Reset to page 1 when filters or sort changes (but not when page changes)
-  useEffect(() => {
-    setCurrentPage(1);
+    setCurrentPage(1); // Reset to page 1 before fetching
+    fetchConfigs(true);
   }, [debouncedSearchTerm, debouncedGpu, selectedGame, selectedGpu, sortOption]);
+
+  // Fetch without count when only page changes
+  useEffect(() => {
+    fetchConfigs(false);
+  }, [currentPage]);
 
   // Update URL Params (Optional, for sharing links)
   useEffect(() => {
