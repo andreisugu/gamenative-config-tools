@@ -156,13 +156,14 @@ export default function ConfigBrowserClient({ initialSearch, initialGpu }: Confi
         .from('devices')
         .select('gpu')
         .ilike('gpu', `%${debouncedGpu}%`)
-        .limit(6);
+        .limit(10);
 
       if (!error && data) {
-        // Remove duplicates
+        // Remove duplicates and limit to 6
         const uniqueGpus = Array.from(new Set(data.map(d => d.gpu)))
-          .map(gpu => ({ gpu }))
-          .slice(0, 6);
+          .filter(gpu => gpu) // Filter out null/undefined values
+          .slice(0, 6)
+          .map(gpu => ({ gpu }));
         setGpuSuggestions(uniqueGpus);
         setShowGpuSuggestions(true);
       }
@@ -213,7 +214,7 @@ export default function ConfigBrowserClient({ initialSearch, initialGpu }: Confi
       }));
 
       // Client-side sorting for accurate results
-      const sortedData = [...transformedData];
+      const sortedData = transformedData.slice(); // More efficient shallow copy
       switch (sortOption) {
         case 'newest':
           sortedData.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
