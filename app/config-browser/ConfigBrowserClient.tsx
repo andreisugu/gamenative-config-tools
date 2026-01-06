@@ -499,11 +499,11 @@ export default function ConfigBrowserClient() {
         </div>
 
         {/* --- Control Bar (Search, Sort, Filter) --- */}
-        <div className="md:static sticky top-4 z-30 mb-8 bg-slate-900/80 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-4 shadow-2xl shadow-black/20">
+        <div className="md:relative sticky top-4 z-30 mb-8 bg-slate-900/80 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-4 shadow-2xl shadow-black/20">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
             
             {/* 1. Game Autocomplete Search */}
-            <div className="md:col-span-4 relative" ref={wrapperRef}>
+            <div className={`md:col-span-4 relative ${showSuggestions ? 'z-50' : 'z-20'}`} ref={wrapperRef}>
               <div className="relative group">
                 <Search className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${isSearchingGames ? 'text-cyan-400' : 'text-slate-500 group-focus-within:text-cyan-400'}`} size={18} />
                 <input
@@ -545,7 +545,7 @@ export default function ConfigBrowserClient() {
             </div>
 
             {/* 2. GPU Filter with Autocomplete */}
-            <div className="md:col-span-3 relative" ref={gpuWrapperRef}>
+            <div className={`md:col-span-3 relative ${showGpuSuggestions ? 'z-50' : 'z-10'}`} ref={gpuWrapperRef}>
               <div className="relative group">
                 <Cpu className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${isSearchingGpus ? 'text-purple-400' : 'text-slate-500 group-focus-within:text-purple-400'}`} size={18} />
                 <input
@@ -587,7 +587,7 @@ export default function ConfigBrowserClient() {
             </div>
 
             {/* 3. Device Filter with Autocomplete */}
-            <div className="md:col-span-3 relative" ref={deviceWrapperRef}>
+            <div className={`md:col-span-3 relative ${showDeviceSuggestions ? 'z-50' : 'z-0'}`} ref={deviceWrapperRef}>
               <div className="relative group">
                 <Smartphone className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 ${isSearchingDevices ? 'text-green-400' : 'text-slate-500 group-focus-within:text-green-400'}`} size={18} />
                 <input
