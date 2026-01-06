@@ -2,20 +2,19 @@ const fs = require('fs');
 
 async function generateGames() {
   try {
-    // Fetch Steam games from API
-    const steamResponse = await fetch('http://api.steampowered.com/ISteamApps/GetAppList/v0002/?format=json');
+    // Fetch Steam games from GitHub repo
+    const steamResponse = await fetch('https://raw.githubusercontent.com/jsnli/steamappidlist/master/data/games_appid.json');
     
     if (!steamResponse.ok) {
-      throw new Error(`Steam API returned ${steamResponse.status}`);
+      throw new Error(`GitHub Steam list returned ${steamResponse.status}`);
     }
     
-    const steamData = await steamResponse.json();
+    const steamGames = await steamResponse.json();
     
     // Filter and clean Steam games
-    const steamGames = steamData.applist.apps
+    const filteredGames = steamGames
       .filter(app => {
         const name = app.name.toLowerCase();
-        // Filter out DLC, soundtracks, demos, trailers, etc.
         return !name.includes('dlc') && 
                !name.includes('soundtrack') && 
                !name.includes('demo') && 
@@ -25,7 +24,7 @@ async function generateGames() {
                name.length > 2;
       })
       .map(app => ({ id: app.appid, name: app.name }))
-      .slice(0, 50000); // Limit for performance
+      .slice(0, 50000);
 
     // Read existing filters
     let existingData = { games: [], gpus: [], devices: [], updatedAt: new Date().toISOString() };
@@ -36,7 +35,7 @@ async function generateGames() {
     // Update only games
     const filterData = {
       ...existingData,
-      games: steamGames,
+      games: filteredGames,
       updatedAt: new Date().toISOString()
     };
 

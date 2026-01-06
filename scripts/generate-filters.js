@@ -8,15 +8,15 @@ async function generate() {
     // Run all generators and combine results
     console.log('Generating all filters...');
     
-    // Steam games
-    const steamResponse = await fetch('http://api.steampowered.com/ISteamApps/GetAppList/v0002/?format=json');
+    // Steam games from GitHub repo
+    const steamResponse = await fetch('https://raw.githubusercontent.com/jsnli/steamappidlist/master/data/games_appid.json');
     
     if (!steamResponse.ok) {
-      throw new Error(`Steam API returned ${steamResponse.status}`);
+      throw new Error(`GitHub Steam list returned ${steamResponse.status}`);
     }
     
-    const steamData = await steamResponse.json();
-    const steamGames = steamData.applist.apps
+    const steamGames = await steamResponse.json();
+    const filteredGames = steamGames
       .filter(app => {
         const name = app.name.toLowerCase();
         return !name.includes('dlc') && 
@@ -59,7 +59,7 @@ async function generate() {
       .filter(d => d && d.name && d.model && d.name.length > 3);
 
     const filterData = {
-      games: steamGames,
+      games: filteredGames,
       gpus: [...new Set((devices || []).map(d => d.gpu).filter(Boolean))],
       devices: playDevices,
       updatedAt: new Date().toISOString()
