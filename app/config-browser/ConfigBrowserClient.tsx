@@ -57,7 +57,6 @@ interface ConfigBrowserClientProps {
 
 const ITEMS_PER_PAGE = 15;
 const DEBOUNCE_MS = 300;
-const SERVER_QUERY_LIMIT = 1000;
 const GAME_RUNS_QUERY = 'id,rating,avg_fps,notes,configs,created_at,games!inner(id,name),devices!inner(id,model,gpu,android_ver)';
 
 // --- Helper Hook: useDebounce ---
@@ -73,6 +72,7 @@ function useDebounce<T>(value: T, delay: number): T {
 export default function ConfigBrowserClient({ initialSearch, initialGpu }: ConfigBrowserClientProps) {
   // --- State ---
   const [configs, setConfigs] = useState<GameConfig[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   
   // Filters
@@ -177,32 +177,69 @@ export default function ConfigBrowserClient({ initialSearch, initialGpu }: Confi
   const fetchConfigs = useCallback(async () => {
     setIsLoading(true);
     try {
-      let query = supabase
+      // Build base query for both count and data fetch
+      let countQuery = supabase
+        .from('game_runs')
+        .select('id', { count: 'exact', head: true });
+
+      let dataQuery = supabase
         .from('game_runs')
         .select(GAME_RUNS_QUERY);
 
+      // Apply filters to both queries
       // Filter by Game (ID if selected, otherwise fuzzy text search)
       if (selectedGame) {
-        query = query.eq('games.id', selectedGame.id);
+        countQuery = countQuery.eq('games.id', selectedGame.id);
+        dataQuery = dataQuery.eq('games.id', selectedGame.id);
       } else if (debouncedSearchTerm) {
-        query = query.ilike('games.name', `%${debouncedSearchTerm}%`);
+        countQuery = countQuery.ilike('games.name', `%${debouncedSearchTerm}%`);
+        dataQuery = dataQuery.ilike('games.name', `%${debouncedSearchTerm}%`);
       }
 
       // Filter by GPU (exact match if selected, otherwise fuzzy text search)
       if (selectedGpu) {
-        query = query.eq('devices.gpu', selectedGpu.gpu);
+        countQuery = countQuery.eq('devices.gpu', selectedGpu.gpu);
+        dataQuery = dataQuery.eq('devices.gpu', selectedGpu.gpu);
       } else if (debouncedGpu) {
-        query = query.ilike('devices.gpu', `%${debouncedGpu}%`);
+        countQuery = countQuery.ilike('devices.gpu', `%${debouncedGpu}%`);
+        dataQuery = dataQuery.ilike('devices.gpu', `%${debouncedGpu}%`);
       }
 
-      query = query.limit(SERVER_QUERY_LIMIT);
+      // Apply sorting to data query
+      switch (sortOption) {
+        case 'newest':
+          dataQuery = dataQuery.order('created_at', { ascending: false });
+          break;
+        case 'rating_desc':
+          dataQuery = dataQuery.order('rating', { ascending: false }).order('avg_fps', { ascending: false });
+          break;
+        case 'fps_desc':
+          dataQuery = dataQuery.order('avg_fps', { ascending: false }).order('rating', { ascending: false });
+          break;
+        case 'fps_asc':
+          dataQuery = dataQuery.order('avg_fps', { ascending: true });
+          break;
+      }
 
-      const { data, error } = await query;
+      // Calculate range for pagination
+      const from = (currentPage - 1) * ITEMS_PER_PAGE;
+      const to = from + ITEMS_PER_PAGE - 1;
+      dataQuery = dataQuery.range(from, to);
 
-      if (error) throw error;
+      // Execute both queries
+      const [countResult, dataResult] = await Promise.all([
+        countQuery,
+        dataQuery
+      ]);
+
+      if (countResult.error) throw countResult.error;
+      if (dataResult.error) throw dataResult.error;
+
+      // Update total count
+      setTotalCount(countResult.count || 0);
 
       // Transform Data
-      const transformedData: GameConfig[] = (data as unknown as SupabaseGameRun[] || []).map(item => ({
+      const transformedData: GameConfig[] = (dataResult.data as unknown as SupabaseGameRun[] || []).map(item => ({
         id: item.id,
         rating: item.rating,
         avg_fps: item.avg_fps,
@@ -213,43 +250,25 @@ export default function ConfigBrowserClient({ initialSearch, initialGpu }: Confi
         device: item.devices || null
       }));
 
-      // Client-side sorting for accurate results
-      const sortedData = transformedData.slice(); // More efficient shallow copy
-      switch (sortOption) {
-        case 'newest':
-          sortedData.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-          break;
-        case 'rating_desc':
-          sortedData.sort((a, b) => {
-            if (b.rating !== a.rating) return b.rating - a.rating;
-            return b.avg_fps - a.avg_fps;
-          });
-          break;
-        case 'fps_desc':
-          sortedData.sort((a, b) => {
-            if (b.avg_fps !== a.avg_fps) return b.avg_fps - a.avg_fps;
-            return b.rating - a.rating;
-          });
-          break;
-        case 'fps_asc':
-          sortedData.sort((a, b) => a.avg_fps - b.avg_fps);
-          break;
-      }
-
-      setConfigs(sortedData);
+      setConfigs(transformedData);
     } catch (error) {
       console.error('Error fetching configs:', error);
       setConfigs([]);
+      setTotalCount(0);
     } finally {
       setIsLoading(false);
     }
-  }, [debouncedSearchTerm, debouncedGpu, selectedGame, selectedGpu, sortOption]);
+  }, [debouncedSearchTerm, debouncedGpu, selectedGame, selectedGpu, sortOption, currentPage]);
 
   // Trigger fetch when dependencies change
   useEffect(() => {
     fetchConfigs();
-    setCurrentPage(1); // Reset page on filter change
   }, [fetchConfigs]);
+
+  // Reset to page 1 when filters or sort changes (but not when page changes)
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearchTerm, debouncedGpu, selectedGame, selectedGpu, sortOption]);
 
   // Update URL Params (Optional, for sharing links)
   useEffect(() => {
@@ -266,13 +285,9 @@ export default function ConfigBrowserClient({ initialSearch, initialGpu }: Confi
 
 
   // --- 3. Pagination Logic ---
-  const { totalPages, paginatedConfigs } = useMemo(() => {
-    const total = Math.ceil(configs.length / ITEMS_PER_PAGE);
-    const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    const end = start + ITEMS_PER_PAGE;
-    const paginated = configs.slice(start, end);
-    return { totalPages: total, paginatedConfigs: paginated };
-  }, [configs, currentPage]);
+  const totalPages = useMemo(() => {
+    return Math.ceil(totalCount / ITEMS_PER_PAGE);
+  }, [totalCount]);
 
   // Scroll to top when changing pages
   useEffect(() => {
@@ -499,7 +514,7 @@ export default function ConfigBrowserClient({ initialSearch, initialGpu }: Confi
             {/* Results Count */}
             <div className="flex items-center justify-between mb-4 text-sm px-1">
               <span className="text-slate-400">
-                Found <strong className="text-white">{configs.length}</strong> configurations
+                Found <strong className="text-white">{totalCount}</strong> configurations
               </span>
               <span className="text-slate-500">
                 Page {currentPage} of {totalPages}
@@ -508,7 +523,7 @@ export default function ConfigBrowserClient({ initialSearch, initialGpu }: Confi
 
             {/* Grid Layout */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {paginatedConfigs.map((config) => (
+              {configs.map((config) => (
                 <div
                   key={config.id}
                   className="group relative bg-slate-800/40 backdrop-blur-sm border border-slate-700/50 rounded-xl overflow-hidden hover:bg-slate-800/60 hover:border-cyan-500/30 transition-all duration-300 shadow-lg hover:shadow-cyan-900/10 flex flex-col"
