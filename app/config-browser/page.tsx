@@ -106,7 +106,7 @@ export default async function ConfigSearchPage({
 
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-purple-950 via-slate-950 to-cyan-950 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center">
         <div className="text-slate-400 text-lg">Loading...</div>
       </div>
     }>

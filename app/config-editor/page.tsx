@@ -374,7 +374,7 @@ export default function App() {
 
     useEffect(() => {
         document.documentElement.classList.add('dark');
-        document.body.style.backgroundColor = '#020617';
+        // Background is now handled by the gradient in the div
         document.body.style.colorScheme = 'dark';
         
         // Check localStorage for guide visibility
@@ -487,7 +487,7 @@ export default function App() {
 
     if (isImporting) {
         return (
-            <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4 selection:bg-blue-600 selection:text-white">
+            <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-slate-100 flex items-center justify-center p-4 selection:bg-blue-600 selection:text-white">
             <Card className="max-w-2xl w-full p-10 bg-slate-900/30">
             <div className="flex items-center gap-5 mb-10">
             <div className="p-4 bg-blue-600 rounded-2xl text-white shadow-2xl shadow-blue-500/20">
@@ -544,18 +544,6 @@ export default function App() {
             </div>
             )}
 
-            <div className="text-center border-t border-slate-900 pt-8">
-            <p className="text-[10px] text-slate-600 uppercase font-black tracking-widest mb-3 italic">Only have a raw config string?</p>
-            <a
-            href={converterUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-[10px] text-blue-500 hover:text-blue-400 font-black uppercase tracking-widest transition-colors group"
-            >
-            Open Config Converter
-            <ExternalLink size={12} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-            </a>
-            </div>
             </div>
             </div>
             </Card>
@@ -566,8 +554,8 @@ export default function App() {
     const currentTab = tabs.find(t => t.id === activeTab);
 
     return (
-        <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
-        <header className="bg-slate-950 border-b border-slate-900 sticky top-0 z-50">
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-slate-100 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
+        <header className="bg-gray-900/80 border-b border-slate-900 sticky top-0 z-50 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-8 h-20 flex items-center justify-between">
         <div className="flex items-center gap-3">
         <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center text-white font-black italic shadow-lg">GN</div>
@@ -892,7 +880,7 @@ export default function App() {
         </div>
         </main>
 
-        <footer className="bg-slate-950 border-t border-slate-900 py-8 px-10 flex justify-between items-center text-[10px] text-slate-800 font-black uppercase tracking-[0.4em]">
+        <footer className="bg-gray-900/80 border-t border-slate-900 py-8 px-10 flex justify-between items-center text-[10px] text-slate-800 font-black uppercase tracking-[0.4em] backdrop-blur-sm">
         <span>GameNative Editor</span>
         <span className="font-mono text-slate-900">{config?.id}</span>
         </footer>

@@ -5,7 +5,7 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100 flex items-center justify-center p-4">
       <div className="max-w-4xl w-full">
         {/* Main Title */}
-        <h1 className="text-6xl font-bold mb-16 text-center protected-gradient-title">
+        <h1 className="text-6xl font-bold mb-16 text-center protected-gradient-title leading-tight">
           GameNative Config Tools
         </h1>
 

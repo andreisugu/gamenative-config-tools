@@ -509,28 +509,12 @@ export default function ConfigConverterPage() {
             </div>
             <div className="flex gap-3">
               <a
-                href="https://gamenative.app/compatibility/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-4 py-2 protected-button-green text-white font-semibold rounded-lg shadow-lg shadow-green-500/30 transition-all transform hover:scale-105 active:scale-95 whitespace-nowrap"
-              >
-                Compatibility List
-              </a>
-              <a
                 href="https://diffcheck.io/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-4 py-2 protected-button-cyan text-white font-semibold rounded-lg shadow-lg shadow-cyan-500/30 transition-all transform hover:scale-105 active:scale-95 whitespace-nowrap"
               >
                 DiffCheck.io
-              </a>
-              <a
-                href="https://andreisugu.github.io/gamenative-config-tools/config-editor"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-4 py-2 protected-button-cyan text-white font-semibold rounded-lg shadow-lg shadow-cyan-500/30 transition-all transform hover:scale-105 active:scale-95 whitespace-nowrap"
-              >
-                Config Editor
               </a>
             </div>
           </div>

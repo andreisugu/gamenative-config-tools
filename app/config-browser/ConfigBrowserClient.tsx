@@ -146,11 +146,11 @@ export default function ConfigBrowserClient({ configs, initialSearch, initialGpu
   }, [totalPages, currentPage]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-950 via-slate-950 to-cyan-950">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-cyan-400 mb-4 tracking-tight">
+          <h1 className="text-5xl font-black protected-gradient-title mb-4 tracking-tight leading-tight">
             Community Configs
           </h1>
           <p className="text-slate-400 text-sm mb-6">
