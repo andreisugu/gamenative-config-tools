@@ -20,13 +20,24 @@ async function generate() {
     const playDevices = csvLines
       .filter(line => line.trim())
       .map(line => {
-        const [retailBranding, marketingName, device, model] = line.split(',').map(s => s.trim().replace(/"/g, ''));
+        // Clean and split CSV line properly
+        const cleanLine = line.replace(/\0/g, '').replace(/"/g, '');
+        const parts = cleanLine.split(',');
+        if (parts.length < 4) return null;
+        
+        const retailBranding = parts[0]?.trim() || '';
+        const marketingName = parts[1]?.trim() || '';
+        const device = parts[2]?.trim() || '';
+        const model = parts[3]?.trim() || '';
+        
+        if (!retailBranding || !model) return null;
+        
         return {
           name: `${retailBranding} ${marketingName}`.trim(),
-          model: `${retailBranding} ${model}`.trim() // Match database format: Retail Branding + Device Model
+          model: `${retailBranding} ${model}`.trim()
         };
       })
-      .filter(d => d.name && d.model);
+      .filter(d => d && d.name && d.model && d.name.length > 3);
 
     const filterData = {
       games: games || [],
