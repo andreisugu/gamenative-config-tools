@@ -37,8 +37,8 @@ interface SupabaseGameRun {
   created_at: string;
   app_version: string | null;
   tags: string | null;
-  games: { id: number; name: string } | null;
-  devices: { id: number; model: string; gpu: string; android_ver: string } | null;
+  game: { id: number; name: string } | null;
+  device: { id: number; model: string; gpu: string; android_ver: string } | null;
 }
 
 interface GameSuggestion {
@@ -65,7 +65,7 @@ interface ConfigBrowserClientProps {
 const ITEMS_PER_PAGE = 15;
 const DEBOUNCE_MS = 300;
 const SUGGESTION_LIMIT = 6;
-const GAME_RUNS_QUERY = 'id,rating,avg_fps,notes,configs,created_at,app_version,tags,games!inner(id,name),devices!inner(id,model,gpu,android_ver)';
+const GAME_RUNS_QUERY = 'id,rating,avg_fps,notes,configs,created_at,app_version,tags,game:games!inner(id,name),device:devices!inner(id,model,gpu,android_ver)';
 
 // --- Helper Hook: useDebounce ---
 function useDebounce<T>(value: T, delay: number): T {
@@ -235,23 +235,23 @@ export default function ConfigBrowserClient() {
       // Apply filters
       // Filter by Game (ID if selected, otherwise fuzzy text search)
       if (selectedGame) {
-        dataQuery = dataQuery.eq('games.id', selectedGame.id);
+        dataQuery = dataQuery.eq('game.id', selectedGame.id);
       } else if (debouncedSearchTerm) {
-        dataQuery = dataQuery.ilike('games.name', `%${debouncedSearchTerm}%`);
+        dataQuery = dataQuery.ilike('game.name', `%${debouncedSearchTerm}%`);
       }
 
       // Filter by GPU (exact match if selected, otherwise fuzzy text search)
       if (selectedGpu) {
-        dataQuery = dataQuery.eq('devices.gpu', selectedGpu.gpu);
+        dataQuery = dataQuery.eq('device.gpu', selectedGpu.gpu);
       } else if (debouncedGpu) {
-        dataQuery = dataQuery.ilike('devices.gpu', `%${debouncedGpu}%`);
+        dataQuery = dataQuery.ilike('device.gpu', `%${debouncedGpu}%`);
       }
 
       // Filter by Device (exact match if selected, otherwise fuzzy text search)
       if (selectedDevice) {
-        dataQuery = dataQuery.eq('devices.model', selectedDevice.model);
+        dataQuery = dataQuery.eq('device.model', selectedDevice.model);
       } else if (debouncedDevice) {
-        dataQuery = dataQuery.ilike('devices.model', `%${debouncedDevice}%`);
+        dataQuery = dataQuery.ilike('device.model', `%${debouncedDevice}%`);
       }
 
       // Apply sorting to data query
@@ -311,25 +311,25 @@ export default function ConfigBrowserClient() {
         // Must include 'name', 'gpu', and 'model' in the select to allow filtering on them
         let countQuery = supabase
           .from('game_runs')
-          .select('id, games!inner(id, name), devices!inner(id, gpu, model)', { count: 'exact', head: true });
+          .select('id, game:games!inner(id, name), device:devices!inner(id, gpu, model)', { count: 'exact', head: true });
 
         // Apply same filters to count query
         if (selectedGame) {
-          countQuery = countQuery.eq('games.id', selectedGame.id);
+          countQuery = countQuery.eq('game.id', selectedGame.id);
         } else if (debouncedSearchTerm) {
-          countQuery = countQuery.ilike('games.name', `%${debouncedSearchTerm}%`);
+          countQuery = countQuery.ilike('game.name', `%${debouncedSearchTerm}%`);
         }
 
         if (selectedGpu) {
-          countQuery = countQuery.eq('devices.gpu', selectedGpu.gpu);
+          countQuery = countQuery.eq('device.gpu', selectedGpu.gpu);
         } else if (debouncedGpu) {
-          countQuery = countQuery.ilike('devices.gpu', `%${debouncedGpu}%`);
+          countQuery = countQuery.ilike('device.gpu', `%${debouncedGpu}%`);
         }
 
         if (selectedDevice) {
-          countQuery = countQuery.eq('devices.model', selectedDevice.model);
+          countQuery = countQuery.eq('device.model', selectedDevice.model);
         } else if (debouncedDevice) {
-          countQuery = countQuery.ilike('devices.model', `%${debouncedDevice}%`);
+          countQuery = countQuery.ilike('device.model', `%${debouncedDevice}%`);
         }
 
         countResult = await countQuery;
@@ -351,8 +351,8 @@ export default function ConfigBrowserClient() {
         created_at: item.created_at,
         app_version: item.app_version,
         tags: item.tags,
-        game: item.games || null,
-        device: item.devices || null
+        game: item.game || null,
+        device: item.device || null
       }));
 
       setConfigs(transformedData);
