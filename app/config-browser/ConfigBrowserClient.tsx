@@ -33,8 +33,8 @@ interface SupabaseGameRun {
   notes: string | null;
   configs: any;
   created_at: string;
-  game: Array<{ id: number; name: string }>;
-  device: Array<{ id: number; model: string; gpu: string; android_ver: string }>;
+  games: { id: number; name: string } | null;
+  devices: { id: number; model: string; gpu: string; android_ver: string } | null;
 }
 
 interface GameSuggestion {
@@ -58,7 +58,7 @@ interface ConfigBrowserClientProps {
 const ITEMS_PER_PAGE = 15;
 const DEBOUNCE_MS = 300;
 const SERVER_QUERY_LIMIT = 1000;
-const GAME_RUNS_QUERY = 'id,rating,avg_fps,notes,configs,created_at,game:games!inner(id,name),device:devices!inner(id,model,gpu,android_ver)';
+const GAME_RUNS_QUERY = 'id,rating,avg_fps,notes,configs,created_at,games!inner(id,name),devices!inner(id,model,gpu,android_ver)';
 
 // --- Helper Hook: useDebounce ---
 function useDebounce<T>(value: T, delay: number): T {
@@ -80,7 +80,7 @@ export default function ConfigBrowserClient({ initialSearch, initialGpu }: Confi
   const [selectedGame, setSelectedGame] = useState<GameSuggestion | null>(null);
   const [gpuFilter, setGpuFilter] = useState(initialGpu || '');
   const [selectedGpu, setSelectedGpu] = useState<GpuSuggestion | null>(null);
-  const [sortOption, setSortOption] = useState<SortOption>('rating_desc');
+  const [sortOption, setSortOption] = useState<SortOption>('newest');
   
   // Autocomplete State
   const [suggestions, setSuggestions] = useState<GameSuggestion[]>([]);
@@ -209,8 +209,8 @@ export default function ConfigBrowserClient({ initialSearch, initialGpu }: Confi
         notes: item.notes,
         configs: item.configs,
         created_at: item.created_at,
-        game: Array.isArray(item.game) && item.game.length > 0 ? item.game[0] : null,
-        device: Array.isArray(item.device) && item.device.length > 0 ? item.device[0] : null
+        game: item.games || null,
+        device: item.devices || null
       }));
 
       // Client-side sorting for accurate results
@@ -426,10 +426,10 @@ export default function ConfigBrowserClient({ initialSearch, initialGpu }: Confi
                   onChange={(e) => setSortOption(e.target.value as SortOption)}
                   className="w-full pl-11 pr-10 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white appearance-none cursor-pointer focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all"
                 >
+                  <option value="newest">Newest First</option>
                   <option value="rating_desc">Highest Rated</option>
                   <option value="fps_desc">Highest FPS</option>
                   <option value="fps_asc">Lowest FPS</option>
-                  <option value="newest">Newest First</option>
                 </select>
                 <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" size={16} />
               </div>
