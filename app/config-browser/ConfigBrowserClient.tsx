@@ -14,7 +14,7 @@ interface GameConfig {
   notes: string | null;
   configs: any;
   created_at: string;
-  app_ver: string | null;
+  app_version: string | null;
   tags: string | null;
   game: {
     id: number;
@@ -35,7 +35,7 @@ interface SupabaseGameRun {
   notes: string | null;
   configs: any;
   created_at: string;
-  app_ver: string | null;
+  app_version: string | null;
   tags: string | null;
   games: { id: number; name: string } | null;
   devices: { id: number; model: string; gpu: string; android_ver: string } | null;
@@ -65,7 +65,7 @@ interface ConfigBrowserClientProps {
 const ITEMS_PER_PAGE = 15;
 const DEBOUNCE_MS = 300;
 const SUGGESTION_LIMIT = 6;
-const GAME_RUNS_QUERY = 'id,rating,avg_fps,notes,configs,created_at,app_ver,tags,games!inner(id,name),devices!inner(id,model,gpu,android_ver)';
+const GAME_RUNS_QUERY = 'id,rating,avg_fps,notes,configs,created_at,app_version,tags,games!inner(id,name),devices!inner(id,model,gpu,android_ver)';
 
 // --- Helper Hook: useDebounce ---
 function useDebounce<T>(value: T, delay: number): T {
@@ -349,7 +349,7 @@ export default function ConfigBrowserClient() {
         notes: item.notes,
         configs: item.configs,
         created_at: item.created_at,
-        app_ver: item.app_ver,
+        app_version: item.app_version,
         tags: item.tags,
         game: item.games || null,
         device: item.devices || null
@@ -721,9 +721,9 @@ export default function ConfigBrowserClient() {
                           <span className="ml-6">Android {config.device.android_ver}</span>
                         </div>
                       )}
-                      {config.app_ver && (
+                      {config.app_version && (
                         <div className="flex items-center gap-2 text-xs text-slate-500">
-                          <span className="ml-6">App Ver: {config.app_ver}</span>
+                          <span className="ml-6">App Ver: {config.app_version}</span>
                         </div>
                       )}
                       {config.tags && (
