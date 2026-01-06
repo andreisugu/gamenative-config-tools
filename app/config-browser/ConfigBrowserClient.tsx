@@ -35,7 +35,7 @@ interface SupabaseGameRun {
   notes: string | null;
   configs: any;
   created_at: string;
-  app_version: string | null;
+  app_version: { semver: string } | null;
   tags: string | null;
   game: { id: number; name: string } | null;
   device: { id: number; model: string; gpu: string; android_ver: string } | null;
@@ -349,7 +349,7 @@ export default function ConfigBrowserClient() {
         notes: item.notes,
         configs: item.configs,
         created_at: item.created_at,
-        app_version: item.app_version,
+        app_version: item.app_version?.semver || null,
         tags: item.tags,
         game: item.game || null,
         device: item.device || null
