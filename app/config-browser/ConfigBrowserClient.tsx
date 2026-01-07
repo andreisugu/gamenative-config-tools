@@ -766,7 +766,7 @@ export default function ConfigBrowserClient() {
               </div>
 
               {/* 4. Sort Dropdown */}
-              <div className="md:col-span-2 relative">
+              <div className="md:col-span-3 relative">
                 <div className="relative">
                   <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                   <select
@@ -786,13 +786,12 @@ export default function ConfigBrowserClient() {
               </div>
 
               {/* 5. Search Button */}
-              <div className="md:col-span-2 flex items-end">
+              <div className="md:col-span-1 flex items-end">
                 <button
                   onClick={handleSearch}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-cyan-900/20 hover:shadow-cyan-500/30 active:scale-[0.98]"
+                  className="w-full flex items-center justify-center px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-cyan-900/20 hover:shadow-cyan-500/30 active:scale-[0.98]"
                 >
                   <Search size={18} />
-                  Search
                 </button>
               </div>
 
