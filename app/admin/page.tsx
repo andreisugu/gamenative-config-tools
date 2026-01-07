@@ -198,9 +198,9 @@ export default function AdminPage() {
       
       while (true) {
         const { data, error } = await supabase
-          .from('devices')
-          .select('game')
-          .not('game', 'is', null)
+          .from('game_runs')
+          .select('game:games!inner(name)')
+          .not('game.name', 'is', null)
           .range(from, from + batchSize - 1);
 
         if (error) throw error;
@@ -211,7 +211,7 @@ export default function AdminPage() {
         from += batchSize;
       }
 
-      const uniqueGames = [...new Set(allData.map(d => d.game))].sort().map(name => ({ name }));
+      const uniqueGames = [...new Set(allData.map(d => d.game.name))].sort().map(name => ({ name }));
       
       const jsonString = JSON.stringify(uniqueGames, null, 2);
       const blob = new Blob([jsonString], { type: 'application/json' });
@@ -239,9 +239,9 @@ export default function AdminPage() {
       
       while (true) {
         const { data, error } = await supabase
-          .from('devices')
-          .select('device')
-          .not('device', 'is', null)
+          .from('game_runs')
+          .select('device:devices!inner(model)')
+          .not('device.model', 'is', null)
           .range(from, from + batchSize - 1);
 
         if (error) throw error;
@@ -252,7 +252,7 @@ export default function AdminPage() {
         from += batchSize;
       }
 
-      const uniqueDevices = [...new Set(allData.map(d => d.device))].sort().map(name => ({ name, model: name }));
+      const uniqueDevices = [...new Set(allData.map(d => d.device.model))].sort().map(name => ({ name, model: name }));
       
       const jsonString = JSON.stringify(uniqueDevices, null, 2);
       const blob = new Blob([jsonString], { type: 'application/json' });
