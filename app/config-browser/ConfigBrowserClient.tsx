@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { Search, Star, Zap, ChevronLeft, ChevronRight, Cpu, Filter, Download, X, ChevronDown, Smartphone } from 'lucide-react';
+import { Search, Star, Zap, ChevronLeft, ChevronRight, Cpu, Filter, Download, X, ChevronDown, Smartphone, ArrowRight } from 'lucide-react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
@@ -71,7 +71,6 @@ interface ConfigBrowserClientProps {
 // --- Constants ---
 
 const ITEMS_PER_PAGE = 15;
-const SEARCH_DEBOUNCE_MS = 1000; // Debounce for actual database search
 const SUGGESTION_DEBOUNCE_MS = 250; // Debounce for filter suggestions dropdown
 const SUGGESTION_LIMIT = 6;
 const GAME_RUNS_QUERY = 'id,rating,avg_fps,notes,configs,created_at,app_version:app_versions(semver),tags,game:games!inner(id,name),device:devices!inner(id,model,gpu,android_ver)';
@@ -105,6 +104,17 @@ export default function ConfigBrowserClient() {
   const [selectedDevice, setSelectedDevice] = useState<DeviceSuggestion | null>(null);
   const [sortOption, setSortOption] = useState<SortOption>('newest');
   
+  // Search trigger state - only search when button is clicked
+  const [searchTrigger, setSearchTrigger] = useState(0);
+  
+  // Committed filter values - these are used for actual database queries
+  const [committedSearchTerm, setCommittedSearchTerm] = useState(searchParams.get('search') || '');
+  const [committedSelectedGame, setCommittedSelectedGame] = useState<GameSuggestion | null>(null);
+  const [committedGpuFilter, setCommittedGpuFilter] = useState(searchParams.get('gpu') || '');
+  const [committedSelectedGpu, setCommittedSelectedGpu] = useState<GpuSuggestion | null>(null);
+  const [committedDeviceFilter, setCommittedDeviceFilter] = useState(searchParams.get('device') || '');
+  const [committedSelectedDevice, setCommittedSelectedDevice] = useState<DeviceSuggestion | null>(null);
+  
   // Static Filter Snapshot
   const [snapshot, setSnapshot] = useState<FilterSnapshot>({ games: [], gpus: [], devices: [], updatedAt: '' });
   const [filtersLoading, setFiltersLoading] = useState(true);
@@ -129,11 +139,6 @@ export default function ConfigBrowserClient() {
   const debouncedSearchTermFast = useDebounce(searchTerm, SUGGESTION_DEBOUNCE_MS);
   const debouncedGpuFast = useDebounce(gpuFilter, SUGGESTION_DEBOUNCE_MS);
   const debouncedDeviceFast = useDebounce(deviceFilter, SUGGESTION_DEBOUNCE_MS);
-
-  // Slow debounce for actual database queries (1000ms)
-  const debouncedSearchTerm = useDebounce(searchTerm, SEARCH_DEBOUNCE_MS);
-  const debouncedGpu = useDebounce(gpuFilter, SEARCH_DEBOUNCE_MS);
-  const debouncedDevice = useDebounce(deviceFilter, SEARCH_DEBOUNCE_MS);
 
   // --- Load Static Filter Data ---
   useEffect(() => {
@@ -286,28 +291,28 @@ export default function ConfigBrowserClient() {
         .select(GAME_RUNS_QUERY);
 
       // --- Filter by Game ---
-      if (selectedGame) {
+      if (committedSelectedGame) {
         // CHANGED: Filter by NAME instead of ID.
         // This fixes the issue where filters.json has Steam IDs but DB has internal IDs.
-        dataQuery = dataQuery.eq('game.name', selectedGame.name);
-      } else if (debouncedSearchTerm) {
-        dataQuery = dataQuery.ilike('game.name', `%${debouncedSearchTerm}%`);
+        dataQuery = dataQuery.eq('game.name', committedSelectedGame.name);
+      } else if (committedSearchTerm) {
+        dataQuery = dataQuery.ilike('game.name', `%${committedSearchTerm}%`);
       }
 
       // --- Filter by GPU ---
-      if (selectedGpu) {
+      if (committedSelectedGpu) {
         // CHANGE: Use ilike instead of eq to handle casing mismatches (e.g., "Adreno" vs "adreno")
-        dataQuery = dataQuery.ilike('device.gpu', selectedGpu.gpu); 
-      } else if (debouncedGpu) {
-        dataQuery = dataQuery.ilike('device.gpu', `%${debouncedGpu}%`);
+        dataQuery = dataQuery.ilike('device.gpu', committedSelectedGpu.gpu); 
+      } else if (committedGpuFilter) {
+        dataQuery = dataQuery.ilike('device.gpu', `%${committedGpuFilter}%`);
       }
 
       // --- Filter by Device ---
-      if (selectedDevice) {
+      if (committedSelectedDevice) {
         // CHANGE: Use ilike instead of eq to handle casing/whitespace mismatches
-        dataQuery = dataQuery.ilike('device.model', selectedDevice.model);
-      } else if (debouncedDevice) {
-        dataQuery = dataQuery.ilike('device.model', `%${debouncedDevice}%`);
+        dataQuery = dataQuery.ilike('device.model', committedSelectedDevice.model);
+      } else if (committedDeviceFilter) {
+        dataQuery = dataQuery.ilike('device.model', `%${committedDeviceFilter}%`);
       }
 
       // Apply sorting to data query
@@ -375,22 +380,22 @@ export default function ConfigBrowserClient() {
           .select('id, game:games!inner(id, name), device:devices!inner(id, gpu, model)', { count: 'exact', head: true });
 
         // Apply same filters to count query with the new .ilike logic
-        if (selectedGame) {
-          countQuery = countQuery.eq('game.name', selectedGame.name);
-        } else if (debouncedSearchTerm) {
-          countQuery = countQuery.ilike('game.name', `%${debouncedSearchTerm}%`);
+        if (committedSelectedGame) {
+          countQuery = countQuery.eq('game.name', committedSelectedGame.name);
+        } else if (committedSearchTerm) {
+          countQuery = countQuery.ilike('game.name', `%${committedSearchTerm}%`);
         }
 
-        if (selectedGpu) {
-          countQuery = countQuery.ilike('device.gpu', selectedGpu.gpu); // Changed to ilike
-        } else if (debouncedGpu) {
-          countQuery = countQuery.ilike('device.gpu', `%${debouncedGpu}%`);
+        if (committedSelectedGpu) {
+          countQuery = countQuery.ilike('device.gpu', committedSelectedGpu.gpu); // Changed to ilike
+        } else if (committedGpuFilter) {
+          countQuery = countQuery.ilike('device.gpu', `%${committedGpuFilter}%`);
         }
 
-        if (selectedDevice) {
-          countQuery = countQuery.ilike('device.model', selectedDevice.model); // Changed to ilike
-        } else if (debouncedDevice) {
-          countQuery = countQuery.ilike('device.model', `%${debouncedDevice}%`);
+        if (committedSelectedDevice) {
+          countQuery = countQuery.ilike('device.model', committedSelectedDevice.model); // Changed to ilike
+        } else if (committedDeviceFilter) {
+          countQuery = countQuery.ilike('device.model', `%${committedDeviceFilter}%`);
         }
 
         countResult = await countQuery;
@@ -441,9 +446,9 @@ export default function ConfigBrowserClient() {
         setIsLoading(false);
       }
     }
-  }, [debouncedSearchTerm, debouncedGpu, debouncedDevice, selectedGame, selectedGpu, selectedDevice, sortOption]);
+  }, [committedSearchTerm, committedGpuFilter, committedDeviceFilter, committedSelectedGame, committedSelectedGpu, committedSelectedDevice, sortOption]);
 
-  // Fetch with count when filters or sort changes
+  // Fetch with count when filters or sort changes or search button is clicked
   useEffect(() => {
     const abortController = new AbortController();
     setCurrentPage(1); // Reset to page 1 before fetching
@@ -453,7 +458,7 @@ export default function ConfigBrowserClient() {
       abortController.abort();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedSearchTerm, debouncedGpu, debouncedDevice, selectedGame, selectedGpu, selectedDevice, sortOption]);
+  }, [searchTrigger, sortOption]);
 
   // Fetch without count when page changes, but skip when page is 1 (already handled by filter change effect)
   useEffect(() => {
@@ -473,18 +478,18 @@ export default function ConfigBrowserClient() {
   // Update URL Params (Optional, for sharing links)
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
-    if (debouncedSearchTerm) params.set('search', debouncedSearchTerm);
+    if (committedSearchTerm) params.set('search', committedSearchTerm);
     else params.delete('search');
     
-    if (debouncedGpu) params.set('gpu', debouncedGpu);
+    if (committedGpuFilter) params.set('gpu', committedGpuFilter);
     else params.delete('gpu');
 
-    if (debouncedDevice) params.set('device', debouncedDevice);
+    if (committedDeviceFilter) params.set('device', committedDeviceFilter);
     else params.delete('device');
 
     const newUrl = `${pathname}?${params.toString()}`;
     router.replace(newUrl, { scroll: false });
-  }, [debouncedSearchTerm, debouncedGpu, debouncedDevice, pathname, router, searchParams]);
+  }, [committedSearchTerm, committedGpuFilter, committedDeviceFilter, pathname, router, searchParams]);
 
 
   // --- 3. Pagination Logic ---
@@ -499,6 +504,18 @@ export default function ConfigBrowserClient() {
 
 
   // --- 4. Handlers ---
+
+  const handleSearch = () => {
+    // Commit the current filter values
+    setCommittedSearchTerm(searchTerm);
+    setCommittedSelectedGame(selectedGame);
+    setCommittedGpuFilter(gpuFilter);
+    setCommittedSelectedGpu(selectedGpu);
+    setCommittedDeviceFilter(deviceFilter);
+    setCommittedSelectedDevice(selectedDevice);
+    // Trigger search
+    setSearchTrigger(prev => prev + 1);
+  };
 
   const handleGameSelect = (game: GameSuggestion) => {
     setSearchTerm(game.name);
@@ -589,155 +606,189 @@ export default function ConfigBrowserClient() {
 
         {/* --- Control Bar (Search, Sort, Filter) --- */}
         <div className="md:static sticky top-4 z-50 mb-8 bg-slate-900/80 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-4 shadow-2xl shadow-black/20">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             
-            {/* 1. Game Autocomplete Search */}
-            <div className="md:col-span-4 relative" ref={wrapperRef}>
-              <div className="relative group">
-                <Search className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 text-slate-500 group-focus-within:text-cyan-400`} size={18} />
-                <input
-                  type="text"
-                  placeholder="Search game name..."
-                  value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    if (selectedGame) setSelectedGame(null); // Clear ID selection if typing new text
-                  }}
-                  onFocus={() => {
-                    if (gameSuggestions.length > 0) setShowSuggestions(true);
-                  }}
-                  className="w-full pl-11 pr-10 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 focus:bg-slate-800 focus:ring-1 focus:ring-cyan-500/20 transition-all"
-                />
-                {searchTerm && (
-                  <button onClick={clearGameSearch} className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-slate-700 rounded-full text-slate-500 hover:text-white transition-colors">
-                    <X size={14} />
-                  </button>
+            {/* Filter Row */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+              
+              {/* 1. Game Autocomplete Search */}
+              <div className="md:col-span-4 relative" ref={wrapperRef}>
+                <div className="relative group">
+                  <Search className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 text-slate-500 group-focus-within:text-cyan-400`} size={18} />
+                  <input
+                    type="text"
+                    placeholder="Search game name..."
+                    value={searchTerm}
+                    onChange={(e) => {
+                      setSearchTerm(e.target.value);
+                      if (selectedGame) setSelectedGame(null); // Clear ID selection if typing new text
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleSearch();
+                        setShowSuggestions(false);
+                      }
+                    }}
+                    onFocus={() => {
+                      if (gameSuggestions.length > 0) setShowSuggestions(true);
+                    }}
+                    className="w-full pl-11 pr-10 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 focus:bg-slate-800 focus:ring-1 focus:ring-cyan-500/20 transition-all"
+                  />
+                  {searchTerm && (
+                    <button onClick={clearGameSearch} className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-slate-700 rounded-full text-slate-500 hover:text-white transition-colors">
+                      <X size={14} />
+                    </button>
+                  )}
+                </div>
+
+                {/* Suggestions Dropdown */}
+                {showSuggestions && gameSuggestions.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden z-[9999] max-h-64 overflow-y-auto">
+                    <div className="text-xs font-semibold text-slate-500 px-4 py-2 bg-slate-800/80 sticky top-0">SUGGESTED GAMES</div>
+                    {gameSuggestions.map((game) => (
+                      <button
+                        key={game.id}
+                        onClick={() => handleGameSelect(game)}
+                        className="w-full text-left px-4 py-3 hover:bg-cyan-900/20 text-slate-200 hover:text-cyan-400 transition-colors flex items-center justify-between group"
+                      >
+                        <span>{game.name}</span>
+                        <ChevronRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </button>
+                    ))}
+                  </div>
                 )}
               </div>
 
-              {/* Suggestions Dropdown */}
-              {showSuggestions && gameSuggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden z-[9999] max-h-64 overflow-y-auto">
-                  <div className="text-xs font-semibold text-slate-500 px-4 py-2 bg-slate-800/80 sticky top-0">SUGGESTED GAMES</div>
-                  {gameSuggestions.map((game) => (
-                    <button
-                      key={game.id}
-                      onClick={() => handleGameSelect(game)}
-                      className="w-full text-left px-4 py-3 hover:bg-cyan-900/20 text-slate-200 hover:text-cyan-400 transition-colors flex items-center justify-between group"
-                    >
-                      <span>{game.name}</span>
-                      <ChevronRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+              {/* 2. GPU Filter with Autocomplete */}
+              <div className="md:col-span-3 relative" ref={gpuWrapperRef}>
+                <div className="relative group">
+                  <Cpu className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 text-slate-500 group-focus-within:text-purple-400`} size={18} />
+                  <input
+                    type="text"
+                    placeholder="GPU (e.g. Adreno 740)"
+                    value={gpuFilter}
+                    onChange={(e) => {
+                      setGpuFilter(e.target.value);
+                      if (selectedGpu) setSelectedGpu(null);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleSearch();
+                        setShowGpuSuggestions(false);
+                      }
+                    }}
+                    onFocus={() => {
+                      if (gpuSuggestions.length > 0) setShowGpuSuggestions(true);
+                    }}
+                    className="w-full pl-11 pr-10 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:bg-slate-800 focus:ring-1 focus:ring-purple-500/20 transition-all"
+                  />
+                  {gpuFilter && (
+                    <button onClick={clearGpuSearch} className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-slate-700 rounded-full text-slate-500 hover:text-white transition-colors">
+                      <X size={14} />
                     </button>
-                  ))}
+                  )}
                 </div>
-              )}
-            </div>
 
-            {/* 2. GPU Filter with Autocomplete */}
-            <div className="md:col-span-3 relative" ref={gpuWrapperRef}>
-              <div className="relative group">
-                <Cpu className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 text-slate-500 group-focus-within:text-purple-400`} size={18} />
-                <input
-                  type="text"
-                  placeholder="GPU (e.g. Adreno 740)"
-                  value={gpuFilter}
-                  onChange={(e) => {
-                    setGpuFilter(e.target.value);
-                    if (selectedGpu) setSelectedGpu(null);
-                  }}
-                  onFocus={() => {
-                    if (gpuSuggestions.length > 0) setShowGpuSuggestions(true);
-                  }}
-                  className="w-full pl-11 pr-10 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:bg-slate-800 focus:ring-1 focus:ring-purple-500/20 transition-all"
-                />
-                {gpuFilter && (
-                  <button onClick={clearGpuSearch} className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-slate-700 rounded-full text-slate-500 hover:text-white transition-colors">
-                    <X size={14} />
-                  </button>
+                {/* GPU Suggestions Dropdown */}
+                {showGpuSuggestions && gpuSuggestions.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden z-[9999] max-h-64 overflow-y-auto">
+                    <div className="text-xs font-semibold text-slate-500 px-4 py-2 bg-slate-800/80 sticky top-0">SUGGESTED GPUs</div>
+                    {gpuSuggestions.map((gpu, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleGpuSelect(gpu)}
+                        className="w-full text-left px-4 py-3 hover:bg-purple-900/20 text-slate-200 hover:text-purple-400 transition-colors flex items-center justify-between group"
+                      >
+                        <span>{gpu.gpu}</span>
+                        <ChevronRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </button>
+                    ))}
+                  </div>
                 )}
               </div>
 
-              {/* GPU Suggestions Dropdown */}
-              {showGpuSuggestions && gpuSuggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden z-[9999] max-h-64 overflow-y-auto">
-                  <div className="text-xs font-semibold text-slate-500 px-4 py-2 bg-slate-800/80 sticky top-0">SUGGESTED GPUs</div>
-                  {gpuSuggestions.map((gpu, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleGpuSelect(gpu)}
-                      className="w-full text-left px-4 py-3 hover:bg-purple-900/20 text-slate-200 hover:text-purple-400 transition-colors flex items-center justify-between group"
-                    >
-                      <span>{gpu.gpu}</span>
-                      <ChevronRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+              {/* 3. Device Filter with Autocomplete */}
+              <div className="md:col-span-3 relative" ref={deviceWrapperRef}>
+                <div className="relative group">
+                  <Smartphone className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 text-slate-500 group-focus-within:text-green-400`} size={18} />
+                  <input
+                    type="text"
+                    placeholder="Device (e.g. Pixel, Galaxy)"
+                    value={deviceFilter}
+                    onChange={(e) => {
+                      setDeviceFilter(e.target.value);
+                      if (selectedDevice) setSelectedDevice(null);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleSearch();
+                        setShowDeviceSuggestions(false);
+                      }
+                    }}
+                    onFocus={() => {
+                      if (deviceSuggestions.length > 0) setShowDeviceSuggestions(true);
+                    }}
+                    className="w-full pl-11 pr-10 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 focus:bg-slate-800 focus:ring-1 focus:ring-green-500/20 transition-all"
+                  />
+                  {deviceFilter && (
+                    <button onClick={clearDeviceSearch} className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-slate-700 rounded-full text-slate-500 hover:text-white transition-colors">
+                      <X size={14} />
                     </button>
-                  ))}
+                  )}
                 </div>
-              )}
-            </div>
 
-            {/* 3. Device Filter with Autocomplete */}
-            <div className="md:col-span-3 relative" ref={deviceWrapperRef}>
-              <div className="relative group">
-                <Smartphone className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 text-slate-500 group-focus-within:text-green-400`} size={18} />
-                <input
-                  type="text"
-                  placeholder="Device (e.g. Pixel, Galaxy)"
-                  value={deviceFilter}
-                  onChange={(e) => {
-                    setDeviceFilter(e.target.value);
-                    if (selectedDevice) setSelectedDevice(null);
-                  }}
-                  onFocus={() => {
-                    if (deviceSuggestions.length > 0) setShowDeviceSuggestions(true);
-                  }}
-                  className="w-full pl-11 pr-10 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 focus:bg-slate-800 focus:ring-1 focus:ring-green-500/20 transition-all"
-                />
-                {deviceFilter && (
-                  <button onClick={clearDeviceSearch} className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-slate-700 rounded-full text-slate-500 hover:text-white transition-colors">
-                    <X size={14} />
-                  </button>
+                {/* Device Suggestions Dropdown */}
+                {showDeviceSuggestions && deviceSuggestions.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden z-[9999] max-h-64 overflow-y-auto">
+                    <div className="text-xs font-semibold text-slate-500 px-4 py-2 bg-slate-800/80 sticky top-0">SUGGESTED DEVICES</div>
+                    {deviceSuggestions.map((device, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleDeviceSelect(device)}
+                        className="w-full text-left px-4 py-3 hover:bg-green-900/20 text-slate-200 hover:text-green-400 transition-colors flex items-center justify-between group"
+                      >
+                        <div className="flex flex-col">
+                          <span className="font-medium">{device.name.replace(/[<>"'&]/g, '')}</span>
+                          <span className="text-xs text-slate-500">{device.model.replace(/[<>"'&]/g, '')}</span>
+                        </div>
+                        <ChevronRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </button>
+                    ))}
+                  </div>
                 )}
               </div>
 
-              {/* Device Suggestions Dropdown */}
-              {showDeviceSuggestions && deviceSuggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden z-[9999] max-h-64 overflow-y-auto">
-                  <div className="text-xs font-semibold text-slate-500 px-4 py-2 bg-slate-800/80 sticky top-0">SUGGESTED DEVICES</div>
-                  {deviceSuggestions.map((device, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleDeviceSelect(device)}
-                      className="w-full text-left px-4 py-3 hover:bg-green-900/20 text-slate-200 hover:text-green-400 transition-colors flex items-center justify-between group"
-                    >
-                      <div className="flex flex-col">
-                        <span className="font-medium">{device.name.replace(/[<>"'&]/g, '')}</span>
-                        <span className="text-xs text-slate-500">{device.model.replace(/[<>"'&]/g, '')}</span>
-                      </div>
-                      <ChevronRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </button>
-                  ))}
+              {/* 4. Sort Dropdown */}
+              <div className="md:col-span-2 relative">
+                <div className="relative">
+                  <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                  <select
+                    value={sortOption}
+                    onChange={(e) => setSortOption(e.target.value as SortOption)}
+                    className="w-full pl-11 pr-10 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white appearance-none cursor-pointer focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all"
+                  >
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="rating_desc">Highest Rated</option>
+                    <option value="rating_asc">Lowest Rated</option>
+                    <option value="fps_desc">Highest FPS</option>
+                    <option value="fps_asc">Lowest FPS</option>
+                  </select>
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" size={16} />
                 </div>
-              )}
+              </div>
+
             </div>
 
-            {/* 4. Sort Dropdown */}
-            <div className="md:col-span-2 relative">
-              <div className="relative">
-                <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
-                <select
-                  value={sortOption}
-                  onChange={(e) => setSortOption(e.target.value as SortOption)}
-                  className="w-full pl-11 pr-10 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white appearance-none cursor-pointer focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all"
-                >
-                  <option value="newest">Newest First</option>
-                  <option value="oldest">Oldest First</option>
-                  <option value="rating_desc">Highest Rated</option>
-                  <option value="rating_asc">Lowest Rated</option>
-                  <option value="fps_desc">Highest FPS</option>
-                  <option value="fps_asc">Lowest FPS</option>
-                </select>
-                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" size={16} />
-              </div>
+            {/* Search Button Row */}
+            <div className="flex justify-end">
+              <button
+                onClick={handleSearch}
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-cyan-900/20 hover:shadow-cyan-500/30 active:scale-[0.98]"
+              >
+                <Search size={18} />
+                Search
+              </button>
             </div>
 
           </div>
@@ -774,14 +825,14 @@ export default function ConfigBrowserClient() {
             </div>
             <p className="mt-4 text-slate-400 animate-pulse">Fetching configurations...</p>
           </div>
-        ) : configs.length === 0 && (!debouncedSearchTerm && !debouncedGpu && !debouncedDevice && !selectedGame && !selectedGpu && !selectedDevice) ? (
+        ) : configs.length === 0 && (!committedSearchTerm && !committedGpuFilter && !committedDeviceFilter && !committedSelectedGame && !committedSelectedGpu && !committedSelectedDevice) ? (
           <div className="text-center py-20 bg-slate-800/30 rounded-2xl border border-slate-700/50 border-dashed">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-800 mb-4">
               <Search className="text-slate-500" size={32} />
             </div>
             <h3 className="text-xl font-bold text-white mb-2">Start searching</h3>
             <p className="text-slate-400 max-w-md mx-auto">
-              Enter a game name, GPU, or device to discover community configurations.
+              Enter a game name, GPU, or device and click the Search button to discover community configurations.
             </p>
           </div>
         ) : configs.length === 0 ? (
@@ -794,7 +845,7 @@ export default function ConfigBrowserClient() {
               We couldn't find any configs matching your search. Try adjusting filters or searching for a different game.
             </p>
             <button 
-              onClick={() => { clearGameSearch(); clearGpuSearch(); clearDeviceSearch(); }}
+              onClick={() => { clearGameSearch(); clearGpuSearch(); clearDeviceSearch(); handleSearch(); }}
               className="mt-6 px-6 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors font-medium"
             >
               Clear All Filters
@@ -803,7 +854,7 @@ export default function ConfigBrowserClient() {
         ) : (
           <>
             {/* Results Count */}
-            {(debouncedSearchTerm || debouncedGpu || debouncedDevice || selectedGame || selectedGpu || selectedDevice) && (
+            {(committedSearchTerm || committedGpuFilter || committedDeviceFilter || committedSelectedGame || committedSelectedGpu || committedSelectedDevice) && (
               <div className="flex items-center justify-between mb-4 text-sm px-1">
                 <span className="text-slate-400">
                   Found <strong className="text-white">{totalCount}</strong> configurations
