@@ -70,7 +70,7 @@ interface ConfigBrowserClientProps {
 
 const ITEMS_PER_PAGE = 15;
 const DEBOUNCE_MS = 300;
-const SUGGESTION_LIMIT = 6;
+const SUGGESTION_LIMIT = 12;
 const GAME_RUNS_QUERY = 'id,rating,avg_fps,notes,created_at,app_version:app_versions(semver),tags,game:games!inner(id,name),device:devices!inner(id,model,gpu,android_ver)';
 const COUNT_QUERY = 'id, game:games!inner(id, name), device:devices!inner(id, gpu, model)';
 
@@ -136,33 +136,80 @@ export default function ConfigBrowserClient() {
   // --- Local Search with useMemo ---
   const gameSuggestions = useMemo(() => {
     if (debouncedSearchTerm.length < 2 || selectedGame) return [];
+    const searchTerm = debouncedSearchTerm.toLowerCase();
     return snapshot.games
-      .filter(g => g.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()))
+      .filter(g => {
+        const name = g.name.toLowerCase();
+        // Enhanced fuzzy matching: remove punctuation, parentheses, and normalize spaces
+        const cleanName = name.replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+        const cleanSearch = searchTerm.replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+        
+        // Check if all words in search exist in the game name
+        const searchWords = cleanSearch.split(' ');
+        const nameWords = cleanName.split(' ');
+        const allWordsMatch = searchWords.every(searchWord => 
+          nameWords.some(nameWord => nameWord.includes(searchWord))
+        );
+        
+        return cleanName.includes(cleanSearch) || name.includes(searchTerm) || allWordsMatch;
+      })
       .slice(0, SUGGESTION_LIMIT);
   }, [debouncedSearchTerm, selectedGame, snapshot.games]);
 
   const gpuSuggestions = useMemo(() => {
     if (debouncedGpu.length < 2 || selectedGpu) return [];
+    const searchTerm = debouncedGpu.toLowerCase();
     return snapshot.gpus
-      .filter(gpu => gpu.toLowerCase().includes(debouncedGpu.toLowerCase()))
+      .filter(gpu => {
+        const name = gpu.toLowerCase();
+        // Enhanced fuzzy matching: remove punctuation, parentheses, and normalize spaces
+        const cleanName = name.replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+        const cleanSearch = searchTerm.replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+        
+        // Check if all words in search exist in the GPU name
+        const searchWords = cleanSearch.split(' ');
+        const nameWords = cleanName.split(' ');
+        const allWordsMatch = searchWords.every(searchWord => 
+          nameWords.some(nameWord => nameWord.includes(searchWord))
+        );
+        
+        return cleanName.includes(cleanSearch) || name.includes(searchTerm) || allWordsMatch;
+      })
       .slice(0, SUGGESTION_LIMIT)
       .map(gpu => ({ gpu }));
   }, [debouncedGpu, selectedGpu, snapshot.gpus]);
 
   const deviceSuggestions = useMemo(() => {
     if (debouncedDevice.length < 2 || selectedDevice) return [];
+    const searchTerm = debouncedDevice.toLowerCase();
     return snapshot.devices
       .filter(device => {
-        const searchTerm = debouncedDevice.toLowerCase();
         const deviceName = device.name.toLowerCase();
         const deviceModel = device.model.toLowerCase();
         
-        // Search in both name and model, and also try to match partial brand + model combinations
+        // Enhanced fuzzy matching: remove punctuation, parentheses, and normalize spaces
+        const cleanDeviceName = deviceName.replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+        const cleanDeviceModel = deviceModel.replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+        const cleanSearch = searchTerm.replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+        
+        // Check if all words in search exist starting at word boundaries
+        const searchWords = cleanSearch.split(' ');
+        const allWordsMatchName = searchWords.every(searchWord => {
+          const regex = new RegExp(`\\b${searchWord}`, 'i');
+          return regex.test(cleanDeviceName);
+        });
+        const allWordsMatchModel = searchWords.every(searchWord => {
+          const regex = new RegExp(`\\b${searchWord}`, 'i');
+          return regex.test(cleanDeviceModel);
+        });
+        
+        // Search in both name and model with enhanced fuzzy matching
         return deviceName.includes(searchTerm) ||
                deviceModel.includes(searchTerm) ||
-               // Allow searching like "Samsung S25" to match "Samsung Galaxy S25 Ultra"
-               deviceName.split(' ').some(word => word.startsWith(searchTerm.split(' ')[0])) &&
-               deviceName.includes(searchTerm.split(' ').slice(1).join(' '));
+               cleanDeviceName.includes(cleanSearch) ||
+               cleanDeviceModel.includes(cleanSearch) ||
+               allWordsMatchName ||
+               allWordsMatchModel;
       })
       .slice(0, SUGGESTION_LIMIT);
   }, [debouncedDevice, selectedDevice, snapshot.devices]);
@@ -574,8 +621,8 @@ export default function ConfigBrowserClient() {
 
               {/* Suggestions Dropdown */}
               {showSuggestions && gameSuggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden z-[100]">
-                  <div className="text-xs font-semibold text-slate-500 px-4 py-2 bg-slate-800/80">SUGGESTED GAMES</div>
+                <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden z-[100] max-h-64 overflow-y-auto">
+                  <div className="text-xs font-semibold text-slate-500 px-4 py-2 bg-slate-800/80 sticky top-0">SUGGESTED GAMES</div>
                   {gameSuggestions.map((game) => (
                     <button
                       key={game.id}
@@ -617,8 +664,8 @@ export default function ConfigBrowserClient() {
 
               {/* GPU Suggestions Dropdown */}
               {showGpuSuggestions && gpuSuggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden z-[100]">
-                  <div className="text-xs font-semibold text-slate-500 px-4 py-2 bg-slate-800/80">SUGGESTED GPUs</div>
+                <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden z-[100] max-h-64 overflow-y-auto">
+                  <div className="text-xs font-semibold text-slate-500 px-4 py-2 bg-slate-800/80 sticky top-0">SUGGESTED GPUs</div>
                   {gpuSuggestions.map((gpu, index) => (
                     <button
                       key={index}
@@ -660,8 +707,8 @@ export default function ConfigBrowserClient() {
 
               {/* Device Suggestions Dropdown */}
               {showDeviceSuggestions && deviceSuggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden z-[100]">
-                  <div className="text-xs font-semibold text-slate-500 px-4 py-2 bg-slate-800/80">SUGGESTED DEVICES</div>
+                <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden z-[100] max-h-64 overflow-y-auto">
+                  <div className="text-xs font-semibold text-slate-500 px-4 py-2 bg-slate-800/80 sticky top-0">SUGGESTED DEVICES</div>
                   {deviceSuggestions.map((device, index) => (
                     <button
                       key={index}
