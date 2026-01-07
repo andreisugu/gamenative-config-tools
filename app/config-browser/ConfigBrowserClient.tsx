@@ -72,7 +72,106 @@ const ITEMS_PER_PAGE = 15;
 const DEBOUNCE_MS = 300;
 const SUGGESTION_LIMIT = 12;
 const GAME_RUNS_QUERY = 'id,rating,avg_fps,notes,created_at,app_version:app_versions(semver),tags,game:games!inner(id,name),device:devices!inner(id,model,gpu,android_ver)';
-const COUNT_QUERY = 'id, game:games!inner(id, name), device:devices!inner(id, gpu, model)';
+const COUNT_QUERY = 'id';
+const CONFIG_QUERY = 'configs';
+
+// --- Request Cache & Deduplication ---
+const requestCache = new Map<string, any>();
+const pendingRequests = new Map<string, Promise<any>>();
+const apiCache = new Map<string, { data: any; timestamp: number }>();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const MAX_CACHE_SIZE = 100;
+
+// Cache cleanup function
+const cleanupCache = () => {
+  const now = Date.now();
+  for (const [key, value] of apiCache.entries()) {
+    if (now - value.timestamp > CACHE_TTL) {
+      apiCache.delete(key);
+    }
+  }
+  // LRU cleanup if cache is too large
+  if (apiCache.size > MAX_CACHE_SIZE) {
+    const entries = Array.from(apiCache.entries());
+    entries.sort((a, b) => a[1].timestamp - b[1].timestamp);
+    for (let i = 0; i < entries.length - MAX_CACHE_SIZE; i++) {
+      apiCache.delete(entries[i][0]);
+    }
+  }
+};
+
+// --- Request Queue for Connection Pool Management ---
+class RequestQueue {
+  private queue: Array<() => Promise<any>> = [];
+  private running = 0;
+  private maxConcurrent = 3;
+
+  async add<T>(fn: () => Promise<T>): Promise<T> {
+    return new Promise((resolve, reject) => {
+      this.queue.push(async () => {
+        try {
+          this.running++;
+          const result = await fn();
+          resolve(result);
+        } catch (error) {
+          reject(error);
+        } finally {
+          this.running--;
+          this.processQueue();
+        }
+      });
+      this.processQueue();
+    });
+  }
+
+  private processQueue() {
+    if (this.running < this.maxConcurrent && this.queue.length > 0) {
+      const next = this.queue.shift()!;
+      next();
+    }
+  }
+}
+
+const requestQueue = new RequestQueue();
+
+const getCachedOrFetch = async (key: string, fetchFn: () => Promise<any>) => {
+  cleanupCache();
+  const cached = apiCache.get(key);
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    return cached.data;
+  }
+  
+  const data = await requestQueue.add(fetchFn);
+  apiCache.set(key, { data, timestamp: Date.now() });
+  return data;
+};
+
+const cachedFetch = async (key: string, fetchFn: () => Promise<any>) => {
+  if (requestCache.has(key)) return requestCache.get(key);
+  if (pendingRequests.has(key)) return pendingRequests.get(key);
+  
+  const promise = getCachedOrFetch(key, fetchFn);
+  pendingRequests.set(key, promise);
+  
+  try {
+    const result = await promise;
+    requestCache.set(key, result);
+    return result;
+  } finally {
+    pendingRequests.delete(key);
+  }
+};
+
+const withRetry = async (fn: () => Promise<any>, maxRetries = 3) => {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (i === maxRetries - 1) throw error;
+      await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+    }
+  }
+};
 
 // --- Helper Hook: useDebounce ---
 function useDebounce<T>(value: T, delay: number): T {
@@ -105,6 +204,8 @@ export default function ConfigBrowserClient() {
   
   // Static Filter Snapshot
   const [snapshot, setSnapshot] = useState<FilterSnapshot>({ games: [], gpus: [], devices: [], updatedAt: '' });
+  const [filtersLoading, setFiltersLoading] = useState(true);
+  const [filtersError, setFiltersError] = useState<string | null>(null);
   
   // Autocomplete State
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -127,10 +228,21 @@ export default function ConfigBrowserClient() {
 
   // --- Load Static Filter Data ---
   useEffect(() => {
+    setFiltersLoading(true);
     fetch('./filters.json')
-      .then(res => res.json())
-      .then(setSnapshot)
-      .catch(console.error);
+      .then(res => {
+        if (!res.ok) throw new Error(`Failed to load filters: ${res.status}`);
+        return res.json();
+      })
+      .then(data => {
+        setSnapshot(data);
+        setFiltersError(null);
+      })
+      .catch(error => {
+        console.error('Error loading filters:', error);
+        setFiltersError('Failed to load search filters');
+      })
+      .finally(() => setFiltersLoading(false));
   }, []);
 
   // --- Local Search with useMemo ---
@@ -246,11 +358,15 @@ export default function ConfigBrowserClient() {
 
   // --- 2. Main Data Fetching ---
   const fetchConfigs = useCallback(async (needsCount: boolean, page: number) => {
-    // Prevent multiple simultaneous requests
-    if (isLoading) return;
+    const requestId = `${Date.now()}-${Math.random()}`;
     
     setIsLoading(true);
+    
+    const cacheKey = `configs-${selectedGame?.id || ''}-${selectedGpu?.gpu || ''}-${selectedDevice?.model || ''}-${sortOption}-${page}-${needsCount}`;
+    
     try {
+      const result = await cachedFetch(cacheKey, async () => {
+        return await withRetry(async () => {
       // Build base query for data fetch (includes joins for games and devices)
       let dataQuery = supabase
         .from('game_runs')
@@ -325,10 +441,10 @@ export default function ConfigBrowserClient() {
       // Fetch count only when filters change, not on every page change
       let countResult = null;
       if (needsCount) {
-        // Build count query with minimal fields for filtering
+        // Count query needs joins to access nested fields
         let countQuery = supabase
           .from('game_runs')
-          .select(COUNT_QUERY, { count: 'exact', head: true });
+          .select('id, game:games!inner(id,name), device:devices!inner(id,gpu,model)', { count: 'exact', head: true });
 
         // Apply same filters to count query
         if (selectedGame) {
@@ -349,7 +465,6 @@ export default function ConfigBrowserClient() {
 
         countResult = await countQuery;
         if (countResult.error) throw countResult.error;
-        setTotalCount(countResult.count || 0);
       }
 
       // Execute data query
@@ -369,7 +484,12 @@ export default function ConfigBrowserClient() {
         device: item.device || null
       }));
 
-      setConfigs(transformedData);
+          return { configs: transformedData, count: countResult?.count || null };
+        });
+      });
+      
+      setConfigs(result.configs);
+      if (result.count !== null) setTotalCount(result.count);
     } catch (error) {
       console.error('Error fetching configs:', error);
       setConfigs([]);
@@ -519,20 +639,26 @@ export default function ConfigBrowserClient() {
 
   const handleOpenInEditor = async (config: GameConfig) => {
     try {
-      const { data, error } = await supabase
-        .from('game_runs')
-        .select('configs')
-        .eq('id', config.id)
-        .single();
-      
-      if (error) throw error;
+      const cacheKey = `config-${config.id}`;
+      const result = await cachedFetch(cacheKey, async () => {
+        return await withRetry(async () => {
+          const { data, error } = await supabase
+            .from('game_runs')
+            .select('configs')
+            .eq('id', config.id)
+            .single();
+          
+          if (error) throw error;
+          return data;
+        });
+      });
       
       const exportData = {
         version: 1,
         exportedFrom: "CommunityBrowser",
         timestamp: Date.now(),
         containerName: config.game?.name || "Community Config",
-        config: data.configs
+        config: result.configs
       };
       
       localStorage.setItem('pendingConfig', JSON.stringify(exportData));
@@ -544,20 +670,26 @@ export default function ConfigBrowserClient() {
 
   const handleDownloadConfig = async (config: GameConfig) => {
     try {
-      const { data, error } = await supabase
-        .from('game_runs')
-        .select('configs')
-        .eq('id', config.id)
-        .single();
-      
-      if (error) throw error;
+      const cacheKey = `config-${config.id}`;
+      const result = await cachedFetch(cacheKey, async () => {
+        return await withRetry(async () => {
+          const { data, error } = await supabase
+            .from('game_runs')
+            .select('configs')
+            .eq('id', config.id)
+            .single();
+          
+          if (error) throw error;
+          return data;
+        });
+      });
       
       const exportData = {
         version: 1,
         exportedFrom: "CommunityBrowser",
         timestamp: Date.now(),
         containerName: config.game?.name || "Community Config",
-        config: data.configs
+        config: result.configs
       };
       
       const jsonString = JSON.stringify(exportData, null, 2);
@@ -716,8 +848,8 @@ export default function ConfigBrowserClient() {
                       className="w-full text-left px-4 py-3 hover:bg-green-900/20 text-slate-200 hover:text-green-400 transition-colors flex items-center justify-between group"
                     >
                       <div className="flex flex-col">
-                        <span className="font-medium">{device.name}</span>
-                        <span className="text-xs text-slate-500">{device.model}</span>
+                      <span className="font-medium">{device.name.replace(/[<>"'&]/g, '')}</span>
+                        <span className="text-xs text-slate-500">{device.model.replace(/[<>"'&]/g, '')}</span>
                       </div>
                       <ChevronRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                     </button>
@@ -761,7 +893,29 @@ export default function ConfigBrowserClient() {
         </div>
 
         {/* --- Content Area --- */}
-        {isLoading ? (
+        {filtersLoading ? (
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="relative w-16 h-16">
+              <div className="absolute top-0 left-0 w-full h-full border-4 border-slate-700 rounded-full"></div>
+              <div className="absolute top-0 left-0 w-full h-full border-4 border-t-cyan-500 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
+            </div>
+            <p className="mt-4 text-slate-400 animate-pulse">Loading search filters...</p>
+          </div>
+        ) : filtersError ? (
+          <div className="text-center py-20 bg-red-900/20 rounded-2xl border border-red-700/50">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-800 mb-4">
+              <X className="text-red-400" size={32} />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">Error Loading Filters</h3>
+            <p className="text-red-400 max-w-md mx-auto mb-4">{filtersError}</p>
+            <button 
+              onClick={() => window.location.reload()}
+              className="px-6 py-2 bg-red-700 hover:bg-red-600 text-white rounded-lg transition-colors font-medium"
+            >
+              Retry
+            </button>
+          </div>
+        ) : isLoading ? (
           <div className="flex flex-col items-center justify-center py-20">
             <div className="relative w-16 h-16">
               <div className="absolute top-0 left-0 w-full h-full border-4 border-slate-700 rounded-full"></div>
