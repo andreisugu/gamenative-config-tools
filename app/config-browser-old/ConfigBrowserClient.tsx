@@ -264,8 +264,9 @@ export default function ConfigBrowserClient() {
 
       // --- Filter by Game ---
       if (selectedGame) {
-        // Use ID for games, but cast to ensure it's a number
-        dataQuery = dataQuery.eq('game.id', Number(selectedGame.id));
+        // CHANGED: Filter by NAME instead of ID.
+        // This fixes the issue where filters.json has Steam IDs but DB has internal IDs.
+        dataQuery = dataQuery.eq('game.name', selectedGame.name);
       } else if (debouncedSearchTerm) {
         dataQuery = dataQuery.ilike('game.name', `%${debouncedSearchTerm}%`);
       }
@@ -347,7 +348,7 @@ export default function ConfigBrowserClient() {
 
         // Apply same filters to count query with the new .ilike logic
         if (selectedGame) {
-          countQuery = countQuery.eq('game.id', Number(selectedGame.id));
+          countQuery = countQuery.eq('game.name', selectedGame.name);
         } else if (debouncedSearchTerm) {
           countQuery = countQuery.ilike('game.name', `%${debouncedSearchTerm}%`);
         }

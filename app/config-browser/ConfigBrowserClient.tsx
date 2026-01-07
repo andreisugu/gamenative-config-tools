@@ -386,11 +386,9 @@ export default function ConfigBrowserClient() {
 
       // Apply filters with proper error handling
       if (selectedGame) {
-        if (selectedGame.id === -1) {
-          dataQuery = dataQuery.eq('game.name', selectedGame.name);
-        } else {
-          dataQuery = dataQuery.eq('game_id', selectedGame.id);
-        }
+        // CHANGED: Filter by NAME instead of ID.
+        // This fixes the issue where filters.json has Steam IDs but DB has internal IDs.
+        dataQuery = dataQuery.eq('game.name', selectedGame.name);
       }
 
       if (selectedGpu) {
@@ -460,11 +458,7 @@ export default function ConfigBrowserClient() {
 
         // Apply same filters to count query
         if (selectedGame) {
-          if (selectedGame.id === -1) {
-            countQuery = countQuery.eq('game.name', selectedGame.name);
-          } else {
-            countQuery = countQuery.eq('game_id', selectedGame.id);
-          }
+          countQuery = countQuery.eq('game.name', selectedGame.name);
         }
 
         if (selectedGpu) {
