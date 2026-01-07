@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { Search, Star, Zap, ChevronLeft, ChevronRight, Cpu, Filter, Download, X, ChevronDown, Smartphone } from 'lucide-react';
+import { Search, Star, Zap, ChevronLeft, ChevronRight, Cpu, Filter, Download, X, ChevronDown, Smartphone, Eye, EyeOff } from 'lucide-react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
@@ -131,6 +131,9 @@ export default function ConfigBrowserClient() {
   // Device Autocomplete State
   const [showDeviceSuggestions, setShowDeviceSuggestions] = useState(false);
   const deviceWrapperRef = useRef<HTMLDivElement>(null);
+  
+  // Show incomplete entries toggle
+  const [showIncomplete, setShowIncomplete] = useState(false);
   
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -286,10 +289,19 @@ export default function ConfigBrowserClient() {
   const fetchConfigs = useCallback(async (needsCount: boolean, page: number, signal?: AbortSignal) => {
     setIsLoading(true);
     try {
-      // Build base query for data fetch (includes joins for games and devices)
+      // Dynamic Select String - use !inner only when NOT showing incomplete
+      const joinType = showIncomplete ? '' : '!inner';
+      const dynamicQuery = `id,rating,avg_fps,notes,configs,created_at,app_version:app_versions(semver),tags,game:games${joinType}(id,name),device:devices${joinType}(id,model,gpu,android_ver)`;
+
+      // Build base query for data fetch
       let dataQuery = supabase
         .from('game_runs')
-        .select(GAME_RUNS_QUERY);
+        .select(dynamicQuery);
+
+      // Strict filtering - only if NOT showing incomplete
+      if (!showIncomplete) {
+        dataQuery = dataQuery.not('avg_fps', 'is', null);
+      }
 
       // --- Filter by Game ---
       if (committedSelectedGame) {
@@ -374,11 +386,15 @@ export default function ConfigBrowserClient() {
       let countResult = null;
       if (needsCount) {
         // Build count query with same joins and filters as data query
-        // Select only 'id' to minimize data transfer while maintaining joins for filtering
-        // Must include 'name', 'gpu', and 'model' in the select to allow filtering on them
+        const joinType = showIncomplete ? '' : '!inner';
         let countQuery = supabase
           .from('game_runs')
-          .select('id, game:games!inner(id, name), device:devices!inner(id, gpu, model)', { count: 'exact', head: true });
+          .select(`id, game:games${joinType}(id, name), device:devices${joinType}(id, gpu, model)`, { count: 'exact', head: true });
+
+        // Apply strict filtering if NOT showing incomplete
+        if (!showIncomplete) {
+          countQuery = countQuery.not('avg_fps', 'is', null);
+        }
 
         // Apply same filters to count query with the new .ilike logic
         if (committedSelectedGame) {
@@ -447,7 +463,7 @@ export default function ConfigBrowserClient() {
         setIsLoading(false);
       }
     }
-  }, [committedSearchTerm, committedGpuFilter, committedDeviceFilter, committedSelectedGame, committedSelectedGpu, committedSelectedDevice, sortOption]);
+  }, [committedSearchTerm, committedGpuFilter, committedDeviceFilter, committedSelectedGame, committedSelectedGpu, committedSelectedDevice, sortOption, showIncomplete]);
 
   // Fetch with count when filters or sort changes or search button is clicked
   useEffect(() => {
@@ -459,7 +475,7 @@ export default function ConfigBrowserClient() {
       abortController.abort();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchTrigger, sortOption]);
+  }, [searchTrigger, sortOption, showIncomplete]);
 
   // Fetch without count when page changes, but skip when page is 1 (already handled by filter change effect)
   useEffect(() => {
@@ -667,7 +683,7 @@ export default function ConfigBrowserClient() {
           <div className="grid grid-cols-1 gap-4">
             
             {/* Filter Row */}
-            <div className="grid grid-cols-1 md:grid-cols-14 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-15 gap-4">
               
               {/* 1. Game Autocomplete Search */}
               <div className="md:col-span-4 relative" ref={wrapperRef}>
@@ -836,7 +852,22 @@ export default function ConfigBrowserClient() {
                 </div>
               </div>
 
-              {/* 5. Search Button */}
+              {/* 5. Toggle Incomplete Button */}
+              <div className="md:col-span-1 flex items-end">
+                <button
+                  onClick={() => setShowIncomplete(!showIncomplete)}
+                  className={`w-full flex items-center justify-center px-4 py-3 font-bold rounded-xl transition-all border ${
+                    showIncomplete 
+                      ? 'bg-amber-600/20 border-amber-500/50 text-amber-400 hover:bg-amber-600/30' 
+                      : 'bg-slate-800/50 border-slate-700 text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                  }`}
+                  title={showIncomplete ? "Showing all entries (including incomplete)" : "Hiding incomplete entries"}
+                >
+                  {showIncomplete ? <Eye size={18} /> : <EyeOff size={18} />}
+                </button>
+              </div>
+
+              {/* 6. Search Button */}
               <div className="md:col-span-1 flex items-end">
                 <button
                   onClick={handleSearch}
