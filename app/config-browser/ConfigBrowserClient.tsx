@@ -616,7 +616,7 @@ export default function ConfigBrowserClient() {
           <div className="grid grid-cols-1 gap-4">
             
             {/* Filter Row */}
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-14 gap-4">
               
               {/* 1. Game Autocomplete Search */}
               <div className="md:col-span-4 relative" ref={wrapperRef}>
@@ -649,8 +649,8 @@ export default function ConfigBrowserClient() {
                 </div>
 
                 {/* Suggestions Dropdown */}
-                {showSuggestions && gameSuggestions.length > 0 && (
-                  <div className="fixed top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden z-[99999] max-h-64 overflow-y-auto" style={{position: 'fixed', top: wrapperRef.current?.getBoundingClientRect().bottom + 8, left: wrapperRef.current?.getBoundingClientRect().left, width: wrapperRef.current?.getBoundingClientRect().width}}>
+                {showSuggestions && gameSuggestions.length > 0 && wrapperRef.current && (
+                  <div className="fixed top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden z-[99999] max-h-64 overflow-y-auto" style={{position: 'fixed', top: wrapperRef.current.getBoundingClientRect().bottom + 8, left: wrapperRef.current.getBoundingClientRect().left, width: wrapperRef.current.getBoundingClientRect().width}}>
                     <div className="text-xs font-semibold text-slate-500 px-4 py-2 bg-slate-800/80 sticky top-0">SUGGESTED GAMES</div>
                     {gameSuggestions.map((game) => (
                       <button
@@ -785,18 +785,19 @@ export default function ConfigBrowserClient() {
                 </div>
               </div>
 
+              {/* 5. Search Button */}
+              <div className="md:col-span-2 flex items-end">
+                <button
+                  onClick={handleSearch}
+                  className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-cyan-900/20 hover:shadow-cyan-500/30 active:scale-[0.98]"
+                >
+                  <Search size={18} />
+                  Search
+                </button>
+              </div>
+
             </div>
 
-            {/* Search Button Row */}
-            <div className="flex justify-end">
-              <button
-                onClick={handleSearch}
-                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-cyan-900/20 hover:shadow-cyan-500/30 active:scale-[0.98]"
-              >
-                <Search size={18} />
-                Search
-              </button>
-            </div>
 
           </div>
         </div>
