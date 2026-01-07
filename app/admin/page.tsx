@@ -14,7 +14,7 @@ const verifyPassword = async (encryptedData: string, password: string): Promise<
     // Create key from password + salt
     const keyMaterial = await crypto.subtle.importKey(
       'raw',
-      new TextEncoder().encode(key + SALT),
+      new TextEncoder().encode(password + SALT),
       { name: 'PBKDF2' },
       false,
       ['deriveKey']
@@ -35,7 +35,7 @@ const verifyPassword = async (encryptedData: string, password: string): Promise<
     
     // For demo, we'll use a simple check instead of actual decryption
     // In real implementation, you'd decrypt the actual encrypted password
-    const expectedHash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(key));
+    const expectedHash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(password));
     const hashArray = Array.from(new Uint8Array(expectedHash));
     const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     
