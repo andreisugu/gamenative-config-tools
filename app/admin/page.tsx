@@ -252,7 +252,7 @@ export default function AdminPage() {
         from += batchSize;
       }
 
-      const uniqueDevices = [...new Set(allData.map((d: any) => d.device.model))].sort().map(name => ({ name, model: name }));
+      const uniqueDevices = [...new Set(allData.map((d: any) => d.device.model))].sort().map(model => ({ name: model, model }));
       
       const jsonString = JSON.stringify(uniqueDevices, null, 2);
       const blob = new Blob([jsonString], { type: 'application/json' });
