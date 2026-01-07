@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { Search, Star, Zap, ChevronLeft, ChevronRight, Cpu, Filter, Download, X, ChevronDown, Smartphone, ArrowRight } from 'lucide-react';
+import { Search, Star, Zap, ChevronLeft, ChevronRight, Cpu, Filter, Download, X, ChevronDown, Smartphone } from 'lucide-react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
@@ -550,6 +550,13 @@ export default function ConfigBrowserClient() {
     setSelectedDevice(null);
   };
 
+  const handleClearAllFilters = () => {
+    clearGameSearch();
+    clearGpuSearch();
+    clearDeviceSearch();
+    handleSearch();
+  };
+
   const handleOpenInEditor = (config: GameConfig) => {
     const exportData = {
       version: 1,
@@ -845,7 +852,7 @@ export default function ConfigBrowserClient() {
               We couldn't find any configs matching your search. Try adjusting filters or searching for a different game.
             </p>
             <button 
-              onClick={() => { clearGameSearch(); clearGpuSearch(); clearDeviceSearch(); handleSearch(); }}
+              onClick={handleClearAllFilters}
               className="mt-6 px-6 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors font-medium"
             >
               Clear All Filters
