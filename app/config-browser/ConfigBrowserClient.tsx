@@ -376,7 +376,7 @@ export default function ConfigBrowserClient() {
       if (needsCount) {
         let countQuery = supabase
           .from('game_runs')
-          .select('*', { count: 'exact', head: true });
+          .select('id, games!inner(name), devices!inner(gpu, model)', { count: 'exact', head: true });
 
         // Apply same filters to count query
         if (committedSelectedGame) {
