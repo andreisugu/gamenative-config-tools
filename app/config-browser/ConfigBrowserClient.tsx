@@ -975,13 +975,13 @@ export default function ConfigBrowserClient() {
                           <span className="ml-6">Screen: {config.configs.screenSize}</span>
                         </div>
                       )}
-                      {config.tags && typeof config.tags === 'string' && (
+                      {config.tags && Array.isArray(config.tags) && config.tags.length > 0 && (
                         <div className="flex items-start gap-2 text-xs text-slate-500">
                           <span className="ml-6">Tags:</span>
                           <div className="flex flex-wrap gap-1">
-                            {config.tags.split(',').map((tag, index) => (
+                            {config.tags.map((tag, index) => (
                               <span key={index} className="px-2 py-1 bg-slate-700/50 text-slate-300 rounded-md text-xs">
-                                {tag.trim()}
+                                {tag}
                               </span>
                             ))}
                           </div>
