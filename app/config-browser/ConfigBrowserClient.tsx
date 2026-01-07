@@ -227,12 +227,13 @@ export default function ConfigBrowserClient() {
 
   // --- Load Static Filter Data ---
   useEffect(() => {
+    const abortController = new AbortController();
     setFiltersLoading(true);
     // Use basePath for GitHub Pages deployment (set in next.config.ts)
     // In production, NEXT_PUBLIC_BASE_PATH defaults to '/gamenative-config-tools'
     // In development, it's empty so files are fetched from root
     const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-    fetch(`${basePath}/filters.json`)
+    fetch(`${basePath}/filters.json`, { signal: abortController.signal })
       .then(res => {
         if (!res.ok) throw new Error(`Failed to load filters: ${res.status}`);
         return res.json();
@@ -242,12 +243,27 @@ export default function ConfigBrowserClient() {
         setFiltersError(null);
       })
       .catch(error => {
+        // Don't set error state if the request was aborted (component unmounted)
+        if (error.name === 'AbortError') {
+          console.log('Filter loading was aborted');
+          return;
+        }
         console.error('Error loading filters:', error);
         setFiltersError('Failed to load search filters');
         // Fallback to empty data to allow the app to continue working
         setSnapshot({ games: [], gpus: [], devices: [], updatedAt: '' });
       })
-      .finally(() => setFiltersLoading(false));
+      .finally(() => {
+        // Only update loading state if not aborted
+        if (!abortController.signal.aborted) {
+          setFiltersLoading(false);
+        }
+      });
+    
+    // Cleanup function to abort the fetch if component unmounts
+    return () => {
+      abortController.abort();
+    };
   }, []);
 
   // --- Local Search with useMemo ---
@@ -362,7 +378,7 @@ export default function ConfigBrowserClient() {
   }, []);
 
   // --- 2. Main Data Fetching ---
-  const fetchConfigs = useCallback(async (needsCount: boolean, page: number) => {
+  const fetchConfigs = useCallback(async (needsCount: boolean, page: number, signal?: AbortSignal) => {
     const requestId = `${Date.now()}-${Math.random()}`;
     
     setIsLoading(true);
@@ -370,11 +386,21 @@ export default function ConfigBrowserClient() {
     const cacheKey = `configs-${selectedGame?.id || ''}-${selectedGpu?.gpu || ''}-${selectedDevice?.model || ''}-${sortOption}-${page}-${needsCount}`;
     
     try {
+      // Check if request was aborted before starting
+      if (signal?.aborted) {
+        return;
+      }
+      
       // Test Supabase connection first
       const connectionTest = await supabase.from('game_runs').select('id').limit(1);
       if (connectionTest.error) {
         console.error('Supabase connection error:', connectionTest.error);
         throw new Error(`Database connection failed: ${connectionTest.error.message}`);
+      }
+      
+      // Check if request was aborted after connection test
+      if (signal?.aborted) {
+        return;
       }
       
       const result = await cachedFetch(cacheKey, async () => {
@@ -531,9 +557,18 @@ export default function ConfigBrowserClient() {
         });
       });
       
+      // Check if request was aborted before updating state
+      if (signal?.aborted) {
+        return;
+      }
+      
       setConfigs(result.configs);
       if (result.count !== null) setTotalCount(result.count);
-    } catch (error) {
+    } catch (error: any) {
+      // Don't log error if request was aborted
+      if (signal?.aborted || error?.name === 'AbortError') {
+        return;
+      }
       console.error('Error fetching configs:', error);
       console.error('Error details:', {
         selectedGame,
@@ -546,7 +581,10 @@ export default function ConfigBrowserClient() {
       setConfigs([]);
       setTotalCount(0);
     } finally {
-      setIsLoading(false);
+      // Only update loading state if not aborted
+      if (!signal?.aborted) {
+        setIsLoading(false);
+      }
     }
   }, [debouncedSearchTerm, debouncedGpu, debouncedDevice, selectedGame, selectedGpu, selectedDevice, sortOption]);
 
@@ -557,22 +595,34 @@ export default function ConfigBrowserClient() {
   );
 
   useEffect(() => {
+    const abortController = new AbortController();
+    
     const hasFilters = selectedGame || selectedGpu || selectedDevice;
     if (!hasFilters) {
       setConfigs([]);
       setTotalCount(0);
-      return;
+    } else {
+      setCurrentPage(1);
+      fetchConfigs(true, 1, abortController.signal);
     }
-    setCurrentPage(1);
-    fetchConfigs(true, 1);
+    
+    return () => {
+      abortController.abort();
+    };
   }, [filterKey, fetchConfigs]);
 
-  // Fetch without count when only page changes
+  // Fetch without count when page changes, but skip when page is 1 (already handled by filter change effect)
   useEffect(() => {
-    const hasFilters = selectedGame || selectedGpu || selectedDevice;
-    if (!hasFilters || currentPage === 1) return;
+    const abortController = new AbortController();
     
-    fetchConfigs(false, currentPage);
+    const hasFilters = selectedGame || selectedGpu || selectedDevice;
+    if (hasFilters && currentPage !== 1) {
+      fetchConfigs(false, currentPage, abortController.signal);
+    }
+    
+    return () => {
+      abortController.abort();
+    };
   }, [currentPage, fetchConfigs]);
 
   // Update URL Params (Optional, for sharing links)

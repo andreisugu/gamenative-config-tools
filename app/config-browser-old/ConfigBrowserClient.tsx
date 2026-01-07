@@ -130,9 +130,10 @@ export default function ConfigBrowserClient() {
 
   // --- Load Static Filter Data ---
   useEffect(() => {
+    const abortController = new AbortController();
     setFiltersLoading(true);
     const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-    fetch(`${basePath}/filters.json`)
+    fetch(`${basePath}/filters.json`, { signal: abortController.signal })
       .then(res => {
         if (!res.ok) throw new Error(`Failed to load filters: ${res.status}`);
         return res.json();
@@ -142,11 +143,26 @@ export default function ConfigBrowserClient() {
         setFiltersError(null);
       })
       .catch(error => {
+        // Don't set error state if the request was aborted (component unmounted)
+        if (error.name === 'AbortError') {
+          console.log('Filter loading was aborted');
+          return;
+        }
         console.error('Error loading filters:', error);
         setFiltersError('Failed to load search filters');
         setSnapshot({ games: [], gpus: [], devices: [], updatedAt: '' });
       })
-      .finally(() => setFiltersLoading(false));
+      .finally(() => {
+        // Only update loading state if not aborted
+        if (!abortController.signal.aborted) {
+          setFiltersLoading(false);
+        }
+      });
+    
+    // Cleanup function to abort the fetch if component unmounts
+    return () => {
+      abortController.abort();
+    };
   }, []);
 
   // --- Local Search with useMemo ---
@@ -254,7 +270,7 @@ export default function ConfigBrowserClient() {
   }, []);
 
   // --- 2. Main Data Fetching ---
-  const fetchConfigs = useCallback(async (needsCount: boolean, page: number) => {
+  const fetchConfigs = useCallback(async (needsCount: boolean, page: number, signal?: AbortSignal) => {
     setIsLoading(true);
     try {
       // Build base query for data fetch (includes joins for games and devices)
@@ -336,6 +352,11 @@ export default function ConfigBrowserClient() {
       const to = from + ITEMS_PER_PAGE - 1;
       dataQuery = dataQuery.range(from, to);
 
+      // Check if request was aborted before continuing
+      if (signal?.aborted) {
+        return;
+      }
+
       // Fetch count only when filters change, not on every page change
       let countResult = null;
       if (needsCount) {
@@ -367,12 +388,22 @@ export default function ConfigBrowserClient() {
 
         countResult = await countQuery;
         if (countResult.error) throw countResult.error;
+        
+        // Check if request was aborted before updating state
+        if (signal?.aborted) {
+          return;
+        }
         setTotalCount(countResult.count || 0);
       }
 
       // Execute data query
       const dataResult = await dataQuery;
       if (dataResult.error) throw dataResult.error;
+
+      // Check if request was aborted before updating state
+      if (signal?.aborted) {
+        return;
+      }
 
       // Transform Data
       const transformedData: GameConfig[] = (dataResult.data as unknown as SupabaseGameRun[] || []).map(item => ({
@@ -389,25 +420,46 @@ export default function ConfigBrowserClient() {
       }));
 
       setConfigs(transformedData);
-    } catch (error) {
+    } catch (error: any) {
+      // Don't log error if request was aborted
+      if (signal?.aborted || error?.name === 'AbortError') {
+        return;
+      }
       console.error('Error fetching configs:', error);
       setConfigs([]);
       setTotalCount(0);
     } finally {
-      setIsLoading(false);
+      // Only update loading state if not aborted
+      if (!signal?.aborted) {
+        setIsLoading(false);
+      }
     }
   }, [debouncedSearchTerm, debouncedGpu, debouncedDevice, selectedGame, selectedGpu, selectedDevice, sortOption]);
 
   // Fetch with count when filters or sort changes
   useEffect(() => {
+    const abortController = new AbortController();
     setCurrentPage(1); // Reset to page 1 before fetching
-    fetchConfigs(true, 1);
+    fetchConfigs(true, 1, abortController.signal);
+    
+    return () => {
+      abortController.abort();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearchTerm, debouncedGpu, debouncedDevice, selectedGame, selectedGpu, selectedDevice, sortOption]);
 
-  // Fetch without count when only page changes
+  // Fetch without count when page changes, but skip when page is 1 (already handled by filter change effect)
   useEffect(() => {
-    fetchConfigs(false, currentPage);
+    const abortController = new AbortController();
+    
+    // Skip if page is 1 (handled by filter change effect)
+    if (currentPage !== 1) {
+      fetchConfigs(false, currentPage, abortController.signal);
+    }
+    
+    return () => {
+      abortController.abort();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
 
