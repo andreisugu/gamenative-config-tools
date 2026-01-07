@@ -71,7 +71,8 @@ interface ConfigBrowserClientProps {
 // --- Constants ---
 
 const ITEMS_PER_PAGE = 15;
-const DEBOUNCE_MS = 1000;
+const SEARCH_DEBOUNCE_MS = 1000; // Debounce for actual database search
+const SUGGESTION_DEBOUNCE_MS = 250; // Debounce for filter suggestions dropdown
 const SUGGESTION_LIMIT = 6;
 const GAME_RUNS_QUERY = 'id,rating,avg_fps,notes,configs,created_at,app_version:app_versions(semver),tags,game:games!inner(id,name),device:devices!inner(id,model,gpu,android_ver)';
 
@@ -124,9 +125,15 @@ export default function ConfigBrowserClient() {
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
 
-  const debouncedSearchTerm = useDebounce(searchTerm, DEBOUNCE_MS);
-  const debouncedGpu = useDebounce(gpuFilter, DEBOUNCE_MS);
-  const debouncedDevice = useDebounce(deviceFilter, DEBOUNCE_MS);
+  // Fast debounce for showing filter suggestions (250ms)
+  const debouncedSearchTermFast = useDebounce(searchTerm, SUGGESTION_DEBOUNCE_MS);
+  const debouncedGpuFast = useDebounce(gpuFilter, SUGGESTION_DEBOUNCE_MS);
+  const debouncedDeviceFast = useDebounce(deviceFilter, SUGGESTION_DEBOUNCE_MS);
+
+  // Slow debounce for actual database queries (1000ms)
+  const debouncedSearchTerm = useDebounce(searchTerm, SEARCH_DEBOUNCE_MS);
+  const debouncedGpu = useDebounce(gpuFilter, SEARCH_DEBOUNCE_MS);
+  const debouncedDevice = useDebounce(deviceFilter, SEARCH_DEBOUNCE_MS);
 
   // --- Load Static Filter Data ---
   useEffect(() => {
@@ -167,8 +174,8 @@ export default function ConfigBrowserClient() {
 
   // --- Local Search with useMemo ---
   const gameSuggestions = useMemo(() => {
-    if (debouncedSearchTerm.length < 2 || selectedGame) return [];
-    const searchTerm = debouncedSearchTerm.toLowerCase();
+    if (debouncedSearchTermFast.length < 2 || selectedGame) return [];
+    const searchTerm = debouncedSearchTermFast.toLowerCase();
     return snapshot.games
       .filter(g => {
         const name = g.name.toLowerCase();
@@ -184,11 +191,11 @@ export default function ConfigBrowserClient() {
         return cleanName.includes(cleanSearch) || name.includes(searchTerm) || allWordsMatch;
       })
       .slice(0, SUGGESTION_LIMIT);
-  }, [debouncedSearchTerm, selectedGame, snapshot.games]);
+  }, [debouncedSearchTermFast, selectedGame, snapshot.games]);
 
   const gpuSuggestions = useMemo(() => {
-    if (debouncedGpu.length < 2 || selectedGpu) return [];
-    const searchTerm = debouncedGpu.toLowerCase();
+    if (debouncedGpuFast.length < 2 || selectedGpu) return [];
+    const searchTerm = debouncedGpuFast.toLowerCase();
     return snapshot.gpus
       .filter(gpu => {
         const name = gpu.toLowerCase();
@@ -205,11 +212,11 @@ export default function ConfigBrowserClient() {
       })
       .slice(0, SUGGESTION_LIMIT)
       .map(gpu => ({ gpu }));
-  }, [debouncedGpu, selectedGpu, snapshot.gpus]);
+  }, [debouncedGpuFast, selectedGpu, snapshot.gpus]);
 
   const deviceSuggestions = useMemo(() => {
-    if (debouncedDevice.length < 2 || selectedDevice) return [];
-    const searchTerm = debouncedDevice.toLowerCase();
+    if (debouncedDeviceFast.length < 2 || selectedDevice) return [];
+    const searchTerm = debouncedDeviceFast.toLowerCase();
     return snapshot.devices
       .filter(device => {
         const deviceName = device.name.toLowerCase();
@@ -237,20 +244,20 @@ export default function ConfigBrowserClient() {
                allWordsMatchModel;
       })
       .slice(0, SUGGESTION_LIMIT);
-  }, [debouncedDevice, selectedDevice, snapshot.devices]);
+  }, [debouncedDeviceFast, selectedDevice, snapshot.devices]);
 
   // --- Show/Hide Suggestions Based on Results ---
   useEffect(() => {
-    setShowSuggestions(gameSuggestions.length > 0 && debouncedSearchTerm.length >= 2 && !selectedGame);
-  }, [gameSuggestions.length, debouncedSearchTerm.length, selectedGame]);
+    setShowSuggestions(gameSuggestions.length > 0 && debouncedSearchTermFast.length >= 2 && !selectedGame);
+  }, [gameSuggestions.length, debouncedSearchTermFast.length, selectedGame]);
 
   useEffect(() => {
-    setShowGpuSuggestions(gpuSuggestions.length > 0 && debouncedGpu.length >= 2 && !selectedGpu);
-  }, [gpuSuggestions.length, debouncedGpu.length, selectedGpu]);
+    setShowGpuSuggestions(gpuSuggestions.length > 0 && debouncedGpuFast.length >= 2 && !selectedGpu);
+  }, [gpuSuggestions.length, debouncedGpuFast.length, selectedGpu]);
 
   useEffect(() => {
-    setShowDeviceSuggestions(deviceSuggestions.length > 0 && debouncedDevice.length >= 2 && !selectedDevice);
-  }, [deviceSuggestions.length, debouncedDevice.length, selectedDevice]);
+    setShowDeviceSuggestions(deviceSuggestions.length > 0 && debouncedDeviceFast.length >= 2 && !selectedDevice);
+  }, [deviceSuggestions.length, debouncedDeviceFast.length, selectedDevice]);
 
   // Handle clicking outside autocomplete
   useEffect(() => {
