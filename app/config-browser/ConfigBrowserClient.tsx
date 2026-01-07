@@ -228,8 +228,10 @@ export default function ConfigBrowserClient() {
   // --- Load Static Filter Data ---
   useEffect(() => {
     setFiltersLoading(true);
-    // Use basePath for GitHub Pages deployment
-    const basePath = process.env.NODE_ENV === 'production' ? '/gamenative-config-tools' : '';
+    // Use basePath for GitHub Pages deployment (set in next.config.ts)
+    // In production, NEXT_PUBLIC_BASE_PATH defaults to '/gamenative-config-tools'
+    // In development, it's empty so files are fetched from root
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
     fetch(`${basePath}/filters.json`)
       .then(res => {
         if (!res.ok) throw new Error(`Failed to load filters: ${res.status}`);
