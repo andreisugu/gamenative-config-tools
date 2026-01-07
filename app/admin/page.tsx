@@ -115,7 +115,7 @@ export default function AdminPage() {
       const steamGames = await steamResponse.json();
       
       const filteredGames = steamGames
-        .filter(app => {
+        .filter((app: any) => {
           const name = app.name.toLowerCase();
           return !name.includes('dlc') && 
                  !name.includes('soundtrack') && 
@@ -125,7 +125,7 @@ export default function AdminPage() {
                  !name.includes('test') && 
                  name.length > 2;
         })
-        .map(app => ({ id: app.appid, name: app.name }))
+        .map((app: any) => ({ id: app.appid, name: app.name }))
         .slice(0, 50000);
       
       const jsonString = JSON.stringify(filteredGames, null, 2);
