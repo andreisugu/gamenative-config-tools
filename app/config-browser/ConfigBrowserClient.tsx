@@ -581,7 +581,7 @@ export default function ConfigBrowserClient() {
         </div>
 
         {/* --- Control Bar (Search, Sort, Filter) --- */}
-        <div className="md:static sticky top-4 z-30 mb-8 bg-slate-900/80 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-4 shadow-2xl shadow-black/20">
+        <div className="md:static sticky top-4 z-50 mb-8 bg-slate-900/80 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-4 shadow-2xl shadow-black/20">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
             
             {/* 1. Game Autocomplete Search */}
