@@ -72,7 +72,7 @@ interface ConfigBrowserClientProps {
 
 const ITEMS_PER_PAGE = 15;
 const SUGGESTION_DEBOUNCE_MS = 250; // Debounce for filter suggestions dropdown
-const SUGGESTION_LIMIT = 6;
+const SUGGESTION_LIMIT = 15;
 const GAME_RUNS_QUERY = 'id,rating,avg_fps,notes,configs,created_at,app_version:app_versions(semver),tags,game:games!inner(id,name),device:devices!inner(id,model,gpu,android_ver)';
 
 // --- Helper Hook: useDebounce ---
@@ -134,6 +134,7 @@ export default function ConfigBrowserClient() {
   
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
+  const [goToPage, setGoToPage] = useState('');
 
   // Fast debounce for showing filter suggestions (250ms)
   const debouncedSearchTermFast = useDebounce(searchTerm, SUGGESTION_DEBOUNCE_MS);
@@ -497,6 +498,48 @@ export default function ConfigBrowserClient() {
     return Math.ceil(totalCount / ITEMS_PER_PAGE);
   }, [totalCount]);
 
+  // Generate page numbers for pagination
+  const getPageNumbers = useMemo(() => {
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+
+    const pages: (number | 'ellipsis')[] = [];
+    
+    // Always show first 3 pages
+    pages.push(1, 2, 3);
+    
+    // Add ellipsis if there's a gap
+    if (currentPage > 5) {
+      pages.push('ellipsis');
+    }
+    
+    // Add current page and neighbors (if not already included)
+    const start = Math.max(4, currentPage - 1);
+    const end = Math.min(totalPages - 3, currentPage + 1);
+    
+    for (let i = start; i <= end; i++) {
+      if (!pages.includes(i)) {
+        pages.push(i);
+      }
+    }
+    
+    // Add ellipsis if there's a gap before last pages
+    if (currentPage < totalPages - 4) {
+      pages.push('ellipsis');
+    }
+    
+    // Always show last 3 pages (if not already included)
+    const lastThree = [totalPages - 2, totalPages - 1, totalPages];
+    lastThree.forEach(page => {
+      if (page > 3 && !pages.includes(page)) {
+        pages.push(page);
+      }
+    });
+    
+    return pages;
+  }, [currentPage, totalPages]);
+
   // Scroll to top when changing pages
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -597,6 +640,14 @@ export default function ConfigBrowserClient() {
     }
   };
 
+  const handleGoToPage = () => {
+    const pageNum = parseInt(goToPage);
+    if (pageNum >= 1 && pageNum <= totalPages) {
+      setCurrentPage(pageNum);
+      setGoToPage('');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-slate-200 font-sans selection:bg-cyan-500/30">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -650,7 +701,7 @@ export default function ConfigBrowserClient() {
 
                 {/* Suggestions Dropdown */}
                 {showSuggestions && gameSuggestions.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden z-50 max-h-64 overflow-y-auto">
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden z-50 max-h-80 overflow-y-auto">
                     <div className="text-xs font-semibold text-slate-500 px-4 py-2 bg-slate-800/80 sticky top-0">SUGGESTED GAMES</div>
                     {gameSuggestions.map((game) => (
                       <button
@@ -698,7 +749,7 @@ export default function ConfigBrowserClient() {
 
                 {/* GPU Suggestions Dropdown */}
                 {showGpuSuggestions && gpuSuggestions.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden z-[99999] max-h-64 overflow-y-auto">
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden z-[99999] max-h-80 overflow-y-auto">
                     <div className="text-xs font-semibold text-slate-500 px-4 py-2 bg-slate-800/80 sticky top-0">SUGGESTED GPUs</div>
                     {gpuSuggestions.map((gpu, index) => (
                       <button
@@ -746,7 +797,7 @@ export default function ConfigBrowserClient() {
 
                 {/* Device Suggestions Dropdown */}
                 {showDeviceSuggestions && deviceSuggestions.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden z-[99999] max-h-64 overflow-y-auto">
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden z-[99999] max-h-80 overflow-y-auto">
                     <div className="text-xs font-semibold text-slate-500 px-4 py-2 bg-slate-800/80 sticky top-0">SUGGESTED DEVICES</div>
                     {deviceSuggestions.map((device, index) => (
                       <button
@@ -985,45 +1036,77 @@ export default function ConfigBrowserClient() {
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="mt-10 flex items-center justify-center gap-2 select-none">
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                  disabled={currentPage === 1}
-                  className="p-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-400 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-700 hover:text-white transition-colors"
-                >
-                  <ChevronLeft size={20} />
-                </button>
-                
-                <div className="flex gap-1 px-2">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1)
-                    .filter(page => page === 1 || page === totalPages || Math.abs(page - currentPage) <= 1)
-                    .map((page, index, array) => {
-                      const prevPage = array[index - 1];
+              <div className="mt-10 flex flex-col items-center gap-4 select-none">
+                <div className="flex items-center justify-center gap-2">
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                    className="p-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-400 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-700 hover:text-white transition-colors"
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+                  
+                  <div className="flex gap-1 px-2">
+                    {getPageNumbers.map((item, index) => {
+                      if (item === 'ellipsis') {
+                        return (
+                          <span key={`ellipsis-${index}`} className="text-slate-600 px-2 flex items-center">
+                            ...
+                          </span>
+                        );
+                      }
+                      
+                      const page = item as number;
                       return (
-                        <div key={page} className="flex items-center">
-                          {prevPage && page - prevPage > 1 && <span className="text-slate-600 px-2">...</span>}
-                          <button
-                            onClick={() => setCurrentPage(page)}
-                            className={`w-10 h-10 rounded-lg text-sm font-bold transition-all ${
-                              currentPage === page
-                                ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-500/25 scale-110'
-                                : 'bg-slate-800 border border-slate-700 text-slate-400 hover:bg-slate-700 hover:text-white'
-                            }`}
-                          >
-                            {page}
-                          </button>
-                        </div>
+                        <button
+                          key={page}
+                          onClick={() => setCurrentPage(page)}
+                          className={`w-10 h-10 rounded-lg text-sm font-bold transition-all ${
+                            currentPage === page
+                              ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-500/25 scale-110'
+                              : 'bg-slate-800 border border-slate-700 text-slate-400 hover:bg-slate-700 hover:text-white'
+                          }`}
+                        >
+                          {page}
+                        </button>
                       );
                     })}
-                </div>
+                  </div>
 
-                <button
-                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                  disabled={currentPage === totalPages}
-                  className="p-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-400 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-700 hover:text-white transition-colors"
-                >
-                  <ChevronRight size={20} />
-                </button>
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                    disabled={currentPage === totalPages}
+                    className="p-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-400 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-700 hover:text-white transition-colors"
+                  >
+                    <ChevronRight size={20} />
+                  </button>
+                </div>
+                
+                {/* Go to Page Input */}
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-slate-400">Go to:</span>
+                  <input
+                    type="number"
+                    min="1"
+                    max={totalPages}
+                    value={goToPage}
+                    onChange={(e) => setGoToPage(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleGoToPage();
+                      }
+                    }}
+                    className="w-16 px-2 py-1 bg-slate-800 border border-slate-700 rounded text-white text-center focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20 transition-all"
+                    placeholder={currentPage.toString()}
+                  />
+                  <button
+                    onClick={handleGoToPage}
+                    disabled={!goToPage || parseInt(goToPage) < 1 || parseInt(goToPage) > totalPages}
+                    className="px-3 py-1 bg-slate-700 hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded text-sm transition-colors"
+                  >
+                    Go
+                  </button>
+                </div>
               </div>
             )}
           </>
