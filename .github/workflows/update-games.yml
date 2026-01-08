@@ -1,0 +1,33 @@
+name: Update Steam Games
+on:
+  schedule:
+    - cron: '0 0 1 * *' # Run on 1st of every month
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run games generator
+        run: node scripts/generate-games.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: npm install node-fetch
+      
+      - name: Combine filters
+        run: node scripts/combine-filters.js
+      - name: Commit and Push
+        run: |
+          git config --global user.name 'Github Actions'
+          git config --global user.email 'actions@github.com'
+          git add public/filters.json
+          git commit -m "Update Steam games and filters" || exit 0
+          git push

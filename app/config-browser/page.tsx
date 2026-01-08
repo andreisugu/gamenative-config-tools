@@ -6,11 +6,7 @@ export const metadata = {
   description: 'Browse and download high-performance game configurations shared by the community.',
 };
 
-export default function ConfigSearchPage({
-  searchParams,
-}: {
-  searchParams: { search?: string; gpu?: string };
-}) {
+export default function ConfigSearchPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center">
@@ -20,10 +16,7 @@ export default function ConfigSearchPage({
         </div>
       </div>
     }>
-      <ConfigBrowserClient 
-        initialSearch={searchParams.search} 
-        initialGpu={searchParams.gpu} 
-      />
+      <ConfigBrowserClient />
     </Suspense>
   );
 }

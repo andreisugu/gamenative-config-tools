@@ -1,0 +1,6834 @@
+[
+  {
+    "name": "ACE France BUZZ 7 Prime",
+    "model": "ACE France BUZZ 7 Prime"
+  },
+  {
+    "name": "ADVAN 1011",
+    "model": "ADVAN 1011"
+  },
+  {
+    "name": "ALLDOCUBE iPlay 70 mini Ultra",
+    "model": "ALLDOCUBE iPlay 70 mini Ultra"
+  },
+  {
+    "name": "ANT DAO TECHNOLOGY LIMITED Air2 Ultra",
+    "model": "ANT DAO TECHNOLOGY LIMITED Air2 Ultra"
+  },
+  {
+    "name": "ARBOR GT78-VN",
+    "model": "ARBOR GT78-VN"
+  },
+  {
+    "name": "AYANEO Pocket ACE",
+    "model": "AYANEO Pocket ACE"
+  },
+  {
+    "name": "AYANEO Pocket DMG",
+    "model": "AYANEO Pocket DMG"
+  },
+  {
+    "name": "AYANEO Pocket DS",
+    "model": "AYANEO Pocket DS"
+  },
+  {
+    "name": "AYANEO Pocket EVO",
+    "model": "AYANEO Pocket EVO"
+  },
+  {
+    "name": "AYANEO Pocket FIT",
+    "model": "AYANEO Pocket FIT"
+  },
+  {
+    "name": "AYANEO Pocket Micro",
+    "model": "AYANEO Pocket Micro"
+  },
+  {
+    "name": "AYANEO Pocket Micro Classic",
+    "model": "AYANEO Pocket Micro Classic"
+  },
+  {
+    "name": "AYANEO Pocket S",
+    "model": "AYANEO Pocket S"
+  },
+  {
+    "name": "AYANEO Pocket S2 Pro",
+    "model": "AYANEO Pocket S2 Pro"
+  },
+  {
+    "name": "AYANEO_Pocket_AIR",
+    "model": "AYANEO_Pocket_AIR"
+  },
+  {
+    "name": "AYN Odin",
+    "model": "AYN Odin"
+  },
+  {
+    "name": "AYN Odin2",
+    "model": "AYN Odin2"
+  },
+  {
+    "name": "AYN Odin2 Mini",
+    "model": "AYN Odin2 Mini"
+  },
+  {
+    "name": "AYN Odin2 Portal",
+    "model": "AYN Odin2 Portal"
+  },
+  {
+    "name": "AYN Odin2EX",
+    "model": "AYN Odin2EX"
+  },
+  {
+    "name": "AYN Odin_M0",
+    "model": "AYN Odin_M0"
+  },
+  {
+    "name": "AYN Odin_M2",
+    "model": "AYN Odin_M2"
+  },
+  {
+    "name": "AYN Thor",
+    "model": "AYN Thor"
+  },
+  {
+    "name": "Alldocube T1201",
+    "model": "Alldocube T1201"
+  },
+  {
+    "name": "Alldocube iPlay 70 mini Pro",
+    "model": "Alldocube iPlay 70 mini Pro"
+  },
+  {
+    "name": "Alldocube iPlay40_5G",
+    "model": "Alldocube iPlay40_5G"
+  },
+  {
+    "name": "Alldocube iPlay50_mini_Pro",
+    "model": "Alldocube iPlay50_mini_Pro"
+  },
+  {
+    "name": "Alldocube iPlay60 mini Turbo",
+    "model": "Alldocube iPlay60 mini Turbo"
+  },
+  {
+    "name": "Alldocube iPlay_50_Pro",
+    "model": "Alldocube iPlay_50_Pro"
+  },
+  {
+    "name": "Allwinner QUAD-CORE A133 aw4",
+    "model": "Allwinner QUAD-CORE A133 aw4"
+  },
+  {
+    "name": "Amazon KFRAPWI",
+    "model": "Amazon KFRAPWI"
+  },
+  {
+    "name": "Amazon KFSNWI",
+    "model": "Amazon KFSNWI"
+  },
+  {
+    "name": "Amazon KFTRWI",
+    "model": "Amazon KFTRWI"
+  },
+  {
+    "name": "Amazon KFTUWI",
+    "model": "Amazon KFTUWI"
+  },
+  {
+    "name": "Anbernic RG 406H",
+    "model": "Anbernic RG 406H"
+  },
+  {
+    "name": "Anbernic RG 476H",
+    "model": "Anbernic RG 476H"
+  },
+  {
+    "name": "Anbernic RG 477V",
+    "model": "Anbernic RG 477V"
+  },
+  {
+    "name": "Anbernic RG DS",
+    "model": "Anbernic RG DS"
+  },
+  {
+    "name": "Anbernic RG Slide",
+    "model": "Anbernic RG Slide"
+  },
+  {
+    "name": "Anbernic RG405M",
+    "model": "Anbernic RG405M"
+  },
+  {
+    "name": "Anbernic RG405V",
+    "model": "Anbernic RG405V"
+  },
+  {
+    "name": "Anbernic RG406V",
+    "model": "Anbernic RG406V"
+  },
+  {
+    "name": "Anbernic RG477M",
+    "model": "Anbernic RG477M"
+  },
+  {
+    "name": "Anbernic RG556",
+    "model": "Anbernic RG556"
+  },
+  {
+    "name": "Anbernic RG557",
+    "model": "Anbernic RG557"
+  },
+  {
+    "name": "Anbernic RGCUBE",
+    "model": "Anbernic RGCUBE"
+  },
+  {
+    "name": "BMAX I10_Plus",
+    "model": "BMAX I10_Plus"
+  },
+  {
+    "name": "BOE 100146660",
+    "model": "BOE 100146660"
+  },
+  {
+    "name": "Blackview A100",
+    "model": "Blackview A100"
+  },
+  {
+    "name": "Blackview BL9000",
+    "model": "Blackview BL9000"
+  },
+  {
+    "name": "Blackview BV6200 Plus",
+    "model": "Blackview BV6200 Plus"
+  },
+  {
+    "name": "Blackview COLOR 8",
+    "model": "Blackview COLOR 8"
+  },
+  {
+    "name": "Blackview MEGA 1",
+    "model": "Blackview MEGA 1"
+  },
+  {
+    "name": "Blackview MEGA 8",
+    "model": "Blackview MEGA 8"
+  },
+  {
+    "name": "Blackview SHARK 8",
+    "model": "Blackview SHARK 8"
+  },
+  {
+    "name": "Blackview SHARK 9",
+    "model": "Blackview SHARK 9"
+  },
+  {
+    "name": "Blackview Tab 11",
+    "model": "Blackview Tab 11"
+  },
+  {
+    "name": "Blackview Tab 13",
+    "model": "Blackview Tab 13"
+  },
+  {
+    "name": "Bullitt Motorola Defy",
+    "model": "Bullitt Motorola Defy"
+  },
+  {
+    "name": "CUBOT KINGKONG X",
+    "model": "CUBOT KINGKONG X"
+  },
+  {
+    "name": "CUBOT MAX 5",
+    "model": "CUBOT MAX 5"
+  },
+  {
+    "name": "CUBOT P90",
+    "model": "CUBOT P90"
+  },
+  {
+    "name": "CUBOT TAB KINGKONG MINI",
+    "model": "CUBOT TAB KINGKONG MINI"
+  },
+  {
+    "name": "CUBOT X70",
+    "model": "CUBOT X70"
+  },
+  {
+    "name": "Cat S62",
+    "model": "Cat S62"
+  },
+  {
+    "name": "DOOGEE N55",
+    "model": "DOOGEE N55"
+  },
+  {
+    "name": "DOOGEE S100",
+    "model": "DOOGEE S100"
+  },
+  {
+    "name": "DOOGEE S200",
+    "model": "DOOGEE S200"
+  },
+  {
+    "name": "DOOGEE S89",
+    "model": "DOOGEE S89"
+  },
+  {
+    "name": "DOOGEE T40",
+    "model": "DOOGEE T40"
+  },
+  {
+    "name": "Dongyuan Intelligent BPad",
+    "model": "Dongyuan Intelligent BPad"
+  },
+  {
+    "name": "EL Pad_S8",
+    "model": "EL Pad_S8"
+  },
+  {
+    "name": "Emdoor LifeTabPlus",
+    "model": "Emdoor LifeTabPlus"
+  },
+  {
+    "name": "Fairphone 6",
+    "model": "Fairphone 6"
+  },
+  {
+    "name": "Fairphone FP4",
+    "model": "Fairphone FP4"
+  },
+  {
+    "name": "Fairphone FP5",
+    "model": "Fairphone FP5"
+  },
+  {
+    "name": "Fxtec QX1050",
+    "model": "Fxtec QX1050"
+  },
+  {
+    "name": "GameForce_ACE",
+    "model": "GameForce_ACE"
+  },
+  {
+    "name": "General Mobile G700",
+    "model": "General Mobile G700"
+  },
+  {
+    "name": "Gigaset E940-2849-00",
+    "model": "Gigaset E940-2849-00"
+  },
+  {
+    "name": "Google GMS on ARM64",
+    "model": "Google GMS on ARM64"
+  },
+  {
+    "name": "Google Pixel 10",
+    "model": "Google Pixel 10"
+  },
+  {
+    "name": "Google Pixel 10 Pro",
+    "model": "Google Pixel 10 Pro"
+  },
+  {
+    "name": "Google Pixel 10 Pro Fold",
+    "model": "Google Pixel 10 Pro Fold"
+  },
+  {
+    "name": "Google Pixel 10 Pro XL",
+    "model": "Google Pixel 10 Pro XL"
+  },
+  {
+    "name": "Google Pixel 3",
+    "model": "Google Pixel 3"
+  },
+  {
+    "name": "Google Pixel 3a",
+    "model": "Google Pixel 3a"
+  },
+  {
+    "name": "Google Pixel 4",
+    "model": "Google Pixel 4"
+  },
+  {
+    "name": "Google Pixel 4a",
+    "model": "Google Pixel 4a"
+  },
+  {
+    "name": "Google Pixel 4a (5G)",
+    "model": "Google Pixel 4a (5G)"
+  },
+  {
+    "name": "Google Pixel 5",
+    "model": "Google Pixel 5"
+  },
+  {
+    "name": "Google Pixel 5a",
+    "model": "Google Pixel 5a"
+  },
+  {
+    "name": "Google Pixel 6",
+    "model": "Google Pixel 6"
+  },
+  {
+    "name": "Google Pixel 6 Pro",
+    "model": "Google Pixel 6 Pro"
+  },
+  {
+    "name": "Google Pixel 6a",
+    "model": "Google Pixel 6a"
+  },
+  {
+    "name": "Google Pixel 7",
+    "model": "Google Pixel 7"
+  },
+  {
+    "name": "Google Pixel 7 Pro",
+    "model": "Google Pixel 7 Pro"
+  },
+  {
+    "name": "Google Pixel 7a",
+    "model": "Google Pixel 7a"
+  },
+  {
+    "name": "Google Pixel 8",
+    "model": "Google Pixel 8"
+  },
+  {
+    "name": "Google Pixel 8 Pro",
+    "model": "Google Pixel 8 Pro"
+  },
+  {
+    "name": "Google Pixel 8a",
+    "model": "Google Pixel 8a"
+  },
+  {
+    "name": "Google Pixel 9",
+    "model": "Google Pixel 9"
+  },
+  {
+    "name": "Google Pixel 9 Pro",
+    "model": "Google Pixel 9 Pro"
+  },
+  {
+    "name": "Google Pixel 9 Pro Fold",
+    "model": "Google Pixel 9 Pro Fold"
+  },
+  {
+    "name": "Google Pixel 9 Pro XL",
+    "model": "Google Pixel 9 Pro XL"
+  },
+  {
+    "name": "Google Pixel 9a",
+    "model": "Google Pixel 9a"
+  },
+  {
+    "name": "Google Pixel Fold",
+    "model": "Google Pixel Fold"
+  },
+  {
+    "name": "Google Pixel Tablet",
+    "model": "Google Pixel Tablet"
+  },
+  {
+    "name": "Google hatch",
+    "model": "Google hatch"
+  },
+  {
+    "name": "Google nami",
+    "model": "Google nami"
+  },
+  {
+    "name": "Google pixel 5",
+    "model": "Google pixel 5"
+  },
+  {
+    "name": "HMD Global HMD Skyline",
+    "model": "HMD Global HMD Skyline"
+  },
+  {
+    "name": "HMD Global Nokia G60 5G",
+    "model": "HMD Global Nokia G60 5G"
+  },
+  {
+    "name": "HMD Global Nokia T20",
+    "model": "HMD Global Nokia T20"
+  },
+  {
+    "name": "HONOR ABR-NX1",
+    "model": "HONOR ABR-NX1"
+  },
+  {
+    "name": "HONOR ALI-AN00",
+    "model": "HONOR ALI-AN00"
+  },
+  {
+    "name": "HONOR ALI-NX1",
+    "model": "HONOR ALI-NX1"
+  },
+  {
+    "name": "HONOR ALT-LX1",
+    "model": "HONOR ALT-LX1"
+  },
+  {
+    "name": "HONOR ALT-LX2",
+    "model": "HONOR ALT-LX2"
+  },
+  {
+    "name": "HONOR ALT-NX1",
+    "model": "HONOR ALT-NX1"
+  },
+  {
+    "name": "HONOR ALT-NX3",
+    "model": "HONOR ALT-NX3"
+  },
+  {
+    "name": "HONOR ANY-LX2",
+    "model": "HONOR ANY-LX2"
+  },
+  {
+    "name": "HONOR BKQ-AN00",
+    "model": "HONOR BKQ-AN00"
+  },
+  {
+    "name": "HONOR BRP-NX1",
+    "model": "HONOR BRP-NX1"
+  },
+  {
+    "name": "HONOR BRP-NX1M",
+    "model": "HONOR BRP-NX1M"
+  },
+  {
+    "name": "HONOR BRP-NX3",
+    "model": "HONOR BRP-NX3"
+  },
+  {
+    "name": "HONOR BVL-AN16",
+    "model": "HONOR BVL-AN16"
+  },
+  {
+    "name": "HONOR BVL-N49",
+    "model": "HONOR BVL-N49"
+  },
+  {
+    "name": "HONOR BVL-N59",
+    "model": "HONOR BVL-N59"
+  },
+  {
+    "name": "HONOR CGA-W00",
+    "model": "HONOR CGA-W00"
+  },
+  {
+    "name": "HONOR CLK-LX1",
+    "model": "HONOR CLK-LX1"
+  },
+  {
+    "name": "HONOR CLK-LX2",
+    "model": "HONOR CLK-LX2"
+  },
+  {
+    "name": "HONOR CLK-LX3",
+    "model": "HONOR CLK-LX3"
+  },
+  {
+    "name": "HONOR CLK-NX3",
+    "model": "HONOR CLK-NX3"
+  },
+  {
+    "name": "HONOR CRT-LX1",
+    "model": "HONOR CRT-LX1"
+  },
+  {
+    "name": "HONOR CRT-NX1",
+    "model": "HONOR CRT-NX1"
+  },
+  {
+    "name": "HONOR CRT-NX3",
+    "model": "HONOR CRT-NX3"
+  },
+  {
+    "name": "HONOR DNP-NX9",
+    "model": "HONOR DNP-NX9"
+  },
+  {
+    "name": "HONOR DNY-NX9",
+    "model": "HONOR DNY-NX9"
+  },
+  {
+    "name": "HONOR ELI-NX9",
+    "model": "HONOR ELI-NX9"
+  },
+  {
+    "name": "HONOR ELN-W09",
+    "model": "HONOR ELN-W09"
+  },
+  {
+    "name": "HONOR ELN2-W29",
+    "model": "HONOR ELN2-W29"
+  },
+  {
+    "name": "HONOR ELP-NX9",
+    "model": "HONOR ELP-NX9"
+  },
+  {
+    "name": "HONOR FCP-AN10",
+    "model": "HONOR FCP-AN10"
+  },
+  {
+    "name": "HONOR FCP-N49",
+    "model": "HONOR FCP-N49"
+  },
+  {
+    "name": "HONOR FNE-NX9",
+    "model": "HONOR FNE-NX9"
+  },
+  {
+    "name": "HONOR GFY-LX2",
+    "model": "HONOR GFY-LX2"
+  },
+  {
+    "name": "HONOR HEY2-N09",
+    "model": "HONOR HEY2-N09"
+  },
+  {
+    "name": "HONOR HEY2-W09",
+    "model": "HONOR HEY2-W09"
+  },
+  {
+    "name": "HONOR HEY3-N09",
+    "model": "HONOR HEY3-N09"
+  },
+  {
+    "name": "HONOR HEY3-W00",
+    "model": "HONOR HEY3-W00"
+  },
+  {
+    "name": "HONOR JDY-LX1",
+    "model": "HONOR JDY-LX1"
+  },
+  {
+    "name": "HONOR JDY-LX2",
+    "model": "HONOR JDY-LX2"
+  },
+  {
+    "name": "HONOR JDY-LX3",
+    "model": "HONOR JDY-LX3"
+  },
+  {
+    "name": "HONOR LGN-LX3",
+    "model": "HONOR LGN-LX3"
+  },
+  {
+    "name": "HONOR LGN-NX1",
+    "model": "HONOR LGN-NX1"
+  },
+  {
+    "name": "HONOR LLY-LX1",
+    "model": "HONOR LLY-LX1"
+  },
+  {
+    "name": "HONOR LLY-NX1",
+    "model": "HONOR LLY-NX1"
+  },
+  {
+    "name": "HONOR MBH-AN10",
+    "model": "HONOR MBH-AN10"
+  },
+  {
+    "name": "HONOR MBH-N49",
+    "model": "HONOR MBH-N49"
+  },
+  {
+    "name": "HONOR MTN-NX1",
+    "model": "HONOR MTN-NX1"
+  },
+  {
+    "name": "HONOR NDL-L09",
+    "model": "HONOR NDL-L09"
+  },
+  {
+    "name": "HONOR NDL-W09",
+    "model": "HONOR NDL-W09"
+  },
+  {
+    "name": "HONOR NIC-LX1",
+    "model": "HONOR NIC-LX1"
+  },
+  {
+    "name": "HONOR NTH-NX9",
+    "model": "HONOR NTH-NX9"
+  },
+  {
+    "name": "HONOR NTN-LX1",
+    "model": "HONOR NTN-LX1"
+  },
+  {
+    "name": "HONOR PGT-N19",
+    "model": "HONOR PGT-N19"
+  },
+  {
+    "name": "HONOR PTP-AN10",
+    "model": "HONOR PTP-AN10"
+  },
+  {
+    "name": "HONOR PTP-AN70",
+    "model": "HONOR PTP-AN70"
+  },
+  {
+    "name": "HONOR PTP-N49",
+    "model": "HONOR PTP-N49"
+  },
+  {
+    "name": "HONOR REA-NX9",
+    "model": "HONOR REA-NX9"
+  },
+  {
+    "name": "HONOR RMO-NX1",
+    "model": "HONOR RMO-NX1"
+  },
+  {
+    "name": "HONOR RMO-NX3",
+    "model": "HONOR RMO-NX3"
+  },
+  {
+    "name": "HONOR ROD2-W09",
+    "model": "HONOR ROD2-W09"
+  },
+  {
+    "name": "HONOR VER-N49",
+    "model": "HONOR VER-N49"
+  },
+  {
+    "name": "HONOR VNE-LX1",
+    "model": "HONOR VNE-LX1"
+  },
+  {
+    "name": "HUAWEI AGS5-L09",
+    "model": "HUAWEI AGS5-L09"
+  },
+  {
+    "name": "HUAWEI ALN-AL00",
+    "model": "HUAWEI ALN-AL00"
+  },
+  {
+    "name": "HUAWEI ALN-AL10",
+    "model": "HUAWEI ALN-AL10"
+  },
+  {
+    "name": "HUAWEI ALT-L29",
+    "model": "HUAWEI ALT-L29"
+  },
+  {
+    "name": "HUAWEI ANA-AN00",
+    "model": "HUAWEI ANA-AN00"
+  },
+  {
+    "name": "HUAWEI ANA-NX9",
+    "model": "HUAWEI ANA-NX9"
+  },
+  {
+    "name": "HUAWEI ANE-LX1",
+    "model": "HUAWEI ANE-LX1"
+  },
+  {
+    "name": "HUAWEI BAH3-L09",
+    "model": "HUAWEI BAH3-L09"
+  },
+  {
+    "name": "HUAWEI BAH3-W59",
+    "model": "HUAWEI BAH3-W59"
+  },
+  {
+    "name": "HUAWEI BAH4-W09",
+    "model": "HUAWEI BAH4-W09"
+  },
+  {
+    "name": "HUAWEI BKY-W09",
+    "model": "HUAWEI BKY-W09"
+  },
+  {
+    "name": "HUAWEI BLK-LX9",
+    "model": "HUAWEI BLK-LX9"
+  },
+  {
+    "name": "HUAWEI BNE-LX1",
+    "model": "HUAWEI BNE-LX1"
+  },
+  {
+    "name": "HUAWEI BRA-AL00",
+    "model": "HUAWEI BRA-AL00"
+  },
+  {
+    "name": "HUAWEI BTK-W09",
+    "model": "HUAWEI BTK-W09"
+  },
+  {
+    "name": "HUAWEI BTKR-W09",
+    "model": "HUAWEI BTKR-W09"
+  },
+  {
+    "name": "HUAWEI CLT-L09",
+    "model": "HUAWEI CLT-L09"
+  },
+  {
+    "name": "HUAWEI CTR-L81",
+    "model": "HUAWEI CTR-L81"
+  },
+  {
+    "name": "HUAWEI DBR-W09",
+    "model": "HUAWEI DBR-W09"
+  },
+  {
+    "name": "HUAWEI DBY-W09",
+    "model": "HUAWEI DBY-W09"
+  },
+  {
+    "name": "HUAWEI DCO-LX9",
+    "model": "HUAWEI DCO-LX9"
+  },
+  {
+    "name": "HUAWEI DMG-W00",
+    "model": "HUAWEI DMG-W00"
+  },
+  {
+    "name": "HUAWEI EBG-AN10",
+    "model": "HUAWEI EBG-AN10"
+  },
+  {
+    "name": "HUAWEI ELS-AN00",
+    "model": "HUAWEI ELS-AN00"
+  },
+  {
+    "name": "HUAWEI EVE-LX9",
+    "model": "HUAWEI EVE-LX9"
+  },
+  {
+    "name": "HUAWEI EVR-L29",
+    "model": "HUAWEI EVR-L29"
+  },
+  {
+    "name": "HUAWEI FOA-AL00",
+    "model": "HUAWEI FOA-AL00"
+  },
+  {
+    "name": "HUAWEI FOA-LX9",
+    "model": "HUAWEI FOA-LX9"
+  },
+  {
+    "name": "HUAWEI GFY-LX1",
+    "model": "HUAWEI GFY-LX1"
+  },
+  {
+    "name": "HUAWEI GOT-W29",
+    "model": "HUAWEI GOT-W29"
+  },
+  {
+    "name": "HUAWEI GRL-AL10",
+    "model": "HUAWEI GRL-AL10"
+  },
+  {
+    "name": "HUAWEI GRL-LX9",
+    "model": "HUAWEI GRL-LX9"
+  },
+  {
+    "name": "HUAWEI HBN-LX9",
+    "model": "HUAWEI HBN-LX9"
+  },
+  {
+    "name": "HUAWEI HPR-W72",
+    "model": "HUAWEI HPR-W72"
+  },
+  {
+    "name": "HUAWEI HRY-AL00Ta",
+    "model": "HUAWEI HRY-AL00Ta"
+  },
+  {
+    "name": "HUAWEI HRY-LX1T",
+    "model": "HUAWEI HRY-LX1T"
+  },
+  {
+    "name": "HUAWEI ICL-LX9",
+    "model": "HUAWEI ICL-LX9"
+  },
+  {
+    "name": "HUAWEI JLN-LX1",
+    "model": "HUAWEI JLN-LX1"
+  },
+  {
+    "name": "HUAWEI JNY-LX1",
+    "model": "HUAWEI JNY-LX1"
+  },
+  {
+    "name": "HUAWEI LIO-AN00P",
+    "model": "HUAWEI LIO-AN00P"
+  },
+  {
+    "name": "HUAWEI LMR-LX9",
+    "model": "HUAWEI LMR-LX9"
+  },
+  {
+    "name": "HUAWEI LMU-LX9",
+    "model": "HUAWEI LMU-LX9"
+  },
+  {
+    "name": "HUAWEI LNA-LX9",
+    "model": "HUAWEI LNA-LX9"
+  },
+  {
+    "name": "HUAWEI LYA-L09",
+    "model": "HUAWEI LYA-L09"
+  },
+  {
+    "name": "HUAWEI MAO-LX9N",
+    "model": "HUAWEI MAO-LX9N"
+  },
+  {
+    "name": "HUAWEI MAR-LX1A",
+    "model": "HUAWEI MAR-LX1A"
+  },
+  {
+    "name": "HUAWEI MIA-LX9",
+    "model": "HUAWEI MIA-LX9"
+  },
+  {
+    "name": "HUAWEI MIS-LX9",
+    "model": "HUAWEI MIS-LX9"
+  },
+  {
+    "name": "HUAWEI MNA-LX9",
+    "model": "HUAWEI MNA-LX9"
+  },
+  {
+    "name": "HUAWEI MRDI-W09",
+    "model": "HUAWEI MRDI-W09"
+  },
+  {
+    "name": "HUAWEI MRO-W09",
+    "model": "HUAWEI MRO-W09"
+  },
+  {
+    "name": "HUAWEI MRR-W29",
+    "model": "HUAWEI MRR-W29"
+  },
+  {
+    "name": "HUAWEI NAM-LX9",
+    "model": "HUAWEI NAM-LX9"
+  },
+  {
+    "name": "HUAWEI NCO-AL00",
+    "model": "HUAWEI NCO-AL00"
+  },
+  {
+    "name": "HUAWEI STG-LX1",
+    "model": "HUAWEI STG-LX1"
+  },
+  {
+    "name": "HUAWEI STK-LX3",
+    "model": "HUAWEI STK-LX3"
+  },
+  {
+    "name": "HUAWEI TGR-W09",
+    "model": "HUAWEI TGR-W09"
+  },
+  {
+    "name": "HUAWEI TLR-LX9",
+    "model": "HUAWEI TLR-LX9"
+  },
+  {
+    "name": "HUAWEI TXZ-W09",
+    "model": "HUAWEI TXZ-W09"
+  },
+  {
+    "name": "HUAWEI VOG-L29",
+    "model": "HUAWEI VOG-L29"
+  },
+  {
+    "name": "HUAWEI WEB-W09",
+    "model": "HUAWEI WEB-W09"
+  },
+  {
+    "name": "HXY RP04",
+    "model": "HXY RP04"
+  },
+  {
+    "name": "INFINIX Infinix X1101B",
+    "model": "INFINIX Infinix X1101B"
+  },
+  {
+    "name": "INFINIX Infinix X1102",
+    "model": "INFINIX Infinix X1102"
+  },
+  {
+    "name": "INFINIX Infinix X6525",
+    "model": "INFINIX Infinix X6525"
+  },
+  {
+    "name": "INFINIX Infinix X6528",
+    "model": "INFINIX Infinix X6528"
+  },
+  {
+    "name": "INFINIX Infinix X6528B",
+    "model": "INFINIX Infinix X6528B"
+  },
+  {
+    "name": "INFINIX Infinix X6531B",
+    "model": "INFINIX Infinix X6531B"
+  },
+  {
+    "name": "INFINIX Infinix X6532",
+    "model": "INFINIX Infinix X6532"
+  },
+  {
+    "name": "INFINIX Infinix X669C",
+    "model": "INFINIX Infinix X669C"
+  },
+  {
+    "name": "INFINIX Infinix X669D",
+    "model": "INFINIX Infinix X669D"
+  },
+  {
+    "name": "INFINIX Infinix X6716",
+    "model": "INFINIX Infinix X6716"
+  },
+  {
+    "name": "INFINIX Infinix X6720B",
+    "model": "INFINIX Infinix X6720B"
+  },
+  {
+    "name": "INFINIX Infinix X6725",
+    "model": "INFINIX Infinix X6725"
+  },
+  {
+    "name": "INFINIX Infinix X6728",
+    "model": "INFINIX Infinix X6728"
+  },
+  {
+    "name": "INFINIX Infinix X6731",
+    "model": "INFINIX Infinix X6731"
+  },
+  {
+    "name": "INFINIX Infinix X6739",
+    "model": "INFINIX Infinix X6739"
+  },
+  {
+    "name": "INFINIX Infinix X676B",
+    "model": "INFINIX Infinix X676B"
+  },
+  {
+    "name": "INFINIX Infinix X676C",
+    "model": "INFINIX Infinix X676C"
+  },
+  {
+    "name": "INFINIX Infinix X678B",
+    "model": "INFINIX Infinix X678B"
+  },
+  {
+    "name": "INFINIX Infinix X6815D",
+    "model": "INFINIX Infinix X6815D"
+  },
+  {
+    "name": "INFINIX Infinix X6821",
+    "model": "INFINIX Infinix X6821"
+  },
+  {
+    "name": "INFINIX Infinix X6826B",
+    "model": "INFINIX Infinix X6826B"
+  },
+  {
+    "name": "INFINIX Infinix X6826C",
+    "model": "INFINIX Infinix X6826C"
+  },
+  {
+    "name": "INFINIX Infinix X6831",
+    "model": "INFINIX Infinix X6831"
+  },
+  {
+    "name": "INFINIX Infinix X6833B",
+    "model": "INFINIX Infinix X6833B"
+  },
+  {
+    "name": "INFINIX Infinix X6836",
+    "model": "INFINIX Infinix X6836"
+  },
+  {
+    "name": "INFINIX Infinix X6837",
+    "model": "INFINIX Infinix X6837"
+  },
+  {
+    "name": "INFINIX Infinix X6851B",
+    "model": "INFINIX Infinix X6851B"
+  },
+  {
+    "name": "INFINIX Infinix X6853",
+    "model": "INFINIX Infinix X6853"
+  },
+  {
+    "name": "INFINIX Infinix X6855",
+    "model": "INFINIX Infinix X6855"
+  },
+  {
+    "name": "INFINIX Infinix X6857B",
+    "model": "INFINIX Infinix X6857B"
+  },
+  {
+    "name": "INFINIX Infinix X6858",
+    "model": "INFINIX Infinix X6858"
+  },
+  {
+    "name": "INFINIX Infinix X6861",
+    "model": "INFINIX Infinix X6861"
+  },
+  {
+    "name": "INFINIX Infinix X6870",
+    "model": "INFINIX Infinix X6870"
+  },
+  {
+    "name": "INFINIX Infinix X6871",
+    "model": "INFINIX Infinix X6871"
+  },
+  {
+    "name": "INFINIX Infinix X6873",
+    "model": "INFINIX Infinix X6873"
+  },
+  {
+    "name": "INFINIX Infinix X6880",
+    "model": "INFINIX Infinix X6880"
+  },
+  {
+    "name": "INFINIX Infinix X6881",
+    "model": "INFINIX Infinix X6881"
+  },
+  {
+    "name": "INFINIX Infinix X6882",
+    "model": "INFINIX Infinix X6882"
+  },
+  {
+    "name": "INFINIX Infinix X6885",
+    "model": "INFINIX Infinix X6885"
+  },
+  {
+    "name": "INFINIX MOBILITY LIMITED Infinix X663D",
+    "model": "INFINIX MOBILITY LIMITED Infinix X663D"
+  },
+  {
+    "name": "INFINIX MOBILITY LIMITED Infinix X695",
+    "model": "INFINIX MOBILITY LIMITED Infinix X695"
+  },
+  {
+    "name": "INFINIX MOBILITY LIMITED Infinix X698",
+    "model": "INFINIX MOBILITY LIMITED Infinix X698"
+  },
+  {
+    "name": "INFINIX XYZ",
+    "model": "INFINIX XYZ"
+  },
+  {
+    "name": "ITEL itel P661N",
+    "model": "ITEL itel P661N"
+  },
+  {
+    "name": "ITEL itel S666LN",
+    "model": "ITEL itel S666LN"
+  },
+  {
+    "name": "KAIDA D115",
+    "model": "KAIDA D115"
+  },
+  {
+    "name": "KENSHI Armor H1s",
+    "model": "KENSHI Armor H1s"
+  },
+  {
+    "name": "LAVA LXX503",
+    "model": "LAVA LXX503"
+  },
+  {
+    "name": "LENOVO Lenovo TB-J606F",
+    "model": "LENOVO Lenovo TB-J606F"
+  },
+  {
+    "name": "LENOVO Lenovo TB-J607Z",
+    "model": "LENOVO Lenovo TB-J607Z"
+  },
+  {
+    "name": "LENOVO Lenovo TB-J616F",
+    "model": "LENOVO Lenovo TB-J616F"
+  },
+  {
+    "name": "LENOVO Lenovo TB-Q706F",
+    "model": "LENOVO Lenovo TB-Q706F"
+  },
+  {
+    "name": "LENOVO Lenovo TB-X6C6F",
+    "model": "LENOVO Lenovo TB-X6C6F"
+  },
+  {
+    "name": "LENOVO Lenovo YT-K606F",
+    "model": "LENOVO Lenovo YT-K606F"
+  },
+  {
+    "name": "LENOVO TB132FU",
+    "model": "LENOVO TB132FU"
+  },
+  {
+    "name": "LENOVO TB310FU",
+    "model": "LENOVO TB310FU"
+  },
+  {
+    "name": "LENOVO TB320FC",
+    "model": "LENOVO TB320FC"
+  },
+  {
+    "name": "LENOVO TB321FU",
+    "model": "LENOVO TB321FU"
+  },
+  {
+    "name": "LENOVO TB322FC",
+    "model": "LENOVO TB322FC"
+  },
+  {
+    "name": "LENOVO TB330FU",
+    "model": "LENOVO TB330FU"
+  },
+  {
+    "name": "LENOVO TB330FUP",
+    "model": "LENOVO TB330FUP"
+  },
+  {
+    "name": "LENOVO TB331FC",
+    "model": "LENOVO TB331FC"
+  },
+  {
+    "name": "LENOVO TB336FU",
+    "model": "LENOVO TB336FU"
+  },
+  {
+    "name": "LENOVO TB351FU",
+    "model": "LENOVO TB351FU"
+  },
+  {
+    "name": "LENOVO TB365FC",
+    "model": "LENOVO TB365FC"
+  },
+  {
+    "name": "LENOVO TB370FU",
+    "model": "LENOVO TB370FU"
+  },
+  {
+    "name": "LENOVO TB371FC",
+    "model": "LENOVO TB371FC"
+  },
+  {
+    "name": "LENOVO TB373FU",
+    "model": "LENOVO TB373FU"
+  },
+  {
+    "name": "LENOVO TB375FC",
+    "model": "LENOVO TB375FC"
+  },
+  {
+    "name": "LENOVO TB520FU",
+    "model": "LENOVO TB520FU"
+  },
+  {
+    "name": "LENOVO TB710FU",
+    "model": "LENOVO TB710FU"
+  },
+  {
+    "name": "LGE L-51A",
+    "model": "LGE L-51A"
+  },
+  {
+    "name": "LGE LM-G710",
+    "model": "LGE LM-G710"
+  },
+  {
+    "name": "LGE LM-G820",
+    "model": "LGE LM-G820"
+  },
+  {
+    "name": "LGE LM-G900",
+    "model": "LGE LM-G900"
+  },
+  {
+    "name": "LGE LM-G910",
+    "model": "LGE LM-G910"
+  },
+  {
+    "name": "LGE LM-V600",
+    "model": "LGE LM-V600"
+  },
+  {
+    "name": "Lenovo Legion Y70",
+    "model": "Lenovo Legion Y70"
+  },
+  {
+    "name": "Lenovo TB-9707F",
+    "model": "Lenovo TB-9707F"
+  },
+  {
+    "name": "Lenovo TB320FC",
+    "model": "Lenovo TB320FC"
+  },
+  {
+    "name": "Logitech GR0006",
+    "model": "Logitech GR0006"
+  },
+  {
+    "name": "MANGMI AIR X",
+    "model": "MANGMI AIR X"
+  },
+  {
+    "name": "MOTOROLA XT2575-3",
+    "model": "MOTOROLA XT2575-3"
+  },
+  {
+    "name": "Microsoft Surface Duo",
+    "model": "Microsoft Surface Duo"
+  },
+  {
+    "name": "Microsoft Surface Duo 2",
+    "model": "Microsoft Surface Duo 2"
+  },
+  {
+    "name": "Moorechip Retroid Pocket 2S",
+    "model": "Moorechip Retroid Pocket 2S"
+  },
+  {
+    "name": "Moorechip Retroid Pocket 3 Plus",
+    "model": "Moorechip Retroid Pocket 3 Plus"
+  },
+  {
+    "name": "Moorechip Retroid Pocket 3.5 Flip",
+    "model": "Moorechip Retroid Pocket 3.5 Flip"
+  },
+  {
+    "name": "Moorechip Retroid Pocket 4",
+    "model": "Moorechip Retroid Pocket 4"
+  },
+  {
+    "name": "Moorechip Retroid Pocket 4 Pro",
+    "model": "Moorechip Retroid Pocket 4 Pro"
+  },
+  {
+    "name": "Moorechip Retroid Pocket 5",
+    "model": "Moorechip Retroid Pocket 5"
+  },
+  {
+    "name": "Moorechip Retroid Pocket Classic",
+    "model": "Moorechip Retroid Pocket Classic"
+  },
+  {
+    "name": "Moorechip Retroid Pocket Flip2",
+    "model": "Moorechip Retroid Pocket Flip2"
+  },
+  {
+    "name": "Moorechip Retroid Pocket Flip2 (D1100)",
+    "model": "Moorechip Retroid Pocket Flip2 (D1100)"
+  },
+  {
+    "name": "Moorechip Retroid Pocket G2",
+    "model": "Moorechip Retroid Pocket G2"
+  },
+  {
+    "name": "Moorechip Retroid Pocket Mini",
+    "model": "Moorechip Retroid Pocket Mini"
+  },
+  {
+    "name": "Moorechip Retroid Pocket Mini V2",
+    "model": "Moorechip Retroid Pocket Mini V2"
+  },
+  {
+    "name": "N-one Npadplus",
+    "model": "N-one Npadplus"
+  },
+  {
+    "name": "NINTENDO Switch",
+    "model": "NINTENDO Switch"
+  },
+  {
+    "name": "NINTENDO Switch Lite",
+    "model": "NINTENDO Switch Lite"
+  },
+  {
+    "name": "NVIDIA SHIELD Android TV",
+    "model": "NVIDIA SHIELD Android TV"
+  },
+  {
+    "name": "Nintendo Switch",
+    "model": "Nintendo Switch"
+  },
+  {
+    "name": "Nintendo Switch OLED",
+    "model": "Nintendo Switch OLED"
+  },
+  {
+    "name": "Nintendo Switch v2",
+    "model": "Nintendo Switch v2"
+  },
+  {
+    "name": "Nothing A001",
+    "model": "Nothing A001"
+  },
+  {
+    "name": "Nothing A015",
+    "model": "Nothing A015"
+  },
+  {
+    "name": "Nothing A024",
+    "model": "Nothing A024"
+  },
+  {
+    "name": "Nothing A059",
+    "model": "Nothing A059"
+  },
+  {
+    "name": "Nothing A059P",
+    "model": "Nothing A059P"
+  },
+  {
+    "name": "Nothing A063",
+    "model": "Nothing A063"
+  },
+  {
+    "name": "Nothing A065",
+    "model": "Nothing A065"
+  },
+  {
+    "name": "Nothing A142",
+    "model": "Nothing A142"
+  },
+  {
+    "name": "Nothing A142P",
+    "model": "Nothing A142P"
+  },
+  {
+    "name": "Nothing AIN065",
+    "model": "Nothing AIN065"
+  },
+  {
+    "name": "OBLUE OB-A98",
+    "model": "OBLUE OB-A98"
+  },
+  {
+    "name": "OBLUE TANK 3",
+    "model": "OBLUE TANK 3"
+  },
+  {
+    "name": "ONEXSUGAR SUGAR 1",
+    "model": "ONEXSUGAR SUGAR 1"
+  },
+  {
+    "name": "OPPO CPH1937",
+    "model": "OPPO CPH1937"
+  },
+  {
+    "name": "OPPO CPH1969",
+    "model": "OPPO CPH1969"
+  },
+  {
+    "name": "OPPO CPH1979",
+    "model": "OPPO CPH1979"
+  },
+  {
+    "name": "OPPO CPH2001",
+    "model": "OPPO CPH2001"
+  },
+  {
+    "name": "OPPO CPH2005",
+    "model": "OPPO CPH2005"
+  },
+  {
+    "name": "OPPO CPH2113",
+    "model": "OPPO CPH2113"
+  },
+  {
+    "name": "OPPO CPH2127",
+    "model": "OPPO CPH2127"
+  },
+  {
+    "name": "OPPO CPH2159",
+    "model": "OPPO CPH2159"
+  },
+  {
+    "name": "OPPO CPH2197",
+    "model": "OPPO CPH2197"
+  },
+  {
+    "name": "OPPO CPH2237",
+    "model": "OPPO CPH2237"
+  },
+  {
+    "name": "OPPO CPH2239",
+    "model": "OPPO CPH2239"
+  },
+  {
+    "name": "OPPO CPH2307",
+    "model": "OPPO CPH2307"
+  },
+  {
+    "name": "OPPO CPH2333",
+    "model": "OPPO CPH2333"
+  },
+  {
+    "name": "OPPO CPH2357",
+    "model": "OPPO CPH2357"
+  },
+  {
+    "name": "OPPO CPH2359",
+    "model": "OPPO CPH2359"
+  },
+  {
+    "name": "OPPO CPH2375",
+    "model": "OPPO CPH2375"
+  },
+  {
+    "name": "OPPO CPH2477",
+    "model": "OPPO CPH2477"
+  },
+  {
+    "name": "OPPO CPH2483",
+    "model": "OPPO CPH2483"
+  },
+  {
+    "name": "OPPO CPH2499",
+    "model": "OPPO CPH2499"
+  },
+  {
+    "name": "OPPO CPH2505",
+    "model": "OPPO CPH2505"
+  },
+  {
+    "name": "OPPO CPH2525",
+    "model": "OPPO CPH2525"
+  },
+  {
+    "name": "OPPO CPH2529",
+    "model": "OPPO CPH2529"
+  },
+  {
+    "name": "OPPO CPH2531",
+    "model": "OPPO CPH2531"
+  },
+  {
+    "name": "OPPO CPH2557",
+    "model": "OPPO CPH2557"
+  },
+  {
+    "name": "OPPO CPH2579",
+    "model": "OPPO CPH2579"
+  },
+  {
+    "name": "OPPO CPH2603",
+    "model": "OPPO CPH2603"
+  },
+  {
+    "name": "OPPO CPH2625",
+    "model": "OPPO CPH2625"
+  },
+  {
+    "name": "OPPO CPH2637",
+    "model": "OPPO CPH2637"
+  },
+  {
+    "name": "OPPO CPH2643",
+    "model": "OPPO CPH2643"
+  },
+  {
+    "name": "OPPO CPH2651",
+    "model": "OPPO CPH2651"
+  },
+  {
+    "name": "OPPO CPH2659",
+    "model": "OPPO CPH2659"
+  },
+  {
+    "name": "OPPO CPH2665",
+    "model": "OPPO CPH2665"
+  },
+  {
+    "name": "OPPO CPH2667",
+    "model": "OPPO CPH2667"
+  },
+  {
+    "name": "OPPO CPH2669",
+    "model": "OPPO CPH2669"
+  },
+  {
+    "name": "OPPO CPH2671",
+    "model": "OPPO CPH2671"
+  },
+  {
+    "name": "OPPO CPH2687",
+    "model": "OPPO CPH2687"
+  },
+  {
+    "name": "OPPO CPH2697",
+    "model": "OPPO CPH2697"
+  },
+  {
+    "name": "OPPO CPH2699",
+    "model": "OPPO CPH2699"
+  },
+  {
+    "name": "OPPO CPH2711",
+    "model": "OPPO CPH2711"
+  },
+  {
+    "name": "OPPO CPH2725",
+    "model": "OPPO CPH2725"
+  },
+  {
+    "name": "OPPO CPH2727",
+    "model": "OPPO CPH2727"
+  },
+  {
+    "name": "OPPO CPH2733",
+    "model": "OPPO CPH2733"
+  },
+  {
+    "name": "OPPO CPH2737",
+    "model": "OPPO CPH2737"
+  },
+  {
+    "name": "OPPO CPH2743",
+    "model": "OPPO CPH2743"
+  },
+  {
+    "name": "OPPO CPH2791",
+    "model": "OPPO CPH2791"
+  },
+  {
+    "name": "OPPO CPH2797",
+    "model": "OPPO CPH2797"
+  },
+  {
+    "name": "OPPO PEDM00",
+    "model": "OPPO PEDM00"
+  },
+  {
+    "name": "OPPO PEQM00",
+    "model": "OPPO PEQM00"
+  },
+  {
+    "name": "OPPO PFJM10",
+    "model": "OPPO PFJM10"
+  },
+  {
+    "name": "OPPO PGCM10",
+    "model": "OPPO PGCM10"
+  },
+  {
+    "name": "OPPO PGEM10",
+    "model": "OPPO PGEM10"
+  },
+  {
+    "name": "OPPO PHN110",
+    "model": "OPPO PHN110"
+  },
+  {
+    "name": "OPPO PHZ110",
+    "model": "OPPO PHZ110"
+  },
+  {
+    "name": "OPPO PKB110",
+    "model": "OPPO PKB110"
+  },
+  {
+    "name": "OPPO PKH110",
+    "model": "OPPO PKH110"
+  },
+  {
+    "name": "OSCAL C80",
+    "model": "OSCAL C80"
+  },
+  {
+    "name": "OSCAL TIGER 10",
+    "model": "OSCAL TIGER 10"
+  },
+  {
+    "name": "OUKITEL G1",
+    "model": "OUKITEL G1"
+  },
+  {
+    "name": "OUKITEL WP21",
+    "model": "OUKITEL WP21"
+  },
+  {
+    "name": "OUKITEL WP22",
+    "model": "OUKITEL WP22"
+  },
+  {
+    "name": "OUKITEL WP30 Pro",
+    "model": "OUKITEL WP30 Pro"
+  },
+  {
+    "name": "Oculus Quest",
+    "model": "Oculus Quest"
+  },
+  {
+    "name": "OnePlus AC2001",
+    "model": "OnePlus AC2001"
+  },
+  {
+    "name": "OnePlus AC2003",
+    "model": "OnePlus AC2003"
+  },
+  {
+    "name": "OnePlus CPH2381",
+    "model": "OnePlus CPH2381"
+  },
+  {
+    "name": "OnePlus CPH2399",
+    "model": "OnePlus CPH2399"
+  },
+  {
+    "name": "OnePlus CPH2409",
+    "model": "OnePlus CPH2409"
+  },
+  {
+    "name": "OnePlus CPH2411",
+    "model": "OnePlus CPH2411"
+  },
+  {
+    "name": "OnePlus CPH2415",
+    "model": "OnePlus CPH2415"
+  },
+  {
+    "name": "OnePlus CPH2417",
+    "model": "OnePlus CPH2417"
+  },
+  {
+    "name": "OnePlus CPH2419",
+    "model": "OnePlus CPH2419"
+  },
+  {
+    "name": "OnePlus CPH2447",
+    "model": "OnePlus CPH2447"
+  },
+  {
+    "name": "OnePlus CPH2449",
+    "model": "OnePlus CPH2449"
+  },
+  {
+    "name": "OnePlus CPH2451",
+    "model": "OnePlus CPH2451"
+  },
+  {
+    "name": "OnePlus CPH2465",
+    "model": "OnePlus CPH2465"
+  },
+  {
+    "name": "OnePlus CPH2487",
+    "model": "OnePlus CPH2487"
+  },
+  {
+    "name": "OnePlus CPH2493",
+    "model": "OnePlus CPH2493"
+  },
+  {
+    "name": "OnePlus CPH2513",
+    "model": "OnePlus CPH2513"
+  },
+  {
+    "name": "OnePlus CPH2551",
+    "model": "OnePlus CPH2551"
+  },
+  {
+    "name": "OnePlus CPH2569",
+    "model": "OnePlus CPH2569"
+  },
+  {
+    "name": "OnePlus CPH2573",
+    "model": "OnePlus CPH2573"
+  },
+  {
+    "name": "OnePlus CPH2581",
+    "model": "OnePlus CPH2581"
+  },
+  {
+    "name": "OnePlus CPH2583",
+    "model": "OnePlus CPH2583"
+  },
+  {
+    "name": "OnePlus CPH2585",
+    "model": "OnePlus CPH2585"
+  },
+  {
+    "name": "OnePlus CPH2609",
+    "model": "OnePlus CPH2609"
+  },
+  {
+    "name": "OnePlus CPH2611",
+    "model": "OnePlus CPH2611"
+  },
+  {
+    "name": "OnePlus CPH2613",
+    "model": "OnePlus CPH2613"
+  },
+  {
+    "name": "OnePlus CPH2621",
+    "model": "OnePlus CPH2621"
+  },
+  {
+    "name": "OnePlus CPH2645",
+    "model": "OnePlus CPH2645"
+  },
+  {
+    "name": "OnePlus CPH2647",
+    "model": "OnePlus CPH2647"
+  },
+  {
+    "name": "OnePlus CPH2649",
+    "model": "OnePlus CPH2649"
+  },
+  {
+    "name": "OnePlus CPH2653",
+    "model": "OnePlus CPH2653"
+  },
+  {
+    "name": "OnePlus CPH2655",
+    "model": "OnePlus CPH2655"
+  },
+  {
+    "name": "OnePlus CPH2661",
+    "model": "OnePlus CPH2661"
+  },
+  {
+    "name": "OnePlus CPH2663",
+    "model": "OnePlus CPH2663"
+  },
+  {
+    "name": "OnePlus CPH2691",
+    "model": "OnePlus CPH2691"
+  },
+  {
+    "name": "OnePlus CPH2709",
+    "model": "OnePlus CPH2709"
+  },
+  {
+    "name": "OnePlus CPH2717",
+    "model": "OnePlus CPH2717"
+  },
+  {
+    "name": "OnePlus CPH2719",
+    "model": "OnePlus CPH2719"
+  },
+  {
+    "name": "OnePlus CPH2723",
+    "model": "OnePlus CPH2723"
+  },
+  {
+    "name": "OnePlus CPH2745",
+    "model": "OnePlus CPH2745"
+  },
+  {
+    "name": "OnePlus CPH2747",
+    "model": "OnePlus CPH2747"
+  },
+  {
+    "name": "OnePlus CPH2749",
+    "model": "OnePlus CPH2749"
+  },
+  {
+    "name": "OnePlus DN2103",
+    "model": "OnePlus DN2103"
+  },
+  {
+    "name": "OnePlus GM1901",
+    "model": "OnePlus GM1901"
+  },
+  {
+    "name": "OnePlus GM1911",
+    "model": "OnePlus GM1911"
+  },
+  {
+    "name": "OnePlus GM1913",
+    "model": "OnePlus GM1913"
+  },
+  {
+    "name": "OnePlus GM1915",
+    "model": "OnePlus GM1915"
+  },
+  {
+    "name": "OnePlus GM1917",
+    "model": "OnePlus GM1917"
+  },
+  {
+    "name": "OnePlus GM1925",
+    "model": "OnePlus GM1925"
+  },
+  {
+    "name": "OnePlus GN2200",
+    "model": "OnePlus GN2200"
+  },
+  {
+    "name": "OnePlus HD1901",
+    "model": "OnePlus HD1901"
+  },
+  {
+    "name": "OnePlus HD1925",
+    "model": "OnePlus HD1925"
+  },
+  {
+    "name": "OnePlus IN2010",
+    "model": "OnePlus IN2010"
+  },
+  {
+    "name": "OnePlus IN2013",
+    "model": "OnePlus IN2013"
+  },
+  {
+    "name": "OnePlus IN2019",
+    "model": "OnePlus IN2019"
+  },
+  {
+    "name": "OnePlus IN2023",
+    "model": "OnePlus IN2023"
+  },
+  {
+    "name": "OnePlus IN2025",
+    "model": "OnePlus IN2025"
+  },
+  {
+    "name": "OnePlus KB2001",
+    "model": "OnePlus KB2001"
+  },
+  {
+    "name": "OnePlus KB2003",
+    "model": "OnePlus KB2003"
+  },
+  {
+    "name": "OnePlus KB2005",
+    "model": "OnePlus KB2005"
+  },
+  {
+    "name": "OnePlus LE2100",
+    "model": "OnePlus LE2100"
+  },
+  {
+    "name": "OnePlus LE2113",
+    "model": "OnePlus LE2113"
+  },
+  {
+    "name": "OnePlus LE2115",
+    "model": "OnePlus LE2115"
+  },
+  {
+    "name": "OnePlus LE2120",
+    "model": "OnePlus LE2120"
+  },
+  {
+    "name": "OnePlus LE2121",
+    "model": "OnePlus LE2121"
+  },
+  {
+    "name": "OnePlus LE2123",
+    "model": "OnePlus LE2123"
+  },
+  {
+    "name": "OnePlus LE2125",
+    "model": "OnePlus LE2125"
+  },
+  {
+    "name": "OnePlus LE2127",
+    "model": "OnePlus LE2127"
+  },
+  {
+    "name": "OnePlus MT2111",
+    "model": "OnePlus MT2111"
+  },
+  {
+    "name": "OnePlus NE2211",
+    "model": "OnePlus NE2211"
+  },
+  {
+    "name": "OnePlus NE2213",
+    "model": "OnePlus NE2213"
+  },
+  {
+    "name": "OnePlus NE2217",
+    "model": "OnePlus NE2217"
+  },
+  {
+    "name": "OnePlus ONEPLUS A5010",
+    "model": "OnePlus ONEPLUS A5010"
+  },
+  {
+    "name": "OnePlus ONEPLUS A6003",
+    "model": "OnePlus ONEPLUS A6003"
+  },
+  {
+    "name": "OnePlus ONEPLUS A6010",
+    "model": "OnePlus ONEPLUS A6010"
+  },
+  {
+    "name": "OnePlus ONEPLUS A6013",
+    "model": "OnePlus ONEPLUS A6013"
+  },
+  {
+    "name": "OnePlus OPD2403",
+    "model": "OnePlus OPD2403"
+  },
+  {
+    "name": "OnePlus OPD2413",
+    "model": "OnePlus OPD2413"
+  },
+  {
+    "name": "OnePlus OPD2415",
+    "model": "OnePlus OPD2415"
+  },
+  {
+    "name": "OnePlus PGZ110",
+    "model": "OnePlus PGZ110"
+  },
+  {
+    "name": "OnePlus PJA110",
+    "model": "OnePlus PJA110"
+  },
+  {
+    "name": "OnePlus PJD110",
+    "model": "OnePlus PJD110"
+  },
+  {
+    "name": "OnePlus PJE110",
+    "model": "OnePlus PJE110"
+  },
+  {
+    "name": "OnePlus PJF110",
+    "model": "OnePlus PJF110"
+  },
+  {
+    "name": "OnePlus PJZ110",
+    "model": "OnePlus PJZ110"
+  },
+  {
+    "name": "OnePlus PKG110",
+    "model": "OnePlus PKG110"
+  },
+  {
+    "name": "OnePlus PKR110",
+    "model": "OnePlus PKR110"
+  },
+  {
+    "name": "OnePlus PKX110",
+    "model": "OnePlus PKX110"
+  },
+  {
+    "name": "OnePlus PLC110",
+    "model": "OnePlus PLC110"
+  },
+  {
+    "name": "OnePlus PLF110",
+    "model": "OnePlus PLF110"
+  },
+  {
+    "name": "OnePlus PLK110",
+    "model": "OnePlus PLK110"
+  },
+  {
+    "name": "OnePlus PLQ110",
+    "model": "OnePlus PLQ110"
+  },
+  {
+    "name": "PIMAX portal",
+    "model": "PIMAX portal"
+  },
+  {
+    "name": "Pico A921C",
+    "model": "Pico A921C"
+  },
+  {
+    "name": "RED H1A1000",
+    "model": "RED H1A1000"
+  },
+  {
+    "name": "Razer Edge 5G",
+    "model": "Razer Edge 5G"
+  },
+  {
+    "name": "Razer Edge WiFi",
+    "model": "Razer Edge WiFi"
+  },
+  {
+    "name": "Reliance Communications R8L5T",
+    "model": "Reliance Communications R8L5T"
+  },
+  {
+    "name": "Retroid Pocket 3",
+    "model": "Retroid Pocket 3"
+  },
+  {
+    "name": "SHARP A208SH",
+    "model": "SHARP A208SH"
+  },
+  {
+    "name": "SHARP A301SH",
+    "model": "SHARP A301SH"
+  },
+  {
+    "name": "SHARP SH-M28",
+    "model": "SHARP SH-M28"
+  },
+  {
+    "name": "SHARP SH-M31",
+    "model": "SHARP SH-M31"
+  },
+  {
+    "name": "SHARP SH-R80",
+    "model": "SHARP SH-R80"
+  },
+  {
+    "name": "SHIFTphone 8",
+    "model": "SHIFTphone 8"
+  },
+  {
+    "name": "SKYEGG K16_US",
+    "model": "SKYEGG K16_US"
+  },
+  {
+    "name": "Skyth K56",
+    "model": "Skyth K56"
+  },
+  {
+    "name": "Solana Mobile Inc. Seeker",
+    "model": "Solana Mobile Inc. Seeker"
+  },
+  {
+    "name": "Sony A103SO",
+    "model": "Sony A103SO"
+  },
+  {
+    "name": "Sony G8441",
+    "model": "Sony G8441"
+  },
+  {
+    "name": "Sony SO-51D",
+    "model": "Sony SO-51D"
+  },
+  {
+    "name": "Sony SOG01",
+    "model": "Sony SOG01"
+  },
+  {
+    "name": "Sony SOG02",
+    "model": "Sony SOG02"
+  },
+  {
+    "name": "Sony SOG04",
+    "model": "Sony SOG04"
+  },
+  {
+    "name": "Sony SOG06",
+    "model": "Sony SOG06"
+  },
+  {
+    "name": "Sony SOG10",
+    "model": "Sony SOG10"
+  },
+  {
+    "name": "Sony SOV37",
+    "model": "Sony SOV37"
+  },
+  {
+    "name": "Sony XQ-AS72",
+    "model": "Sony XQ-AS72"
+  },
+  {
+    "name": "Sony XQ-AT51",
+    "model": "Sony XQ-AT51"
+  },
+  {
+    "name": "Sony XQ-AT52",
+    "model": "Sony XQ-AT52"
+  },
+  {
+    "name": "Sony XQ-BC52",
+    "model": "Sony XQ-BC52"
+  },
+  {
+    "name": "Sony XQ-BC62",
+    "model": "Sony XQ-BC62"
+  },
+  {
+    "name": "Sony XQ-BE72",
+    "model": "Sony XQ-BE72"
+  },
+  {
+    "name": "Sony XQ-CC54",
+    "model": "Sony XQ-CC54"
+  },
+  {
+    "name": "Sony XQ-CC72",
+    "model": "Sony XQ-CC72"
+  },
+  {
+    "name": "Sony XQ-CQ54",
+    "model": "Sony XQ-CQ54"
+  },
+  {
+    "name": "Sony XQ-CQ62",
+    "model": "Sony XQ-CQ62"
+  },
+  {
+    "name": "Sony XQ-CT54",
+    "model": "Sony XQ-CT54"
+  },
+  {
+    "name": "Sony XQ-CT72",
+    "model": "Sony XQ-CT72"
+  },
+  {
+    "name": "Sony XQ-DC54",
+    "model": "Sony XQ-DC54"
+  },
+  {
+    "name": "Sony XQ-DC72",
+    "model": "Sony XQ-DC72"
+  },
+  {
+    "name": "Sony XQ-DE72",
+    "model": "Sony XQ-DE72"
+  },
+  {
+    "name": "Sony XQ-DQ54",
+    "model": "Sony XQ-DQ54"
+  },
+  {
+    "name": "Sony XQ-DQ62",
+    "model": "Sony XQ-DQ62"
+  },
+  {
+    "name": "Sony XQ-DQ72",
+    "model": "Sony XQ-DQ72"
+  },
+  {
+    "name": "Sony XQ-EC44",
+    "model": "Sony XQ-EC44"
+  },
+  {
+    "name": "Sony XQ-EC54",
+    "model": "Sony XQ-EC54"
+  },
+  {
+    "name": "Sony XQ-EC72",
+    "model": "Sony XQ-EC72"
+  },
+  {
+    "name": "Sony XQ-ES44",
+    "model": "Sony XQ-ES44"
+  },
+  {
+    "name": "Sony XQ-ES54",
+    "model": "Sony XQ-ES54"
+  },
+  {
+    "name": "Sony XQ-ES72",
+    "model": "Sony XQ-ES72"
+  },
+  {
+    "name": "Sony XQ-FS44",
+    "model": "Sony XQ-FS44"
+  },
+  {
+    "name": "Sony XQ-FS54",
+    "model": "Sony XQ-FS54"
+  },
+  {
+    "name": "Sony XQ-FS72",
+    "model": "Sony XQ-FS72"
+  },
+  {
+    "name": "Sony Xperia 1 III",
+    "model": "Sony Xperia 1 III"
+  },
+  {
+    "name": "Sony Xperia 5 III",
+    "model": "Sony Xperia 5 III"
+  },
+  {
+    "name": "TCL 5087Z",
+    "model": "TCL 5087Z"
+  },
+  {
+    "name": "TCL 9469X",
+    "model": "TCL 9469X"
+  },
+  {
+    "name": "TCL 9491G",
+    "model": "TCL 9491G"
+  },
+  {
+    "name": "TCL T614D",
+    "model": "TCL T614D"
+  },
+  {
+    "name": "TCL T779W",
+    "model": "TCL T779W"
+  },
+  {
+    "name": "TCL T790S",
+    "model": "TCL T790S"
+  },
+  {
+    "name": "TCL T810S",
+    "model": "TCL T810S"
+  },
+  {
+    "name": "TECNO BG6",
+    "model": "TECNO BG6"
+  },
+  {
+    "name": "TECNO CH6i",
+    "model": "TECNO CH6i"
+  },
+  {
+    "name": "TECNO CK7n",
+    "model": "TECNO CK7n"
+  },
+  {
+    "name": "TECNO CK8n",
+    "model": "TECNO CK8n"
+  },
+  {
+    "name": "TECNO CK9n",
+    "model": "TECNO CK9n"
+  },
+  {
+    "name": "TECNO CL6",
+    "model": "TECNO CL6"
+  },
+  {
+    "name": "TECNO CL6k",
+    "model": "TECNO CL6k"
+  },
+  {
+    "name": "TECNO CL8",
+    "model": "TECNO CL8"
+  },
+  {
+    "name": "TECNO CL9",
+    "model": "TECNO CL9"
+  },
+  {
+    "name": "TECNO CM5",
+    "model": "TECNO CM5"
+  },
+  {
+    "name": "TECNO CM6",
+    "model": "TECNO CM6"
+  },
+  {
+    "name": "TECNO CM7",
+    "model": "TECNO CM7"
+  },
+  {
+    "name": "TECNO KI5m",
+    "model": "TECNO KI5m"
+  },
+  {
+    "name": "TECNO KI5q",
+    "model": "TECNO KI5q"
+  },
+  {
+    "name": "TECNO KI7",
+    "model": "TECNO KI7"
+  },
+  {
+    "name": "TECNO KI8",
+    "model": "TECNO KI8"
+  },
+  {
+    "name": "TECNO KJ5n",
+    "model": "TECNO KJ5n"
+  },
+  {
+    "name": "TECNO KJ6",
+    "model": "TECNO KJ6"
+  },
+  {
+    "name": "TECNO KJ7",
+    "model": "TECNO KJ7"
+  },
+  {
+    "name": "TECNO KJ8",
+    "model": "TECNO KJ8"
+  },
+  {
+    "name": "TECNO KL4",
+    "model": "TECNO KL4"
+  },
+  {
+    "name": "TECNO KL5n",
+    "model": "TECNO KL5n"
+  },
+  {
+    "name": "TECNO KL6",
+    "model": "TECNO KL6"
+  },
+  {
+    "name": "TECNO KL7",
+    "model": "TECNO KL7"
+  },
+  {
+    "name": "TECNO KM4",
+    "model": "TECNO KM4"
+  },
+  {
+    "name": "TECNO KM4k",
+    "model": "TECNO KM4k"
+  },
+  {
+    "name": "TECNO KM5n",
+    "model": "TECNO KM5n"
+  },
+  {
+    "name": "TECNO KM6",
+    "model": "TECNO KM6"
+  },
+  {
+    "name": "TECNO LG8n",
+    "model": "TECNO LG8n"
+  },
+  {
+    "name": "TECNO LH6n",
+    "model": "TECNO LH6n"
+  },
+  {
+    "name": "TECNO LH7n",
+    "model": "TECNO LH7n"
+  },
+  {
+    "name": "TECNO LH8n",
+    "model": "TECNO LH8n"
+  },
+  {
+    "name": "TECNO LI6",
+    "model": "TECNO LI6"
+  },
+  {
+    "name": "TECNO LI7",
+    "model": "TECNO LI7"
+  },
+  {
+    "name": "TECNO LI9",
+    "model": "TECNO LI9"
+  },
+  {
+    "name": "TECNO LJ6",
+    "model": "TECNO LJ6"
+  },
+  {
+    "name": "TECNO LJ7",
+    "model": "TECNO LJ7"
+  },
+  {
+    "name": "TECNO LJ9",
+    "model": "TECNO LJ9"
+  },
+  {
+    "name": "TECNO MOBILE LIMITED TECNO KG5n",
+    "model": "TECNO MOBILE LIMITED TECNO KG5n"
+  },
+  {
+    "name": "TECNO MOBILE LIMITED TECNO LE7n",
+    "model": "TECNO MOBILE LIMITED TECNO LE7n"
+  },
+  {
+    "name": "TECNO T1101",
+    "model": "TECNO T1101"
+  },
+  {
+    "name": "Teclast T65Max_ROW",
+    "model": "Teclast T65Max_ROW"
+  },
+  {
+    "name": "Tinno Celero3 5G+",
+    "model": "Tinno Celero3 5G+"
+  },
+  {
+    "name": "UMIDIGI MT10",
+    "model": "UMIDIGI MT10"
+  },
+  {
+    "name": "UNISOC uis7870sc_2h10",
+    "model": "UNISOC uis7870sc_2h10"
+  },
+  {
+    "name": "Ulefone Armor 24",
+    "model": "Ulefone Armor 24"
+  },
+  {
+    "name": "Unihertz Jelly Star",
+    "model": "Unihertz Jelly Star"
+  },
+  {
+    "name": "Unihertz Titan 2",
+    "model": "Unihertz Titan 2"
+  },
+  {
+    "name": "Unihertz Titan pocket",
+    "model": "Unihertz Titan pocket"
+  },
+  {
+    "name": "VIVIMAGE E10",
+    "model": "VIVIMAGE E10"
+  },
+  {
+    "name": "Visual Land Inc Prestige_P10_Plus",
+    "model": "Visual Land Inc Prestige_P10_Plus"
+  },
+  {
+    "name": "Volla Phone Quintus",
+    "model": "Volla Phone Quintus"
+  },
+  {
+    "name": "Wacom DTHA140",
+    "model": "Wacom DTHA140"
+  },
+  {
+    "name": "Wingtech TMAF025G",
+    "model": "Wingtech TMAF025G"
+  },
+  {
+    "name": "Wingtech TMRV06P5G",
+    "model": "Wingtech TMRV06P5G"
+  },
+  {
+    "name": "Wingtech TMRV075G",
+    "model": "Wingtech TMRV075G"
+  },
+  {
+    "name": "Wingtech TMRV5GTB",
+    "model": "Wingtech TMRV5GTB"
+  },
+  {
+    "name": "XPPen MDP1221",
+    "model": "XPPen MDP1221"
+  },
+  {
+    "name": "XPPen MNP1095",
+    "model": "XPPen MNP1095"
+  },
+  {
+    "name": "XPPen MagicDrawingPad",
+    "model": "XPPen MagicDrawingPad"
+  },
+  {
+    "name": "XREAL X4000",
+    "model": "XREAL X4000"
+  },
+  {
+    "name": "Xiaomi 21051182C",
+    "model": "Xiaomi 21051182C"
+  },
+  {
+    "name": "Xiaomi 21051182G",
+    "model": "Xiaomi 21051182G"
+  },
+  {
+    "name": "Xiaomi 21061110AG",
+    "model": "Xiaomi 21061110AG"
+  },
+  {
+    "name": "Xiaomi 21061119DG",
+    "model": "Xiaomi 21061119DG"
+  },
+  {
+    "name": "Xiaomi 2107113SG",
+    "model": "Xiaomi 2107113SG"
+  },
+  {
+    "name": "Xiaomi 21081111RG",
+    "model": "Xiaomi 21081111RG"
+  },
+  {
+    "name": "Xiaomi 21091116AC",
+    "model": "Xiaomi 21091116AC"
+  },
+  {
+    "name": "Xiaomi 21091116AG",
+    "model": "Xiaomi 21091116AG"
+  },
+  {
+    "name": "Xiaomi 21091116AI",
+    "model": "Xiaomi 21091116AI"
+  },
+  {
+    "name": "Xiaomi 21091116I",
+    "model": "Xiaomi 21091116I"
+  },
+  {
+    "name": "Xiaomi 21091116UG",
+    "model": "Xiaomi 21091116UG"
+  },
+  {
+    "name": "Xiaomi 2109119BC",
+    "model": "Xiaomi 2109119BC"
+  },
+  {
+    "name": "Xiaomi 2109119DG",
+    "model": "Xiaomi 2109119DG"
+  },
+  {
+    "name": "Xiaomi 2109119DI",
+    "model": "Xiaomi 2109119DI"
+  },
+  {
+    "name": "Xiaomi 21121119SG",
+    "model": "Xiaomi 21121119SG"
+  },
+  {
+    "name": "Xiaomi 21121119VL",
+    "model": "Xiaomi 21121119VL"
+  },
+  {
+    "name": "Xiaomi 21121210G",
+    "model": "Xiaomi 21121210G"
+  },
+  {
+    "name": "Xiaomi 2112123AG",
+    "model": "Xiaomi 2112123AG"
+  },
+  {
+    "name": "Xiaomi 22011119UY",
+    "model": "Xiaomi 22011119UY"
+  },
+  {
+    "name": "Xiaomi 2201116PG",
+    "model": "Xiaomi 2201116PG"
+  },
+  {
+    "name": "Xiaomi 2201116SG",
+    "model": "Xiaomi 2201116SG"
+  },
+  {
+    "name": "Xiaomi 2201116TG",
+    "model": "Xiaomi 2201116TG"
+  },
+  {
+    "name": "Xiaomi 2201117PG",
+    "model": "Xiaomi 2201117PG"
+  },
+  {
+    "name": "Xiaomi 2201117SG",
+    "model": "Xiaomi 2201117SG"
+  },
+  {
+    "name": "Xiaomi 2201117SY",
+    "model": "Xiaomi 2201117SY"
+  },
+  {
+    "name": "Xiaomi 2201117TG",
+    "model": "Xiaomi 2201117TG"
+  },
+  {
+    "name": "Xiaomi 2201117TL",
+    "model": "Xiaomi 2201117TL"
+  },
+  {
+    "name": "Xiaomi 2201117TY",
+    "model": "Xiaomi 2201117TY"
+  },
+  {
+    "name": "Xiaomi 2201122G",
+    "model": "Xiaomi 2201122G"
+  },
+  {
+    "name": "Xiaomi 2201123G",
+    "model": "Xiaomi 2201123G"
+  },
+  {
+    "name": "Xiaomi 22021211RG",
+    "model": "Xiaomi 22021211RG"
+  },
+  {
+    "name": "Xiaomi 2203129G",
+    "model": "Xiaomi 2203129G"
+  },
+  {
+    "name": "Xiaomi 220333QAG",
+    "model": "Xiaomi 220333QAG"
+  },
+  {
+    "name": "Xiaomi 220333QL",
+    "model": "Xiaomi 220333QL"
+  },
+  {
+    "name": "Xiaomi 220333QNY",
+    "model": "Xiaomi 220333QNY"
+  },
+  {
+    "name": "Xiaomi 22041211AC",
+    "model": "Xiaomi 22041211AC"
+  },
+  {
+    "name": "Xiaomi 22041216G",
+    "model": "Xiaomi 22041216G"
+  },
+  {
+    "name": "Xiaomi 2207117BPG",
+    "model": "Xiaomi 2207117BPG"
+  },
+  {
+    "name": "Xiaomi 22071212AG",
+    "model": "Xiaomi 22071212AG"
+  },
+  {
+    "name": "Xiaomi 22071219CG",
+    "model": "Xiaomi 22071219CG"
+  },
+  {
+    "name": "Xiaomi 22081212UG",
+    "model": "Xiaomi 22081212UG"
+  },
+  {
+    "name": "Xiaomi 22081283C",
+    "model": "Xiaomi 22081283C"
+  },
+  {
+    "name": "Xiaomi 22081283G",
+    "model": "Xiaomi 22081283G"
+  },
+  {
+    "name": "Xiaomi 2209116AG",
+    "model": "Xiaomi 2209116AG"
+  },
+  {
+    "name": "Xiaomi 2210129SG",
+    "model": "Xiaomi 2210129SG"
+  },
+  {
+    "name": "Xiaomi 22101316G",
+    "model": "Xiaomi 22101316G"
+  },
+  {
+    "name": "Xiaomi 22101316I",
+    "model": "Xiaomi 22101316I"
+  },
+  {
+    "name": "Xiaomi 22101316UG",
+    "model": "Xiaomi 22101316UG"
+  },
+  {
+    "name": "Xiaomi 22101317C",
+    "model": "Xiaomi 22101317C"
+  },
+  {
+    "name": "Xiaomi 22101320G",
+    "model": "Xiaomi 22101320G"
+  },
+  {
+    "name": "Xiaomi 22101320I",
+    "model": "Xiaomi 22101320I"
+  },
+  {
+    "name": "Xiaomi 2210132C",
+    "model": "Xiaomi 2210132C"
+  },
+  {
+    "name": "Xiaomi 22111317G",
+    "model": "Xiaomi 22111317G"
+  },
+  {
+    "name": "Xiaomi 22111317I",
+    "model": "Xiaomi 22111317I"
+  },
+  {
+    "name": "Xiaomi 22111317PG",
+    "model": "Xiaomi 22111317PG"
+  },
+  {
+    "name": "Xiaomi 22111317PI",
+    "model": "Xiaomi 22111317PI"
+  },
+  {
+    "name": "Xiaomi 2211133C",
+    "model": "Xiaomi 2211133C"
+  },
+  {
+    "name": "Xiaomi 2211133G",
+    "model": "Xiaomi 2211133G"
+  },
+  {
+    "name": "Xiaomi 22120RN86I",
+    "model": "Xiaomi 22120RN86I"
+  },
+  {
+    "name": "Xiaomi 22126RN91Y",
+    "model": "Xiaomi 22126RN91Y"
+  },
+  {
+    "name": "Xiaomi 22127RK46C",
+    "model": "Xiaomi 22127RK46C"
+  },
+  {
+    "name": "Xiaomi 23013PC75G",
+    "model": "Xiaomi 23013PC75G"
+  },
+  {
+    "name": "Xiaomi 23013RK75C",
+    "model": "Xiaomi 23013RK75C"
+  },
+  {
+    "name": "Xiaomi 23021RAA2Y",
+    "model": "Xiaomi 23021RAA2Y"
+  },
+  {
+    "name": "Xiaomi 23021RAAEG",
+    "model": "Xiaomi 23021RAAEG"
+  },
+  {
+    "name": "Xiaomi 23028RA60L",
+    "model": "Xiaomi 23028RA60L"
+  },
+  {
+    "name": "Xiaomi 23030RAC7Y",
+    "model": "Xiaomi 23030RAC7Y"
+  },
+  {
+    "name": "Xiaomi 2303CRA44A",
+    "model": "Xiaomi 2303CRA44A"
+  },
+  {
+    "name": "Xiaomi 2303ERA42L",
+    "model": "Xiaomi 2303ERA42L"
+  },
+  {
+    "name": "Xiaomi 23043RP34G",
+    "model": "Xiaomi 23043RP34G"
+  },
+  {
+    "name": "Xiaomi 23043RP34I",
+    "model": "Xiaomi 23043RP34I"
+  },
+  {
+    "name": "Xiaomi 23046RP50C",
+    "model": "Xiaomi 23046RP50C"
+  },
+  {
+    "name": "Xiaomi 23049PCD8G",
+    "model": "Xiaomi 23049PCD8G"
+  },
+  {
+    "name": "Xiaomi 23049RAD8C",
+    "model": "Xiaomi 23049RAD8C"
+  },
+  {
+    "name": "Xiaomi 2304FPN6DC",
+    "model": "Xiaomi 2304FPN6DC"
+  },
+  {
+    "name": "Xiaomi 23053RN02A",
+    "model": "Xiaomi 23053RN02A"
+  },
+  {
+    "name": "Xiaomi 23053RN02L",
+    "model": "Xiaomi 23053RN02L"
+  },
+  {
+    "name": "Xiaomi 23053RN02Y",
+    "model": "Xiaomi 23053RN02Y"
+  },
+  {
+    "name": "Xiaomi 23054RA19C",
+    "model": "Xiaomi 23054RA19C"
+  },
+  {
+    "name": "Xiaomi 2306EPN60G",
+    "model": "Xiaomi 2306EPN60G"
+  },
+  {
+    "name": "Xiaomi 23073RPBFG",
+    "model": "Xiaomi 23073RPBFG"
+  },
+  {
+    "name": "Xiaomi 23073RPBFL",
+    "model": "Xiaomi 23073RPBFL"
+  },
+  {
+    "name": "Xiaomi 23076PC4BI",
+    "model": "Xiaomi 23076PC4BI"
+  },
+  {
+    "name": "Xiaomi 23076RA4BC",
+    "model": "Xiaomi 23076RA4BC"
+  },
+  {
+    "name": "Xiaomi 23076RN4BI",
+    "model": "Xiaomi 23076RN4BI"
+  },
+  {
+    "name": "Xiaomi 23078PND5G",
+    "model": "Xiaomi 23078PND5G"
+  },
+  {
+    "name": "Xiaomi 23090RA98G",
+    "model": "Xiaomi 23090RA98G"
+  },
+  {
+    "name": "Xiaomi 23100RN82L",
+    "model": "Xiaomi 23100RN82L"
+  },
+  {
+    "name": "Xiaomi 23106RN0DA",
+    "model": "Xiaomi 23106RN0DA"
+  },
+  {
+    "name": "Xiaomi 23108RN04Y",
+    "model": "Xiaomi 23108RN04Y"
+  },
+  {
+    "name": "Xiaomi 2310FPCA4G",
+    "model": "Xiaomi 2310FPCA4G"
+  },
+  {
+    "name": "Xiaomi 2310FPCA4I",
+    "model": "Xiaomi 2310FPCA4I"
+  },
+  {
+    "name": "Xiaomi 23113RKC6C",
+    "model": "Xiaomi 23113RKC6C"
+  },
+  {
+    "name": "Xiaomi 23113RKC6G",
+    "model": "Xiaomi 23113RKC6G"
+  },
+  {
+    "name": "Xiaomi 23117RA68G",
+    "model": "Xiaomi 23117RA68G"
+  },
+  {
+    "name": "Xiaomi 23117RK66C",
+    "model": "Xiaomi 23117RK66C"
+  },
+  {
+    "name": "Xiaomi 2311DRK48C",
+    "model": "Xiaomi 2311DRK48C"
+  },
+  {
+    "name": "Xiaomi 2311DRK48G",
+    "model": "Xiaomi 2311DRK48G"
+  },
+  {
+    "name": "Xiaomi 2311DRK48I",
+    "model": "Xiaomi 2311DRK48I"
+  },
+  {
+    "name": "Xiaomi 2311DRN14I",
+    "model": "Xiaomi 2311DRN14I"
+  },
+  {
+    "name": "Xiaomi 23122PCD1G",
+    "model": "Xiaomi 23122PCD1G"
+  },
+  {
+    "name": "Xiaomi 23122PCD1I",
+    "model": "Xiaomi 23122PCD1I"
+  },
+  {
+    "name": "Xiaomi 23124RA7EO",
+    "model": "Xiaomi 23124RA7EO"
+  },
+  {
+    "name": "Xiaomi 23124RN87I",
+    "model": "Xiaomi 23124RN87I"
+  },
+  {
+    "name": "Xiaomi 23127PN0CC",
+    "model": "Xiaomi 23127PN0CC"
+  },
+  {
+    "name": "Xiaomi 23127PN0CG",
+    "model": "Xiaomi 23127PN0CG"
+  },
+  {
+    "name": "Xiaomi 23129RA5FL",
+    "model": "Xiaomi 23129RA5FL"
+  },
+  {
+    "name": "Xiaomi 23129RAA4G",
+    "model": "Xiaomi 23129RAA4G"
+  },
+  {
+    "name": "Xiaomi 2312CRNCCL",
+    "model": "Xiaomi 2312CRNCCL"
+  },
+  {
+    "name": "Xiaomi 2312DRA50C",
+    "model": "Xiaomi 2312DRA50C"
+  },
+  {
+    "name": "Xiaomi 2312DRA50G",
+    "model": "Xiaomi 2312DRA50G"
+  },
+  {
+    "name": "Xiaomi 2312DRA50I",
+    "model": "Xiaomi 2312DRA50I"
+  },
+  {
+    "name": "Xiaomi 2312DRAABG",
+    "model": "Xiaomi 2312DRAABG"
+  },
+  {
+    "name": "Xiaomi 2312DRAABI",
+    "model": "Xiaomi 2312DRAABI"
+  },
+  {
+    "name": "Xiaomi 2312FPCA6G",
+    "model": "Xiaomi 2312FPCA6G"
+  },
+  {
+    "name": "Xiaomi 2312FRAFDI",
+    "model": "Xiaomi 2312FRAFDI"
+  },
+  {
+    "name": "Xiaomi 24018RPACG",
+    "model": "Xiaomi 24018RPACG"
+  },
+  {
+    "name": "Xiaomi 24030PN60G",
+    "model": "Xiaomi 24030PN60G"
+  },
+  {
+    "name": "Xiaomi 24031PN0DC",
+    "model": "Xiaomi 24031PN0DC"
+  },
+  {
+    "name": "Xiaomi 24040RN64Y",
+    "model": "Xiaomi 24040RN64Y"
+  },
+  {
+    "name": "Xiaomi 24048RN6CG",
+    "model": "Xiaomi 24048RN6CG"
+  },
+  {
+    "name": "Xiaomi 24049RN28L",
+    "model": "Xiaomi 24049RN28L"
+  },
+  {
+    "name": "Xiaomi 24053PY09I",
+    "model": "Xiaomi 24053PY09I"
+  },
+  {
+    "name": "Xiaomi 2405CPCFBG",
+    "model": "Xiaomi 2405CPCFBG"
+  },
+  {
+    "name": "Xiaomi 2405CPX3DG",
+    "model": "Xiaomi 2405CPX3DG"
+  },
+  {
+    "name": "Xiaomi 2405CRPFDC",
+    "model": "Xiaomi 2405CRPFDC"
+  },
+  {
+    "name": "Xiaomi 2405CRPFDG",
+    "model": "Xiaomi 2405CRPFDG"
+  },
+  {
+    "name": "Xiaomi 24066PC95I",
+    "model": "Xiaomi 24066PC95I"
+  },
+  {
+    "name": "Xiaomi 24069PC21G",
+    "model": "Xiaomi 24069PC21G"
+  },
+  {
+    "name": "Xiaomi 24069PC21I",
+    "model": "Xiaomi 24069PC21I"
+  },
+  {
+    "name": "Xiaomi 24069RA21C",
+    "model": "Xiaomi 24069RA21C"
+  },
+  {
+    "name": "Xiaomi 2406APNFAG",
+    "model": "Xiaomi 2406APNFAG"
+  },
+  {
+    "name": "Xiaomi 2406ERN9CI",
+    "model": "Xiaomi 2406ERN9CI"
+  },
+  {
+    "name": "Xiaomi 24074RPD2G",
+    "model": "Xiaomi 24074RPD2G"
+  },
+  {
+    "name": "Xiaomi 24075RP89G",
+    "model": "Xiaomi 24075RP89G"
+  },
+  {
+    "name": "Xiaomi 24076RP19G",
+    "model": "Xiaomi 24076RP19G"
+  },
+  {
+    "name": "Xiaomi 2407FPN8EG",
+    "model": "Xiaomi 2407FPN8EG"
+  },
+  {
+    "name": "Xiaomi 2407FRK8EC",
+    "model": "Xiaomi 2407FRK8EC"
+  },
+  {
+    "name": "Xiaomi 24090RA29G",
+    "model": "Xiaomi 24090RA29G"
+  },
+  {
+    "name": "Xiaomi 24090RA29I",
+    "model": "Xiaomi 24090RA29I"
+  },
+  {
+    "name": "Xiaomi 24091RPADC",
+    "model": "Xiaomi 24091RPADC"
+  },
+  {
+    "name": "Xiaomi 24091RPADG",
+    "model": "Xiaomi 24091RPADG"
+  },
+  {
+    "name": "Xiaomi 24094RAD4G",
+    "model": "Xiaomi 24094RAD4G"
+  },
+  {
+    "name": "Xiaomi 24095PCADG",
+    "model": "Xiaomi 24095PCADG"
+  },
+  {
+    "name": "Xiaomi 24095PCADI",
+    "model": "Xiaomi 24095PCADI"
+  },
+  {
+    "name": "Xiaomi 2409BRN2CA",
+    "model": "Xiaomi 2409BRN2CA"
+  },
+  {
+    "name": "Xiaomi 2409BRN2CL",
+    "model": "Xiaomi 2409BRN2CL"
+  },
+  {
+    "name": "Xiaomi 2409BRN2CY",
+    "model": "Xiaomi 2409BRN2CY"
+  },
+  {
+    "name": "Xiaomi 2409FPCC4G",
+    "model": "Xiaomi 2409FPCC4G"
+  },
+  {
+    "name": "Xiaomi 24108PCE2I",
+    "model": "Xiaomi 24108PCE2I"
+  },
+  {
+    "name": "Xiaomi 2410CRP4CC",
+    "model": "Xiaomi 2410CRP4CC"
+  },
+  {
+    "name": "Xiaomi 2410CRP4CG",
+    "model": "Xiaomi 2410CRP4CG"
+  },
+  {
+    "name": "Xiaomi 2410CRP4CI",
+    "model": "Xiaomi 2410CRP4CI"
+  },
+  {
+    "name": "Xiaomi 2410DPN6CC",
+    "model": "Xiaomi 2410DPN6CC"
+  },
+  {
+    "name": "Xiaomi 2410FPCC5G",
+    "model": "Xiaomi 2410FPCC5G"
+  },
+  {
+    "name": "Xiaomi 24115RA8EG",
+    "model": "Xiaomi 24115RA8EG"
+  },
+  {
+    "name": "Xiaomi 24115RA8EI",
+    "model": "Xiaomi 24115RA8EI"
+  },
+  {
+    "name": "Xiaomi 24116RACCG",
+    "model": "Xiaomi 24116RACCG"
+  },
+  {
+    "name": "Xiaomi 24117RK2CC",
+    "model": "Xiaomi 24117RK2CC"
+  },
+  {
+    "name": "Xiaomi 24117RK2CG",
+    "model": "Xiaomi 24117RK2CG"
+  },
+  {
+    "name": "Xiaomi 24117RN76E",
+    "model": "Xiaomi 24117RN76E"
+  },
+  {
+    "name": "Xiaomi 24117RN76G",
+    "model": "Xiaomi 24117RN76G"
+  },
+  {
+    "name": "Xiaomi 24117RN76L",
+    "model": "Xiaomi 24117RN76L"
+  },
+  {
+    "name": "Xiaomi 24117RN76O",
+    "model": "Xiaomi 24117RN76O"
+  },
+  {
+    "name": "Xiaomi 2411DRN47C",
+    "model": "Xiaomi 2411DRN47C"
+  },
+  {
+    "name": "Xiaomi 2411DRN47I",
+    "model": "Xiaomi 2411DRN47I"
+  },
+  {
+    "name": "Xiaomi 24122RKC7C",
+    "model": "Xiaomi 24122RKC7C"
+  },
+  {
+    "name": "Xiaomi 24122RKC7G",
+    "model": "Xiaomi 24122RKC7G"
+  },
+  {
+    "name": "Xiaomi 24129PN74C",
+    "model": "Xiaomi 24129PN74C"
+  },
+  {
+    "name": "Xiaomi 24129PN74G",
+    "model": "Xiaomi 24129PN74G"
+  },
+  {
+    "name": "Xiaomi 2412DPC0AG",
+    "model": "Xiaomi 2412DPC0AG"
+  },
+  {
+    "name": "Xiaomi 2412DPC0AI",
+    "model": "Xiaomi 2412DPC0AI"
+  },
+  {
+    "name": "Xiaomi 25010PN30G",
+    "model": "Xiaomi 25010PN30G"
+  },
+  {
+    "name": "Xiaomi 25028RN03A",
+    "model": "Xiaomi 25028RN03A"
+  },
+  {
+    "name": "Xiaomi 25028RN03L",
+    "model": "Xiaomi 25028RN03L"
+  },
+  {
+    "name": "Xiaomi 25028RN03Y",
+    "model": "Xiaomi 25028RN03Y"
+  },
+  {
+    "name": "Xiaomi 25032RP42C",
+    "model": "Xiaomi 25032RP42C"
+  },
+  {
+    "name": "Xiaomi 25040RP0AE",
+    "model": "Xiaomi 25040RP0AE"
+  },
+  {
+    "name": "Xiaomi 25040RP0AG",
+    "model": "Xiaomi 25040RP0AG"
+  },
+  {
+    "name": "Xiaomi 25040RP0AL",
+    "model": "Xiaomi 25040RP0AL"
+  },
+  {
+    "name": "Xiaomi 25053PC47G",
+    "model": "Xiaomi 25053PC47G"
+  },
+  {
+    "name": "Xiaomi 25053PC47I",
+    "model": "Xiaomi 25053PC47I"
+  },
+  {
+    "name": "Xiaomi 25053RT47C",
+    "model": "Xiaomi 25053RT47C"
+  },
+  {
+    "name": "Xiaomi 25062PC34E",
+    "model": "Xiaomi 25062PC34E"
+  },
+  {
+    "name": "Xiaomi 25062PC34G",
+    "model": "Xiaomi 25062PC34G"
+  },
+  {
+    "name": "Xiaomi 25062RN2DE",
+    "model": "Xiaomi 25062RN2DE"
+  },
+  {
+    "name": "Xiaomi 25062RN2DL",
+    "model": "Xiaomi 25062RN2DL"
+  },
+  {
+    "name": "Xiaomi 25069PTEBG",
+    "model": "Xiaomi 25069PTEBG"
+  },
+  {
+    "name": "Xiaomi 2506BPN68G",
+    "model": "Xiaomi 2506BPN68G"
+  },
+  {
+    "name": "Xiaomi 25078RA3EA",
+    "model": "Xiaomi 25078RA3EA"
+  },
+  {
+    "name": "Xiaomi 25079RPDCG",
+    "model": "Xiaomi 25079RPDCG"
+  },
+  {
+    "name": "Xiaomi 25098PN5AC",
+    "model": "Xiaomi 25098PN5AC"
+  },
+  {
+    "name": "Xiaomi 25099RP13G",
+    "model": "Xiaomi 25099RP13G"
+  },
+  {
+    "name": "Xiaomi 2509ARPBDG",
+    "model": "Xiaomi 2509ARPBDG"
+  },
+  {
+    "name": "Xiaomi 2509BRP2DG",
+    "model": "Xiaomi 2509BRP2DG"
+  },
+  {
+    "name": "Xiaomi 2509FPN0BC",
+    "model": "Xiaomi 2509FPN0BC"
+  },
+  {
+    "name": "Xiaomi 25102PCBEG",
+    "model": "Xiaomi 25102PCBEG"
+  },
+  {
+    "name": "Xiaomi 2510DPC44G",
+    "model": "Xiaomi 2510DPC44G"
+  },
+  {
+    "name": "Xiaomi 25113PN0EC",
+    "model": "Xiaomi 25113PN0EC"
+  },
+  {
+    "name": "Xiaomi M1906G7G",
+    "model": "Xiaomi M1906G7G"
+  },
+  {
+    "name": "Xiaomi M2002J9G",
+    "model": "Xiaomi M2002J9G"
+  },
+  {
+    "name": "Xiaomi M2003J15SC",
+    "model": "Xiaomi M2003J15SC"
+  },
+  {
+    "name": "Xiaomi M2004J19C",
+    "model": "Xiaomi M2004J19C"
+  },
+  {
+    "name": "Xiaomi M2007J17G",
+    "model": "Xiaomi M2007J17G"
+  },
+  {
+    "name": "Xiaomi M2007J1SC",
+    "model": "Xiaomi M2007J1SC"
+  },
+  {
+    "name": "Xiaomi M2007J20CG",
+    "model": "Xiaomi M2007J20CG"
+  },
+  {
+    "name": "Xiaomi M2007J3SG",
+    "model": "Xiaomi M2007J3SG"
+  },
+  {
+    "name": "Xiaomi M2007J3SY",
+    "model": "Xiaomi M2007J3SY"
+  },
+  {
+    "name": "Xiaomi M2010J19CG",
+    "model": "Xiaomi M2010J19CG"
+  },
+  {
+    "name": "Xiaomi M2010J19CI",
+    "model": "Xiaomi M2010J19CI"
+  },
+  {
+    "name": "Xiaomi M2010J19SG",
+    "model": "Xiaomi M2010J19SG"
+  },
+  {
+    "name": "Xiaomi M2010J19SI",
+    "model": "Xiaomi M2010J19SI"
+  },
+  {
+    "name": "Xiaomi M2010J19SL",
+    "model": "Xiaomi M2010J19SL"
+  },
+  {
+    "name": "Xiaomi M2010J19SY",
+    "model": "Xiaomi M2010J19SY"
+  },
+  {
+    "name": "Xiaomi M2011K2G",
+    "model": "Xiaomi M2011K2G"
+  },
+  {
+    "name": "Xiaomi M2012K10C",
+    "model": "Xiaomi M2012K10C"
+  },
+  {
+    "name": "Xiaomi M2012K11AC",
+    "model": "Xiaomi M2012K11AC"
+  },
+  {
+    "name": "Xiaomi M2012K11AG",
+    "model": "Xiaomi M2012K11AG"
+  },
+  {
+    "name": "Xiaomi M2012K11AI",
+    "model": "Xiaomi M2012K11AI"
+  },
+  {
+    "name": "Xiaomi M2012K11C",
+    "model": "Xiaomi M2012K11C"
+  },
+  {
+    "name": "Xiaomi M2012K11G",
+    "model": "Xiaomi M2012K11G"
+  },
+  {
+    "name": "Xiaomi M2101K6G",
+    "model": "Xiaomi M2101K6G"
+  },
+  {
+    "name": "Xiaomi M2101K6I",
+    "model": "Xiaomi M2101K6I"
+  },
+  {
+    "name": "Xiaomi M2101K7AG",
+    "model": "Xiaomi M2101K7AG"
+  },
+  {
+    "name": "Xiaomi M2101K7AI",
+    "model": "Xiaomi M2101K7AI"
+  },
+  {
+    "name": "Xiaomi M2101K7BL",
+    "model": "Xiaomi M2101K7BL"
+  },
+  {
+    "name": "Xiaomi M2101K7BNY",
+    "model": "Xiaomi M2101K7BNY"
+  },
+  {
+    "name": "Xiaomi M2101K9G",
+    "model": "Xiaomi M2101K9G"
+  },
+  {
+    "name": "Xiaomi M2102J20SG",
+    "model": "Xiaomi M2102J20SG"
+  },
+  {
+    "name": "Xiaomi M2102K1AC",
+    "model": "Xiaomi M2102K1AC"
+  },
+  {
+    "name": "Xiaomi M2102K1G",
+    "model": "Xiaomi M2102K1G"
+  },
+  {
+    "name": "Xiaomi M2103K19PG",
+    "model": "Xiaomi M2103K19PG"
+  },
+  {
+    "name": "Xiaomi M2103K19PY",
+    "model": "Xiaomi M2103K19PY"
+  },
+  {
+    "name": "Xiaomi M2103K19Y",
+    "model": "Xiaomi M2103K19Y"
+  },
+  {
+    "name": "Xiaomi M2105K81AC",
+    "model": "Xiaomi M2105K81AC"
+  },
+  {
+    "name": "Xiaomi MI 9",
+    "model": "Xiaomi MI 9"
+  },
+  {
+    "name": "Xiaomi MI 9 Transparent Edition",
+    "model": "Xiaomi MI 9 Transparent Edition"
+  },
+  {
+    "name": "Xiaomi Mi 10",
+    "model": "Xiaomi Mi 10"
+  },
+  {
+    "name": "Xiaomi Mi 9 Lite",
+    "model": "Xiaomi Mi 9 Lite"
+  },
+  {
+    "name": "Xiaomi Mi 9 SE",
+    "model": "Xiaomi Mi 9 SE"
+  },
+  {
+    "name": "Xiaomi Mi 9T",
+    "model": "Xiaomi Mi 9T"
+  },
+  {
+    "name": "Xiaomi Mi 9T Pro",
+    "model": "Xiaomi Mi 9T Pro"
+  },
+  {
+    "name": "Xiaomi Mi Note 10 Lite",
+    "model": "Xiaomi Mi Note 10 Lite"
+  },
+  {
+    "name": "Xiaomi POCO F1",
+    "model": "Xiaomi POCO F1"
+  },
+  {
+    "name": "Xiaomi POCO F2 Pro",
+    "model": "Xiaomi POCO F2 Pro"
+  },
+  {
+    "name": "Xiaomi Pad 6",
+    "model": "Xiaomi Pad 6"
+  },
+  {
+    "name": "Xiaomi Redmi 9",
+    "model": "Xiaomi Redmi 9"
+  },
+  {
+    "name": "Xiaomi Redmi K20 Pro",
+    "model": "Xiaomi Redmi K20 Pro"
+  },
+  {
+    "name": "Xiaomi Redmi Note 7",
+    "model": "Xiaomi Redmi Note 7"
+  },
+  {
+    "name": "Xiaomi Redmi Note 7 Pro",
+    "model": "Xiaomi Redmi Note 7 Pro"
+  },
+  {
+    "name": "Xiaomi Redmi Note 8",
+    "model": "Xiaomi Redmi Note 8"
+  },
+  {
+    "name": "Xiaomi Redmi Note 8 Pro",
+    "model": "Xiaomi Redmi Note 8 Pro"
+  },
+  {
+    "name": "Xiaomi Redmi Note 8T",
+    "model": "Xiaomi Redmi Note 8T"
+  },
+  {
+    "name": "Xiaomi Redmi Note 9",
+    "model": "Xiaomi Redmi Note 9"
+  },
+  {
+    "name": "Xiaomi Redmi Note 9 Pro",
+    "model": "Xiaomi Redmi Note 9 Pro"
+  },
+  {
+    "name": "Xiaomi Redmi Note 9 Pro Max",
+    "model": "Xiaomi Redmi Note 9 Pro Max"
+  },
+  {
+    "name": "Xiaomi Redmi Note 9S",
+    "model": "Xiaomi Redmi Note 9S"
+  },
+  {
+    "name": "Xiaomi ZTE A2020G Pro",
+    "model": "Xiaomi ZTE A2020G Pro"
+  },
+  {
+    "name": "ZTE A2322G",
+    "model": "ZTE A2322G"
+  },
+  {
+    "name": "ZTE Blade A54",
+    "model": "ZTE Blade A54"
+  },
+  {
+    "name": "ZTE Blade A76 5G",
+    "model": "ZTE Blade A76 5G"
+  },
+  {
+    "name": "ZTE NX724J",
+    "model": "ZTE NX724J"
+  },
+  {
+    "name": "ZTE Z2350",
+    "model": "ZTE Z2350"
+  },
+  {
+    "name": "ZTE Z2352N",
+    "model": "ZTE Z2352N"
+  },
+  {
+    "name": "ZTE Z2357N",
+    "model": "ZTE Z2357N"
+  },
+  {
+    "name": "ZTE Z2450",
+    "model": "ZTE Z2450"
+  },
+  {
+    "name": "ZTE Z2459",
+    "model": "ZTE Z2459"
+  },
+  {
+    "name": "ZULEISY E8A",
+    "model": "ZULEISY E8A"
+  },
+  {
+    "name": "abxylute_one_pro",
+    "model": "abxylute_one_pro"
+  },
+  {
+    "name": "alps OdinLite_M2",
+    "model": "alps OdinLite_M2"
+  },
+  {
+    "name": "asus ASUSAI2501B",
+    "model": "asus ASUSAI2501B"
+  },
+  {
+    "name": "asus ASUSAI2501C",
+    "model": "asus ASUSAI2501C"
+  },
+  {
+    "name": "asus ASUSAI2501E",
+    "model": "asus ASUSAI2501E"
+  },
+  {
+    "name": "asus ASUS_AI2201_A",
+    "model": "asus ASUS_AI2201_A"
+  },
+  {
+    "name": "asus ASUS_AI2201_B",
+    "model": "asus ASUS_AI2201_B"
+  },
+  {
+    "name": "asus ASUS_AI2201_C",
+    "model": "asus ASUS_AI2201_C"
+  },
+  {
+    "name": "asus ASUS_AI2201_F",
+    "model": "asus ASUS_AI2201_F"
+  },
+  {
+    "name": "asus ASUS_AI2202",
+    "model": "asus ASUS_AI2202"
+  },
+  {
+    "name": "asus ASUS_AI2202_B",
+    "model": "asus ASUS_AI2202_B"
+  },
+  {
+    "name": "asus ASUS_AI2203_C",
+    "model": "asus ASUS_AI2203_C"
+  },
+  {
+    "name": "asus ASUS_AI2205_C",
+    "model": "asus ASUS_AI2205_C"
+  },
+  {
+    "name": "asus ASUS_AI2205_D",
+    "model": "asus ASUS_AI2205_D"
+  },
+  {
+    "name": "asus ASUS_AI2302",
+    "model": "asus ASUS_AI2302"
+  },
+  {
+    "name": "asus ASUS_AI2401_C",
+    "model": "asus ASUS_AI2401_C"
+  },
+  {
+    "name": "asus ASUS_AI2401_D",
+    "model": "asus ASUS_AI2401_D"
+  },
+  {
+    "name": "asus ASUS_AI2401_E",
+    "model": "asus ASUS_AI2401_E"
+  },
+  {
+    "name": "asus ASUS_I001DC",
+    "model": "asus ASUS_I001DC"
+  },
+  {
+    "name": "asus ASUS_I003D",
+    "model": "asus ASUS_I003D"
+  },
+  {
+    "name": "asus ASUS_I003DD",
+    "model": "asus ASUS_I003DD"
+  },
+  {
+    "name": "asus ASUS_I004D",
+    "model": "asus ASUS_I004D"
+  },
+  {
+    "name": "asus ASUS_I005D",
+    "model": "asus ASUS_I005D"
+  },
+  {
+    "name": "asus ASUS_I005DA",
+    "model": "asus ASUS_I005DA"
+  },
+  {
+    "name": "asus ASUS_I006D",
+    "model": "asus ASUS_I006D"
+  },
+  {
+    "name": "ayn Odin3",
+    "model": "ayn Odin3"
+  },
+  {
+    "name": "blackshark SHARK KLE-H0",
+    "model": "blackshark SHARK KLE-H0"
+  },
+  {
+    "name": "blackshark SHARK KTUS-H0",
+    "model": "blackshark SHARK KTUS-H0"
+  },
+  {
+    "name": "blackshark SHARK PAR-H0",
+    "model": "blackshark SHARK PAR-H0"
+  },
+  {
+    "name": "fezawio F11_US",
+    "model": "fezawio F11_US"
+  },
+  {
+    "name": "google Pixel 6",
+    "model": "google Pixel 6"
+  },
+  {
+    "name": "mPTech Hammer_Blade_3",
+    "model": "mPTech Hammer_Blade_3"
+  },
+  {
+    "name": "meizu MEIZU 20",
+    "model": "meizu MEIZU 20"
+  },
+  {
+    "name": "motorola ThinkPhone by motorola",
+    "model": "motorola ThinkPhone by motorola"
+  },
+  {
+    "name": "motorola XT2201-2",
+    "model": "motorola XT2201-2"
+  },
+  {
+    "name": "motorola edge (2021)",
+    "model": "motorola edge (2021)"
+  },
+  {
+    "name": "motorola edge (2022)",
+    "model": "motorola edge (2022)"
+  },
+  {
+    "name": "motorola edge 20",
+    "model": "motorola edge 20"
+  },
+  {
+    "name": "motorola edge 20 lite",
+    "model": "motorola edge 20 lite"
+  },
+  {
+    "name": "motorola edge 20 pro",
+    "model": "motorola edge 20 pro"
+  },
+  {
+    "name": "motorola edge 2024",
+    "model": "motorola edge 2024"
+  },
+  {
+    "name": "motorola edge 2025",
+    "model": "motorola edge 2025"
+  },
+  {
+    "name": "motorola edge 30",
+    "model": "motorola edge 30"
+  },
+  {
+    "name": "motorola edge 30 fusion",
+    "model": "motorola edge 30 fusion"
+  },
+  {
+    "name": "motorola edge 30 neo",
+    "model": "motorola edge 30 neo"
+  },
+  {
+    "name": "motorola edge 30 pro",
+    "model": "motorola edge 30 pro"
+  },
+  {
+    "name": "motorola edge 30 ultra",
+    "model": "motorola edge 30 ultra"
+  },
+  {
+    "name": "motorola edge 40",
+    "model": "motorola edge 40"
+  },
+  {
+    "name": "motorola edge 40 neo",
+    "model": "motorola edge 40 neo"
+  },
+  {
+    "name": "motorola edge 40 pro",
+    "model": "motorola edge 40 pro"
+  },
+  {
+    "name": "motorola edge 50",
+    "model": "motorola edge 50"
+  },
+  {
+    "name": "motorola edge 50 fusion",
+    "model": "motorola edge 50 fusion"
+  },
+  {
+    "name": "motorola edge 50 neo",
+    "model": "motorola edge 50 neo"
+  },
+  {
+    "name": "motorola edge 50 pro",
+    "model": "motorola edge 50 pro"
+  },
+  {
+    "name": "motorola edge 50 ultra",
+    "model": "motorola edge 50 ultra"
+  },
+  {
+    "name": "motorola edge 50s pro",
+    "model": "motorola edge 50s pro"
+  },
+  {
+    "name": "motorola edge 5G UW (2021)",
+    "model": "motorola edge 5G UW (2021)"
+  },
+  {
+    "name": "motorola edge 60",
+    "model": "motorola edge 60"
+  },
+  {
+    "name": "motorola edge 60 fusion",
+    "model": "motorola edge 60 fusion"
+  },
+  {
+    "name": "motorola edge 60 pro",
+    "model": "motorola edge 60 pro"
+  },
+  {
+    "name": "motorola edge 70",
+    "model": "motorola edge 70"
+  },
+  {
+    "name": "motorola edge plus (2022)",
+    "model": "motorola edge plus (2022)"
+  },
+  {
+    "name": "motorola edge plus 2023",
+    "model": "motorola edge plus 2023"
+  },
+  {
+    "name": "motorola edge plus 5G UW (2022)",
+    "model": "motorola edge plus 5G UW (2022)"
+  },
+  {
+    "name": "motorola moto e13",
+    "model": "motorola moto e13"
+  },
+  {
+    "name": "motorola moto e22",
+    "model": "motorola moto e22"
+  },
+  {
+    "name": "motorola moto e32",
+    "model": "motorola moto e32"
+  },
+  {
+    "name": "motorola moto g - 2025",
+    "model": "motorola moto g - 2025"
+  },
+  {
+    "name": "motorola moto g 5G (2022)",
+    "model": "motorola moto g 5G (2022)"
+  },
+  {
+    "name": "motorola moto g 5G - 2023",
+    "model": "motorola moto g 5G - 2023"
+  },
+  {
+    "name": "motorola moto g 5G - 2024",
+    "model": "motorola moto g 5G - 2024"
+  },
+  {
+    "name": "motorola moto g 5G plus",
+    "model": "motorola moto g 5G plus"
+  },
+  {
+    "name": "motorola moto g play - 2024",
+    "model": "motorola moto g play - 2024"
+  },
+  {
+    "name": "motorola moto g power (2021)",
+    "model": "motorola moto g power (2021)"
+  },
+  {
+    "name": "motorola moto g power - 2025",
+    "model": "motorola moto g power - 2025"
+  },
+  {
+    "name": "motorola moto g power 5G - 2023",
+    "model": "motorola moto g power 5G - 2023"
+  },
+  {
+    "name": "motorola moto g power 5G - 2024",
+    "model": "motorola moto g power 5G - 2024"
+  },
+  {
+    "name": "motorola moto g stylus (2023)",
+    "model": "motorola moto g stylus (2023)"
+  },
+  {
+    "name": "motorola moto g stylus - 2025",
+    "model": "motorola moto g stylus - 2025"
+  },
+  {
+    "name": "motorola moto g stylus 5G",
+    "model": "motorola moto g stylus 5G"
+  },
+  {
+    "name": "motorola moto g stylus 5G (2022)",
+    "model": "motorola moto g stylus 5G (2022)"
+  },
+  {
+    "name": "motorola moto g stylus 5G - 2023",
+    "model": "motorola moto g stylus 5G - 2023"
+  },
+  {
+    "name": "motorola moto g stylus 5G - 2024",
+    "model": "motorola moto g stylus 5G - 2024"
+  },
+  {
+    "name": "motorola moto g(100)",
+    "model": "motorola moto g(100)"
+  },
+  {
+    "name": "motorola moto g(20)",
+    "model": "motorola moto g(20)"
+  },
+  {
+    "name": "motorola moto g(30)",
+    "model": "motorola moto g(30)"
+  },
+  {
+    "name": "motorola moto g(40) fusion",
+    "model": "motorola moto g(40) fusion"
+  },
+  {
+    "name": "motorola moto g(50)",
+    "model": "motorola moto g(50)"
+  },
+  {
+    "name": "motorola moto g(60)",
+    "model": "motorola moto g(60)"
+  },
+  {
+    "name": "motorola moto g(7)",
+    "model": "motorola moto g(7)"
+  },
+  {
+    "name": "motorola moto g(9) plus",
+    "model": "motorola moto g(9) plus"
+  },
+  {
+    "name": "motorola moto g(9) power",
+    "model": "motorola moto g(9) power"
+  },
+  {
+    "name": "motorola moto g05",
+    "model": "motorola moto g05"
+  },
+  {
+    "name": "motorola moto g13",
+    "model": "motorola moto g13"
+  },
+  {
+    "name": "motorola moto g14",
+    "model": "motorola moto g14"
+  },
+  {
+    "name": "motorola moto g15",
+    "model": "motorola moto g15"
+  },
+  {
+    "name": "motorola moto g15 power",
+    "model": "motorola moto g15 power"
+  },
+  {
+    "name": "motorola moto g200 5G",
+    "model": "motorola moto g200 5G"
+  },
+  {
+    "name": "motorola moto g22",
+    "model": "motorola moto g22"
+  },
+  {
+    "name": "motorola moto g24",
+    "model": "motorola moto g24"
+  },
+  {
+    "name": "motorola moto g24 power",
+    "model": "motorola moto g24 power"
+  },
+  {
+    "name": "motorola moto g31",
+    "model": "motorola moto g31"
+  },
+  {
+    "name": "motorola moto g32",
+    "model": "motorola moto g32"
+  },
+  {
+    "name": "motorola moto g34 5G",
+    "model": "motorola moto g34 5G"
+  },
+  {
+    "name": "motorola moto g35 5G",
+    "model": "motorola moto g35 5G"
+  },
+  {
+    "name": "motorola moto g41",
+    "model": "motorola moto g41"
+  },
+  {
+    "name": "motorola moto g42",
+    "model": "motorola moto g42"
+  },
+  {
+    "name": "motorola moto g45 5G",
+    "model": "motorola moto g45 5G"
+  },
+  {
+    "name": "motorola moto g51 5G",
+    "model": "motorola moto g51 5G"
+  },
+  {
+    "name": "motorola moto g52",
+    "model": "motorola moto g52"
+  },
+  {
+    "name": "motorola moto g53 5G",
+    "model": "motorola moto g53 5G"
+  },
+  {
+    "name": "motorola moto g54 5G",
+    "model": "motorola moto g54 5G"
+  },
+  {
+    "name": "motorola moto g56 5G",
+    "model": "motorola moto g56 5G"
+  },
+  {
+    "name": "motorola moto g64 5G",
+    "model": "motorola moto g64 5G"
+  },
+  {
+    "name": "motorola moto g71 5G",
+    "model": "motorola moto g71 5G"
+  },
+  {
+    "name": "motorola moto g72",
+    "model": "motorola moto g72"
+  },
+  {
+    "name": "motorola moto g73 5G",
+    "model": "motorola moto g73 5G"
+  },
+  {
+    "name": "motorola moto g75 5G",
+    "model": "motorola moto g75 5G"
+  },
+  {
+    "name": "motorola moto g82 5G",
+    "model": "motorola moto g82 5G"
+  },
+  {
+    "name": "motorola moto g84 5G",
+    "model": "motorola moto g84 5G"
+  },
+  {
+    "name": "motorola moto g85 5G",
+    "model": "motorola moto g85 5G"
+  },
+  {
+    "name": "motorola moto g86 5G",
+    "model": "motorola moto g86 5G"
+  },
+  {
+    "name": "motorola moto g86 power 5G",
+    "model": "motorola moto g86 power 5G"
+  },
+  {
+    "name": "motorola moto g96 5G",
+    "model": "motorola moto g96 5G"
+  },
+  {
+    "name": "motorola moto z4",
+    "model": "motorola moto z4"
+  },
+  {
+    "name": "motorola one 5G ace",
+    "model": "motorola one 5G ace"
+  },
+  {
+    "name": "motorola one fusion",
+    "model": "motorola one fusion"
+  },
+  {
+    "name": "motorola razr 2023",
+    "model": "motorola razr 2023"
+  },
+  {
+    "name": "motorola razr 2024",
+    "model": "motorola razr 2024"
+  },
+  {
+    "name": "motorola razr 2025",
+    "model": "motorola razr 2025"
+  },
+  {
+    "name": "motorola razr 40 ultra",
+    "model": "motorola razr 40 ultra"
+  },
+  {
+    "name": "motorola razr 50",
+    "model": "motorola razr 50"
+  },
+  {
+    "name": "motorola razr 50 ultra",
+    "model": "motorola razr 50 ultra"
+  },
+  {
+    "name": "motorola razr 5G",
+    "model": "motorola razr 5G"
+  },
+  {
+    "name": "motorola razr 60 ultra",
+    "model": "motorola razr 60 ultra"
+  },
+  {
+    "name": "motorola razr plus 2023",
+    "model": "motorola razr plus 2023"
+  },
+  {
+    "name": "motorola razr plus 2024",
+    "model": "motorola razr plus 2024"
+  },
+  {
+    "name": "motorola razr plus 2025",
+    "model": "motorola razr plus 2025"
+  },
+  {
+    "name": "motorola razr ultra 2025",
+    "model": "motorola razr ultra 2025"
+  },
+  {
+    "name": "nubia NP03J",
+    "model": "nubia NP03J"
+  },
+  {
+    "name": "nubia NP05J",
+    "model": "nubia NP05J"
+  },
+  {
+    "name": "nubia NT01",
+    "model": "nubia NT01"
+  },
+  {
+    "name": "nubia NX629J",
+    "model": "nubia NX629J"
+  },
+  {
+    "name": "nubia NX666J",
+    "model": "nubia NX666J"
+  },
+  {
+    "name": "nubia NX669J",
+    "model": "nubia NX669J"
+  },
+  {
+    "name": "nubia NX679J",
+    "model": "nubia NX679J"
+  },
+  {
+    "name": "nubia NX709S",
+    "model": "nubia NX709S"
+  },
+  {
+    "name": "nubia NX713J",
+    "model": "nubia NX713J"
+  },
+  {
+    "name": "nubia NX721J",
+    "model": "nubia NX721J"
+  },
+  {
+    "name": "nubia NX725J",
+    "model": "nubia NX725J"
+  },
+  {
+    "name": "nubia NX729J",
+    "model": "nubia NX729J"
+  },
+  {
+    "name": "nubia NX733J",
+    "model": "nubia NX733J"
+  },
+  {
+    "name": "nubia NX741J",
+    "model": "nubia NX741J"
+  },
+  {
+    "name": "nubia NX769J",
+    "model": "nubia NX769J"
+  },
+  {
+    "name": "nubia NX779J",
+    "model": "nubia NX779J"
+  },
+  {
+    "name": "nubia NX789J",
+    "model": "nubia NX789J"
+  },
+  {
+    "name": "nubia NX809J",
+    "model": "nubia NX809J"
+  },
+  {
+    "name": "nubia Z2461",
+    "model": "nubia Z2461"
+  },
+  {
+    "name": "nubia Z2464N",
+    "model": "nubia Z2464N"
+  },
+  {
+    "name": "nubia Z2465N",
+    "model": "nubia Z2465N"
+  },
+  {
+    "name": "oneplus CPH2513",
+    "model": "oneplus CPH2513"
+  },
+  {
+    "name": "onn 100110603",
+    "model": "onn 100110603"
+  },
+  {
+    "name": "onn 100135923",
+    "model": "onn 100135923"
+  },
+  {
+    "name": "realme RMP2102",
+    "model": "realme RMP2102"
+  },
+  {
+    "name": "realme RMP2103",
+    "model": "realme RMP2103"
+  },
+  {
+    "name": "realme RMX1911",
+    "model": "realme RMX1911"
+  },
+  {
+    "name": "realme RMX1921",
+    "model": "realme RMX1921"
+  },
+  {
+    "name": "realme RMX1931",
+    "model": "realme RMX1931"
+  },
+  {
+    "name": "realme RMX2001",
+    "model": "realme RMX2001"
+  },
+  {
+    "name": "realme RMX2051",
+    "model": "realme RMX2051"
+  },
+  {
+    "name": "realme RMX2061",
+    "model": "realme RMX2061"
+  },
+  {
+    "name": "realme RMX2063",
+    "model": "realme RMX2063"
+  },
+  {
+    "name": "realme RMX2121",
+    "model": "realme RMX2121"
+  },
+  {
+    "name": "realme RMX2155",
+    "model": "realme RMX2155"
+  },
+  {
+    "name": "realme RMX2180",
+    "model": "realme RMX2180"
+  },
+  {
+    "name": "realme RMX2202",
+    "model": "realme RMX2202"
+  },
+  {
+    "name": "realme RMX3085",
+    "model": "realme RMX3085"
+  },
+  {
+    "name": "realme RMX3151",
+    "model": "realme RMX3151"
+  },
+  {
+    "name": "realme RMX3195",
+    "model": "realme RMX3195"
+  },
+  {
+    "name": "realme RMX3231",
+    "model": "realme RMX3231"
+  },
+  {
+    "name": "realme RMX3263",
+    "model": "realme RMX3263"
+  },
+  {
+    "name": "realme RMX3269",
+    "model": "realme RMX3269"
+  },
+  {
+    "name": "realme RMX3301",
+    "model": "realme RMX3301"
+  },
+  {
+    "name": "realme RMX3350",
+    "model": "realme RMX3350"
+  },
+  {
+    "name": "realme RMX3357",
+    "model": "realme RMX3357"
+  },
+  {
+    "name": "realme RMX3363",
+    "model": "realme RMX3363"
+  },
+  {
+    "name": "realme RMX3370",
+    "model": "realme RMX3370"
+  },
+  {
+    "name": "realme RMX3371",
+    "model": "realme RMX3371"
+  },
+  {
+    "name": "realme RMX3461",
+    "model": "realme RMX3461"
+  },
+  {
+    "name": "realme RMX3472",
+    "model": "realme RMX3472"
+  },
+  {
+    "name": "realme RMX3474",
+    "model": "realme RMX3474"
+  },
+  {
+    "name": "realme RMX3491",
+    "model": "realme RMX3491"
+  },
+  {
+    "name": "realme RMX3511",
+    "model": "realme RMX3511"
+  },
+  {
+    "name": "realme RMX3521",
+    "model": "realme RMX3521"
+  },
+  {
+    "name": "realme RMX3561",
+    "model": "realme RMX3561"
+  },
+  {
+    "name": "realme RMX3563",
+    "model": "realme RMX3563"
+  },
+  {
+    "name": "realme RMX3581",
+    "model": "realme RMX3581"
+  },
+  {
+    "name": "realme RMX3630",
+    "model": "realme RMX3630"
+  },
+  {
+    "name": "realme RMX3636",
+    "model": "realme RMX3636"
+  },
+  {
+    "name": "realme RMX3661",
+    "model": "realme RMX3661"
+  },
+  {
+    "name": "realme RMX3686",
+    "model": "realme RMX3686"
+  },
+  {
+    "name": "realme RMX3700",
+    "model": "realme RMX3700"
+  },
+  {
+    "name": "realme RMX3706",
+    "model": "realme RMX3706"
+  },
+  {
+    "name": "realme RMX3709",
+    "model": "realme RMX3709"
+  },
+  {
+    "name": "realme RMX3710",
+    "model": "realme RMX3710"
+  },
+  {
+    "name": "realme RMX3741",
+    "model": "realme RMX3741"
+  },
+  {
+    "name": "realme RMX3760",
+    "model": "realme RMX3760"
+  },
+  {
+    "name": "realme RMX3762",
+    "model": "realme RMX3762"
+  },
+  {
+    "name": "realme RMX3771",
+    "model": "realme RMX3771"
+  },
+  {
+    "name": "realme RMX3785",
+    "model": "realme RMX3785"
+  },
+  {
+    "name": "realme RMX3800",
+    "model": "realme RMX3800"
+  },
+  {
+    "name": "realme RMX3830",
+    "model": "realme RMX3830"
+  },
+  {
+    "name": "realme RMX3834",
+    "model": "realme RMX3834"
+  },
+  {
+    "name": "realme RMX3842",
+    "model": "realme RMX3842"
+  },
+  {
+    "name": "realme RMX3851",
+    "model": "realme RMX3851"
+  },
+  {
+    "name": "realme RMX3852",
+    "model": "realme RMX3852"
+  },
+  {
+    "name": "realme RMX3853",
+    "model": "realme RMX3853"
+  },
+  {
+    "name": "realme RMX3867",
+    "model": "realme RMX3867"
+  },
+  {
+    "name": "realme RMX3870",
+    "model": "realme RMX3870"
+  },
+  {
+    "name": "realme RMX3871",
+    "model": "realme RMX3871"
+  },
+  {
+    "name": "realme RMX3890",
+    "model": "realme RMX3890"
+  },
+  {
+    "name": "realme RMX3921",
+    "model": "realme RMX3921"
+  },
+  {
+    "name": "realme RMX3930",
+    "model": "realme RMX3930"
+  },
+  {
+    "name": "realme RMX3933",
+    "model": "realme RMX3933"
+  },
+  {
+    "name": "realme RMX3938",
+    "model": "realme RMX3938"
+  },
+  {
+    "name": "realme RMX3939",
+    "model": "realme RMX3939"
+  },
+  {
+    "name": "realme RMX3940",
+    "model": "realme RMX3940"
+  },
+  {
+    "name": "realme RMX3941",
+    "model": "realme RMX3941"
+  },
+  {
+    "name": "realme RMX3943",
+    "model": "realme RMX3943"
+  },
+  {
+    "name": "realme RMX3951",
+    "model": "realme RMX3951"
+  },
+  {
+    "name": "realme RMX3997",
+    "model": "realme RMX3997"
+  },
+  {
+    "name": "realme RMX3999",
+    "model": "realme RMX3999"
+  },
+  {
+    "name": "realme RMX5000",
+    "model": "realme RMX5000"
+  },
+  {
+    "name": "realme RMX5003",
+    "model": "realme RMX5003"
+  },
+  {
+    "name": "realme RMX5010",
+    "model": "realme RMX5010"
+  },
+  {
+    "name": "realme RMX5011",
+    "model": "realme RMX5011"
+  },
+  {
+    "name": "realme RMX5020",
+    "model": "realme RMX5020"
+  },
+  {
+    "name": "realme RMX5030",
+    "model": "realme RMX5030"
+  },
+  {
+    "name": "realme RMX5051",
+    "model": "realme RMX5051"
+  },
+  {
+    "name": "realme RMX5056",
+    "model": "realme RMX5056"
+  },
+  {
+    "name": "realme RMX5060",
+    "model": "realme RMX5060"
+  },
+  {
+    "name": "realme RMX5061",
+    "model": "realme RMX5061"
+  },
+  {
+    "name": "realme RMX5070",
+    "model": "realme RMX5070"
+  },
+  {
+    "name": "realme RMX5078",
+    "model": "realme RMX5078"
+  },
+  {
+    "name": "realme RMX5085",
+    "model": "realme RMX5085"
+  },
+  {
+    "name": "realme RMX5101",
+    "model": "realme RMX5101"
+  },
+  {
+    "name": "realme RMX5106",
+    "model": "realme RMX5106"
+  },
+  {
+    "name": "realme RMX5108",
+    "model": "realme RMX5108"
+  },
+  {
+    "name": "realme RMX5200",
+    "model": "realme RMX5200"
+  },
+  {
+    "name": "realme RMX5313",
+    "model": "realme RMX5313"
+  },
+  {
+    "name": "samsung SC-51D",
+    "model": "samsung SC-51D"
+  },
+  {
+    "name": "samsung SC-52F",
+    "model": "samsung SC-52F"
+  },
+  {
+    "name": "samsung SCG14",
+    "model": "samsung SCG14"
+  },
+  {
+    "name": "samsung SCG26",
+    "model": "samsung SCG26"
+  },
+  {
+    "name": "samsung SCG31",
+    "model": "samsung SCG31"
+  },
+  {
+    "name": "samsung SM-A035M",
+    "model": "samsung SM-A035M"
+  },
+  {
+    "name": "samsung SM-A045F",
+    "model": "samsung SM-A045F"
+  },
+  {
+    "name": "samsung SM-A045M",
+    "model": "samsung SM-A045M"
+  },
+  {
+    "name": "samsung SM-A047F",
+    "model": "samsung SM-A047F"
+  },
+  {
+    "name": "samsung SM-A047M",
+    "model": "samsung SM-A047M"
+  },
+  {
+    "name": "samsung SM-A055F",
+    "model": "samsung SM-A055F"
+  },
+  {
+    "name": "samsung SM-A055M",
+    "model": "samsung SM-A055M"
+  },
+  {
+    "name": "samsung SM-A057F",
+    "model": "samsung SM-A057F"
+  },
+  {
+    "name": "samsung SM-A057G",
+    "model": "samsung SM-A057G"
+  },
+  {
+    "name": "samsung SM-A057M",
+    "model": "samsung SM-A057M"
+  },
+  {
+    "name": "samsung SM-A065F",
+    "model": "samsung SM-A065F"
+  },
+  {
+    "name": "samsung SM-A065M",
+    "model": "samsung SM-A065M"
+  },
+  {
+    "name": "samsung SM-A075F",
+    "model": "samsung SM-A075F"
+  },
+  {
+    "name": "samsung SM-A125F",
+    "model": "samsung SM-A125F"
+  },
+  {
+    "name": "samsung SM-A127F",
+    "model": "samsung SM-A127F"
+  },
+  {
+    "name": "samsung SM-A127M",
+    "model": "samsung SM-A127M"
+  },
+  {
+    "name": "samsung SM-A135F",
+    "model": "samsung SM-A135F"
+  },
+  {
+    "name": "samsung SM-A145F",
+    "model": "samsung SM-A145F"
+  },
+  {
+    "name": "samsung SM-A145M",
+    "model": "samsung SM-A145M"
+  },
+  {
+    "name": "samsung SM-A145R",
+    "model": "samsung SM-A145R"
+  },
+  {
+    "name": "samsung SM-A146B",
+    "model": "samsung SM-A146B"
+  },
+  {
+    "name": "samsung SM-A146M",
+    "model": "samsung SM-A146M"
+  },
+  {
+    "name": "samsung SM-A146P",
+    "model": "samsung SM-A146P"
+  },
+  {
+    "name": "samsung SM-A146U",
+    "model": "samsung SM-A146U"
+  },
+  {
+    "name": "samsung SM-A155F",
+    "model": "samsung SM-A155F"
+  },
+  {
+    "name": "samsung SM-A155M",
+    "model": "samsung SM-A155M"
+  },
+  {
+    "name": "samsung SM-A1560",
+    "model": "samsung SM-A1560"
+  },
+  {
+    "name": "samsung SM-A156E",
+    "model": "samsung SM-A156E"
+  },
+  {
+    "name": "samsung SM-A156M",
+    "model": "samsung SM-A156M"
+  },
+  {
+    "name": "samsung SM-A156U",
+    "model": "samsung SM-A156U"
+  },
+  {
+    "name": "samsung SM-A156U1",
+    "model": "samsung SM-A156U1"
+  },
+  {
+    "name": "samsung SM-A156W",
+    "model": "samsung SM-A156W"
+  },
+  {
+    "name": "samsung SM-A165F",
+    "model": "samsung SM-A165F"
+  },
+  {
+    "name": "samsung SM-A165N",
+    "model": "samsung SM-A165N"
+  },
+  {
+    "name": "samsung SM-A166B",
+    "model": "samsung SM-A166B"
+  },
+  {
+    "name": "samsung SM-A166M",
+    "model": "samsung SM-A166M"
+  },
+  {
+    "name": "samsung SM-A166P",
+    "model": "samsung SM-A166P"
+  },
+  {
+    "name": "samsung SM-A166U",
+    "model": "samsung SM-A166U"
+  },
+  {
+    "name": "samsung SM-A166U1",
+    "model": "samsung SM-A166U1"
+  },
+  {
+    "name": "samsung SM-A166W",
+    "model": "samsung SM-A166W"
+  },
+  {
+    "name": "samsung SM-A175F",
+    "model": "samsung SM-A175F"
+  },
+  {
+    "name": "samsung SM-A176B",
+    "model": "samsung SM-A176B"
+  },
+  {
+    "name": "samsung SM-A217M",
+    "model": "samsung SM-A217M"
+  },
+  {
+    "name": "samsung SM-A225F",
+    "model": "samsung SM-A225F"
+  },
+  {
+    "name": "samsung SM-A225M",
+    "model": "samsung SM-A225M"
+  },
+  {
+    "name": "samsung SM-A226B",
+    "model": "samsung SM-A226B"
+  },
+  {
+    "name": "samsung SM-A226BR",
+    "model": "samsung SM-A226BR"
+  },
+  {
+    "name": "samsung SM-A235F",
+    "model": "samsung SM-A235F"
+  },
+  {
+    "name": "samsung SM-A235M",
+    "model": "samsung SM-A235M"
+  },
+  {
+    "name": "samsung SM-A235N",
+    "model": "samsung SM-A235N"
+  },
+  {
+    "name": "samsung SM-A236B",
+    "model": "samsung SM-A236B"
+  },
+  {
+    "name": "samsung SM-A245F",
+    "model": "samsung SM-A245F"
+  },
+  {
+    "name": "samsung SM-A245M",
+    "model": "samsung SM-A245M"
+  },
+  {
+    "name": "samsung SM-A256B",
+    "model": "samsung SM-A256B"
+  },
+  {
+    "name": "samsung SM-A256E",
+    "model": "samsung SM-A256E"
+  },
+  {
+    "name": "samsung SM-A256U",
+    "model": "samsung SM-A256U"
+  },
+  {
+    "name": "samsung SM-A266B",
+    "model": "samsung SM-A266B"
+  },
+  {
+    "name": "samsung SM-A266M",
+    "model": "samsung SM-A266M"
+  },
+  {
+    "name": "samsung SM-A266U",
+    "model": "samsung SM-A266U"
+  },
+  {
+    "name": "samsung SM-A315F",
+    "model": "samsung SM-A315F"
+  },
+  {
+    "name": "samsung SM-A315G",
+    "model": "samsung SM-A315G"
+  },
+  {
+    "name": "samsung SM-A325F",
+    "model": "samsung SM-A325F"
+  },
+  {
+    "name": "samsung SM-A325M",
+    "model": "samsung SM-A325M"
+  },
+  {
+    "name": "samsung SM-A325N",
+    "model": "samsung SM-A325N"
+  },
+  {
+    "name": "samsung SM-A326B",
+    "model": "samsung SM-A326B"
+  },
+  {
+    "name": "samsung SM-A326BR",
+    "model": "samsung SM-A326BR"
+  },
+  {
+    "name": "samsung SM-A326U",
+    "model": "samsung SM-A326U"
+  },
+  {
+    "name": "samsung SM-A336B",
+    "model": "samsung SM-A336B"
+  },
+  {
+    "name": "samsung SM-A336E",
+    "model": "samsung SM-A336E"
+  },
+  {
+    "name": "samsung SM-A336M",
+    "model": "samsung SM-A336M"
+  },
+  {
+    "name": "samsung SM-A346B",
+    "model": "samsung SM-A346B"
+  },
+  {
+    "name": "samsung SM-A346E",
+    "model": "samsung SM-A346E"
+  },
+  {
+    "name": "samsung SM-A346M",
+    "model": "samsung SM-A346M"
+  },
+  {
+    "name": "samsung SM-A3560",
+    "model": "samsung SM-A3560"
+  },
+  {
+    "name": "samsung SM-A356B",
+    "model": "samsung SM-A356B"
+  },
+  {
+    "name": "samsung SM-A356E",
+    "model": "samsung SM-A356E"
+  },
+  {
+    "name": "samsung SM-A356U",
+    "model": "samsung SM-A356U"
+  },
+  {
+    "name": "samsung SM-A366B",
+    "model": "samsung SM-A366B"
+  },
+  {
+    "name": "samsung SM-A366E",
+    "model": "samsung SM-A366E"
+  },
+  {
+    "name": "samsung SM-A366N",
+    "model": "samsung SM-A366N"
+  },
+  {
+    "name": "samsung SM-A366U",
+    "model": "samsung SM-A366U"
+  },
+  {
+    "name": "samsung SM-A505FN",
+    "model": "samsung SM-A505FN"
+  },
+  {
+    "name": "samsung SM-A515F",
+    "model": "samsung SM-A515F"
+  },
+  {
+    "name": "samsung SM-A516N",
+    "model": "samsung SM-A516N"
+  },
+  {
+    "name": "samsung SM-A516U",
+    "model": "samsung SM-A516U"
+  },
+  {
+    "name": "samsung SM-A525F",
+    "model": "samsung SM-A525F"
+  },
+  {
+    "name": "samsung SM-A525M",
+    "model": "samsung SM-A525M"
+  },
+  {
+    "name": "samsung SM-A526B",
+    "model": "samsung SM-A526B"
+  },
+  {
+    "name": "samsung SM-A526U",
+    "model": "samsung SM-A526U"
+  },
+  {
+    "name": "samsung SM-A526W",
+    "model": "samsung SM-A526W"
+  },
+  {
+    "name": "samsung SM-A528B",
+    "model": "samsung SM-A528B"
+  },
+  {
+    "name": "samsung SM-A5360",
+    "model": "samsung SM-A5360"
+  },
+  {
+    "name": "samsung SM-A536B",
+    "model": "samsung SM-A536B"
+  },
+  {
+    "name": "samsung SM-A536E",
+    "model": "samsung SM-A536E"
+  },
+  {
+    "name": "samsung SM-A536U",
+    "model": "samsung SM-A536U"
+  },
+  {
+    "name": "samsung SM-A536U1",
+    "model": "samsung SM-A536U1"
+  },
+  {
+    "name": "samsung SM-A5460",
+    "model": "samsung SM-A5460"
+  },
+  {
+    "name": "samsung SM-A546B",
+    "model": "samsung SM-A546B"
+  },
+  {
+    "name": "samsung SM-A546E",
+    "model": "samsung SM-A546E"
+  },
+  {
+    "name": "samsung SM-A546U",
+    "model": "samsung SM-A546U"
+  },
+  {
+    "name": "samsung SM-A546U1",
+    "model": "samsung SM-A546U1"
+  },
+  {
+    "name": "samsung SM-A546V",
+    "model": "samsung SM-A546V"
+  },
+  {
+    "name": "samsung SM-A556B",
+    "model": "samsung SM-A556B"
+  },
+  {
+    "name": "samsung SM-A556E",
+    "model": "samsung SM-A556E"
+  },
+  {
+    "name": "samsung SM-A5660",
+    "model": "samsung SM-A5660"
+  },
+  {
+    "name": "samsung SM-A566B",
+    "model": "samsung SM-A566B"
+  },
+  {
+    "name": "samsung SM-A566E",
+    "model": "samsung SM-A566E"
+  },
+  {
+    "name": "samsung SM-A566S",
+    "model": "samsung SM-A566S"
+  },
+  {
+    "name": "samsung SM-A7050",
+    "model": "samsung SM-A7050"
+  },
+  {
+    "name": "samsung SM-A705FN",
+    "model": "samsung SM-A705FN"
+  },
+  {
+    "name": "samsung SM-A705W",
+    "model": "samsung SM-A705W"
+  },
+  {
+    "name": "samsung SM-A715F",
+    "model": "samsung SM-A715F"
+  },
+  {
+    "name": "samsung SM-A716U1",
+    "model": "samsung SM-A716U1"
+  },
+  {
+    "name": "samsung SM-A725F",
+    "model": "samsung SM-A725F"
+  },
+  {
+    "name": "samsung SM-A736B",
+    "model": "samsung SM-A736B"
+  },
+  {
+    "name": "samsung SM-A805N",
+    "model": "samsung SM-A805N"
+  },
+  {
+    "name": "samsung SM-A908B",
+    "model": "samsung SM-A908B"
+  },
+  {
+    "name": "samsung SM-E045F",
+    "model": "samsung SM-E045F"
+  },
+  {
+    "name": "samsung SM-E055F",
+    "model": "samsung SM-E055F"
+  },
+  {
+    "name": "samsung SM-E236B",
+    "model": "samsung SM-E236B"
+  },
+  {
+    "name": "samsung SM-E546B",
+    "model": "samsung SM-E546B"
+  },
+  {
+    "name": "samsung SM-E556B",
+    "model": "samsung SM-E556B"
+  },
+  {
+    "name": "samsung SM-F711B",
+    "model": "samsung SM-F711B"
+  },
+  {
+    "name": "samsung SM-F7210",
+    "model": "samsung SM-F7210"
+  },
+  {
+    "name": "samsung SM-F721B",
+    "model": "samsung SM-F721B"
+  },
+  {
+    "name": "samsung SM-F721N",
+    "model": "samsung SM-F721N"
+  },
+  {
+    "name": "samsung SM-F721U",
+    "model": "samsung SM-F721U"
+  },
+  {
+    "name": "samsung SM-F721U1",
+    "model": "samsung SM-F721U1"
+  },
+  {
+    "name": "samsung SM-F731B",
+    "model": "samsung SM-F731B"
+  },
+  {
+    "name": "samsung SM-F731N",
+    "model": "samsung SM-F731N"
+  },
+  {
+    "name": "samsung SM-F731U",
+    "model": "samsung SM-F731U"
+  },
+  {
+    "name": "samsung SM-F731U1",
+    "model": "samsung SM-F731U1"
+  },
+  {
+    "name": "samsung SM-F731W",
+    "model": "samsung SM-F731W"
+  },
+  {
+    "name": "samsung SM-F741B",
+    "model": "samsung SM-F741B"
+  },
+  {
+    "name": "samsung SM-F741N",
+    "model": "samsung SM-F741N"
+  },
+  {
+    "name": "samsung SM-F741U",
+    "model": "samsung SM-F741U"
+  },
+  {
+    "name": "samsung SM-F741U1",
+    "model": "samsung SM-F741U1"
+  },
+  {
+    "name": "samsung SM-F741W",
+    "model": "samsung SM-F741W"
+  },
+  {
+    "name": "samsung SM-F766B",
+    "model": "samsung SM-F766B"
+  },
+  {
+    "name": "samsung SM-F766U",
+    "model": "samsung SM-F766U"
+  },
+  {
+    "name": "samsung SM-F766U1",
+    "model": "samsung SM-F766U1"
+  },
+  {
+    "name": "samsung SM-F766W",
+    "model": "samsung SM-F766W"
+  },
+  {
+    "name": "samsung SM-F926B",
+    "model": "samsung SM-F926B"
+  },
+  {
+    "name": "samsung SM-F926N",
+    "model": "samsung SM-F926N"
+  },
+  {
+    "name": "samsung SM-F926U",
+    "model": "samsung SM-F926U"
+  },
+  {
+    "name": "samsung SM-F926U1",
+    "model": "samsung SM-F926U1"
+  },
+  {
+    "name": "samsung SM-F936B",
+    "model": "samsung SM-F936B"
+  },
+  {
+    "name": "samsung SM-F936N",
+    "model": "samsung SM-F936N"
+  },
+  {
+    "name": "samsung SM-F936U",
+    "model": "samsung SM-F936U"
+  },
+  {
+    "name": "samsung SM-F936U1",
+    "model": "samsung SM-F936U1"
+  },
+  {
+    "name": "samsung SM-F946B",
+    "model": "samsung SM-F946B"
+  },
+  {
+    "name": "samsung SM-F946N",
+    "model": "samsung SM-F946N"
+  },
+  {
+    "name": "samsung SM-F946U",
+    "model": "samsung SM-F946U"
+  },
+  {
+    "name": "samsung SM-F946U1",
+    "model": "samsung SM-F946U1"
+  },
+  {
+    "name": "samsung SM-F946W",
+    "model": "samsung SM-F946W"
+  },
+  {
+    "name": "samsung SM-F9560",
+    "model": "samsung SM-F9560"
+  },
+  {
+    "name": "samsung SM-F956B",
+    "model": "samsung SM-F956B"
+  },
+  {
+    "name": "samsung SM-F956N",
+    "model": "samsung SM-F956N"
+  },
+  {
+    "name": "samsung SM-F956U",
+    "model": "samsung SM-F956U"
+  },
+  {
+    "name": "samsung SM-F956U1",
+    "model": "samsung SM-F956U1"
+  },
+  {
+    "name": "samsung SM-F956W",
+    "model": "samsung SM-F956W"
+  },
+  {
+    "name": "samsung SM-F9660",
+    "model": "samsung SM-F9660"
+  },
+  {
+    "name": "samsung SM-F966B",
+    "model": "samsung SM-F966B"
+  },
+  {
+    "name": "samsung SM-F966N",
+    "model": "samsung SM-F966N"
+  },
+  {
+    "name": "samsung SM-F966U",
+    "model": "samsung SM-F966U"
+  },
+  {
+    "name": "samsung SM-F966U1",
+    "model": "samsung SM-F966U1"
+  },
+  {
+    "name": "samsung SM-F966W",
+    "model": "samsung SM-F966W"
+  },
+  {
+    "name": "samsung SM-F966Z",
+    "model": "samsung SM-F966Z"
+  },
+  {
+    "name": "samsung SM-F968N",
+    "model": "samsung SM-F968N"
+  },
+  {
+    "name": "samsung SM-G736B",
+    "model": "samsung SM-G736B"
+  },
+  {
+    "name": "samsung SM-G766U1",
+    "model": "samsung SM-G766U1"
+  },
+  {
+    "name": "samsung SM-G780F",
+    "model": "samsung SM-G780F"
+  },
+  {
+    "name": "samsung SM-G780G",
+    "model": "samsung SM-G780G"
+  },
+  {
+    "name": "samsung SM-G781B",
+    "model": "samsung SM-G781B"
+  },
+  {
+    "name": "samsung SM-G781U",
+    "model": "samsung SM-G781U"
+  },
+  {
+    "name": "samsung SM-G781U1",
+    "model": "samsung SM-G781U1"
+  },
+  {
+    "name": "samsung SM-G781V",
+    "model": "samsung SM-G781V"
+  },
+  {
+    "name": "samsung SM-G781W",
+    "model": "samsung SM-G781W"
+  },
+  {
+    "name": "samsung SM-G960F",
+    "model": "samsung SM-G960F"
+  },
+  {
+    "name": "samsung SM-G960U",
+    "model": "samsung SM-G960U"
+  },
+  {
+    "name": "samsung SM-G960W",
+    "model": "samsung SM-G960W"
+  },
+  {
+    "name": "samsung SM-G965F",
+    "model": "samsung SM-G965F"
+  },
+  {
+    "name": "samsung SM-G965U",
+    "model": "samsung SM-G965U"
+  },
+  {
+    "name": "samsung SM-G965U1",
+    "model": "samsung SM-G965U1"
+  },
+  {
+    "name": "samsung SM-G9700",
+    "model": "samsung SM-G9700"
+  },
+  {
+    "name": "samsung SM-G970F",
+    "model": "samsung SM-G970F"
+  },
+  {
+    "name": "samsung SM-G970U",
+    "model": "samsung SM-G970U"
+  },
+  {
+    "name": "samsung SM-G970U1",
+    "model": "samsung SM-G970U1"
+  },
+  {
+    "name": "samsung SM-G973F",
+    "model": "samsung SM-G973F"
+  },
+  {
+    "name": "samsung SM-G973U1",
+    "model": "samsung SM-G973U1"
+  },
+  {
+    "name": "samsung SM-G975N",
+    "model": "samsung SM-G975N"
+  },
+  {
+    "name": "samsung SM-G975U",
+    "model": "samsung SM-G975U"
+  },
+  {
+    "name": "samsung SM-G975U1",
+    "model": "samsung SM-G975U1"
+  },
+  {
+    "name": "samsung SM-G977N",
+    "model": "samsung SM-G977N"
+  },
+  {
+    "name": "samsung SM-G977U",
+    "model": "samsung SM-G977U"
+  },
+  {
+    "name": "samsung SM-G980F",
+    "model": "samsung SM-G980F"
+  },
+  {
+    "name": "samsung SM-G9810",
+    "model": "samsung SM-G9810"
+  },
+  {
+    "name": "samsung SM-G981B",
+    "model": "samsung SM-G981B"
+  },
+  {
+    "name": "samsung SM-G981U",
+    "model": "samsung SM-G981U"
+  },
+  {
+    "name": "samsung SM-G981U1",
+    "model": "samsung SM-G981U1"
+  },
+  {
+    "name": "samsung SM-G981V",
+    "model": "samsung SM-G981V"
+  },
+  {
+    "name": "samsung SM-G981W",
+    "model": "samsung SM-G981W"
+  },
+  {
+    "name": "samsung SM-G985F",
+    "model": "samsung SM-G985F"
+  },
+  {
+    "name": "samsung SM-G9860",
+    "model": "samsung SM-G9860"
+  },
+  {
+    "name": "samsung SM-G986B",
+    "model": "samsung SM-G986B"
+  },
+  {
+    "name": "samsung SM-G986N",
+    "model": "samsung SM-G986N"
+  },
+  {
+    "name": "samsung SM-G986U",
+    "model": "samsung SM-G986U"
+  },
+  {
+    "name": "samsung SM-G986U1",
+    "model": "samsung SM-G986U1"
+  },
+  {
+    "name": "samsung SM-G986W",
+    "model": "samsung SM-G986W"
+  },
+  {
+    "name": "samsung SM-G9880",
+    "model": "samsung SM-G9880"
+  },
+  {
+    "name": "samsung SM-G988B",
+    "model": "samsung SM-G988B"
+  },
+  {
+    "name": "samsung SM-G988U",
+    "model": "samsung SM-G988U"
+  },
+  {
+    "name": "samsung SM-G988U1",
+    "model": "samsung SM-G988U1"
+  },
+  {
+    "name": "samsung SM-G9900",
+    "model": "samsung SM-G9900"
+  },
+  {
+    "name": "samsung SM-G990B",
+    "model": "samsung SM-G990B"
+  },
+  {
+    "name": "samsung SM-G990B2",
+    "model": "samsung SM-G990B2"
+  },
+  {
+    "name": "samsung SM-G990E",
+    "model": "samsung SM-G990E"
+  },
+  {
+    "name": "samsung SM-G990U",
+    "model": "samsung SM-G990U"
+  },
+  {
+    "name": "samsung SM-G990U1",
+    "model": "samsung SM-G990U1"
+  },
+  {
+    "name": "samsung SM-G990U2",
+    "model": "samsung SM-G990U2"
+  },
+  {
+    "name": "samsung SM-G990U3",
+    "model": "samsung SM-G990U3"
+  },
+  {
+    "name": "samsung SM-G990W2",
+    "model": "samsung SM-G990W2"
+  },
+  {
+    "name": "samsung SM-G991B",
+    "model": "samsung SM-G991B"
+  },
+  {
+    "name": "samsung SM-G991N",
+    "model": "samsung SM-G991N"
+  },
+  {
+    "name": "samsung SM-G991U",
+    "model": "samsung SM-G991U"
+  },
+  {
+    "name": "samsung SM-G991U1",
+    "model": "samsung SM-G991U1"
+  },
+  {
+    "name": "samsung SM-G991W",
+    "model": "samsung SM-G991W"
+  },
+  {
+    "name": "samsung SM-G9960",
+    "model": "samsung SM-G9960"
+  },
+  {
+    "name": "samsung SM-G996B",
+    "model": "samsung SM-G996B"
+  },
+  {
+    "name": "samsung SM-G996N",
+    "model": "samsung SM-G996N"
+  },
+  {
+    "name": "samsung SM-G996U",
+    "model": "samsung SM-G996U"
+  },
+  {
+    "name": "samsung SM-G996U1",
+    "model": "samsung SM-G996U1"
+  },
+  {
+    "name": "samsung SM-G9980",
+    "model": "samsung SM-G9980"
+  },
+  {
+    "name": "samsung SM-G998B",
+    "model": "samsung SM-G998B"
+  },
+  {
+    "name": "samsung SM-G998U",
+    "model": "samsung SM-G998U"
+  },
+  {
+    "name": "samsung SM-G998U1",
+    "model": "samsung SM-G998U1"
+  },
+  {
+    "name": "samsung SM-J727VPP",
+    "model": "samsung SM-J727VPP"
+  },
+  {
+    "name": "samsung SM-M127F",
+    "model": "samsung SM-M127F"
+  },
+  {
+    "name": "samsung SM-M135M",
+    "model": "samsung SM-M135M"
+  },
+  {
+    "name": "samsung SM-M146B",
+    "model": "samsung SM-M146B"
+  },
+  {
+    "name": "samsung SM-M215F",
+    "model": "samsung SM-M215F"
+  },
+  {
+    "name": "samsung SM-M225FV",
+    "model": "samsung SM-M225FV"
+  },
+  {
+    "name": "samsung SM-M236B",
+    "model": "samsung SM-M236B"
+  },
+  {
+    "name": "samsung SM-M307F",
+    "model": "samsung SM-M307F"
+  },
+  {
+    "name": "samsung SM-M315F",
+    "model": "samsung SM-M315F"
+  },
+  {
+    "name": "samsung SM-M336B",
+    "model": "samsung SM-M336B"
+  },
+  {
+    "name": "samsung SM-M346B",
+    "model": "samsung SM-M346B"
+  },
+  {
+    "name": "samsung SM-M346B1",
+    "model": "samsung SM-M346B1"
+  },
+  {
+    "name": "samsung SM-M356B",
+    "model": "samsung SM-M356B"
+  },
+  {
+    "name": "samsung SM-M515F",
+    "model": "samsung SM-M515F"
+  },
+  {
+    "name": "samsung SM-M526B",
+    "model": "samsung SM-M526B"
+  },
+  {
+    "name": "samsung SM-M546B",
+    "model": "samsung SM-M546B"
+  },
+  {
+    "name": "samsung SM-M556B",
+    "model": "samsung SM-M556B"
+  },
+  {
+    "name": "samsung SM-M566B",
+    "model": "samsung SM-M566B"
+  },
+  {
+    "name": "samsung SM-N770F",
+    "model": "samsung SM-N770F"
+  },
+  {
+    "name": "samsung SM-N960U",
+    "model": "samsung SM-N960U"
+  },
+  {
+    "name": "samsung SM-N960U1",
+    "model": "samsung SM-N960U1"
+  },
+  {
+    "name": "samsung SM-N970F",
+    "model": "samsung SM-N970F"
+  },
+  {
+    "name": "samsung SM-N970U",
+    "model": "samsung SM-N970U"
+  },
+  {
+    "name": "samsung SM-N975F",
+    "model": "samsung SM-N975F"
+  },
+  {
+    "name": "samsung SM-N975U",
+    "model": "samsung SM-N975U"
+  },
+  {
+    "name": "samsung SM-N975U1",
+    "model": "samsung SM-N975U1"
+  },
+  {
+    "name": "samsung SM-N976N",
+    "model": "samsung SM-N976N"
+  },
+  {
+    "name": "samsung SM-N981U",
+    "model": "samsung SM-N981U"
+  },
+  {
+    "name": "samsung SM-N985F",
+    "model": "samsung SM-N985F"
+  },
+  {
+    "name": "samsung SM-N9860",
+    "model": "samsung SM-N9860"
+  },
+  {
+    "name": "samsung SM-N986B",
+    "model": "samsung SM-N986B"
+  },
+  {
+    "name": "samsung SM-N986N",
+    "model": "samsung SM-N986N"
+  },
+  {
+    "name": "samsung SM-N986U",
+    "model": "samsung SM-N986U"
+  },
+  {
+    "name": "samsung SM-N986U1",
+    "model": "samsung SM-N986U1"
+  },
+  {
+    "name": "samsung SM-N986W",
+    "model": "samsung SM-N986W"
+  },
+  {
+    "name": "samsung SM-P610",
+    "model": "samsung SM-P610"
+  },
+  {
+    "name": "samsung SM-P613",
+    "model": "samsung SM-P613"
+  },
+  {
+    "name": "samsung SM-P615",
+    "model": "samsung SM-P615"
+  },
+  {
+    "name": "samsung SM-P620",
+    "model": "samsung SM-P620"
+  },
+  {
+    "name": "samsung SM-S146VL",
+    "model": "samsung SM-S146VL"
+  },
+  {
+    "name": "samsung SM-S156V",
+    "model": "samsung SM-S156V"
+  },
+  {
+    "name": "samsung SM-S256VL",
+    "model": "samsung SM-S256VL"
+  },
+  {
+    "name": "samsung SM-S546VL",
+    "model": "samsung SM-S546VL"
+  },
+  {
+    "name": "samsung SM-S711B",
+    "model": "samsung SM-S711B"
+  },
+  {
+    "name": "samsung SM-S711N",
+    "model": "samsung SM-S711N"
+  },
+  {
+    "name": "samsung SM-S711U",
+    "model": "samsung SM-S711U"
+  },
+  {
+    "name": "samsung SM-S711U1",
+    "model": "samsung SM-S711U1"
+  },
+  {
+    "name": "samsung SM-S7210",
+    "model": "samsung SM-S7210"
+  },
+  {
+    "name": "samsung SM-S721B",
+    "model": "samsung SM-S721B"
+  },
+  {
+    "name": "samsung SM-S721U",
+    "model": "samsung SM-S721U"
+  },
+  {
+    "name": "samsung SM-S721U1",
+    "model": "samsung SM-S721U1"
+  },
+  {
+    "name": "samsung SM-S721W",
+    "model": "samsung SM-S721W"
+  },
+  {
+    "name": "samsung SM-S731B",
+    "model": "samsung SM-S731B"
+  },
+  {
+    "name": "samsung SM-S731U",
+    "model": "samsung SM-S731U"
+  },
+  {
+    "name": "samsung SM-S731W",
+    "model": "samsung SM-S731W"
+  },
+  {
+    "name": "samsung SM-S9010",
+    "model": "samsung SM-S9010"
+  },
+  {
+    "name": "samsung SM-S901B",
+    "model": "samsung SM-S901B"
+  },
+  {
+    "name": "samsung SM-S901E",
+    "model": "samsung SM-S901E"
+  },
+  {
+    "name": "samsung SM-S901N",
+    "model": "samsung SM-S901N"
+  },
+  {
+    "name": "samsung SM-S901U",
+    "model": "samsung SM-S901U"
+  },
+  {
+    "name": "samsung SM-S901U1",
+    "model": "samsung SM-S901U1"
+  },
+  {
+    "name": "samsung SM-S901W",
+    "model": "samsung SM-S901W"
+  },
+  {
+    "name": "samsung SM-S9060",
+    "model": "samsung SM-S9060"
+  },
+  {
+    "name": "samsung SM-S906B",
+    "model": "samsung SM-S906B"
+  },
+  {
+    "name": "samsung SM-S906E",
+    "model": "samsung SM-S906E"
+  },
+  {
+    "name": "samsung SM-S906N",
+    "model": "samsung SM-S906N"
+  },
+  {
+    "name": "samsung SM-S906U",
+    "model": "samsung SM-S906U"
+  },
+  {
+    "name": "samsung SM-S906U1",
+    "model": "samsung SM-S906U1"
+  },
+  {
+    "name": "samsung SM-S9080",
+    "model": "samsung SM-S9080"
+  },
+  {
+    "name": "samsung SM-S908B",
+    "model": "samsung SM-S908B"
+  },
+  {
+    "name": "samsung SM-S908E",
+    "model": "samsung SM-S908E"
+  },
+  {
+    "name": "samsung SM-S908N",
+    "model": "samsung SM-S908N"
+  },
+  {
+    "name": "samsung SM-S908U",
+    "model": "samsung SM-S908U"
+  },
+  {
+    "name": "samsung SM-S908U1",
+    "model": "samsung SM-S908U1"
+  },
+  {
+    "name": "samsung SM-S9110",
+    "model": "samsung SM-S9110"
+  },
+  {
+    "name": "samsung SM-S911B",
+    "model": "samsung SM-S911B"
+  },
+  {
+    "name": "samsung SM-S911N",
+    "model": "samsung SM-S911N"
+  },
+  {
+    "name": "samsung SM-S911U",
+    "model": "samsung SM-S911U"
+  },
+  {
+    "name": "samsung SM-S911U1",
+    "model": "samsung SM-S911U1"
+  },
+  {
+    "name": "samsung SM-S911W",
+    "model": "samsung SM-S911W"
+  },
+  {
+    "name": "samsung SM-S916B",
+    "model": "samsung SM-S916B"
+  },
+  {
+    "name": "samsung SM-S916N",
+    "model": "samsung SM-S916N"
+  },
+  {
+    "name": "samsung SM-S916U",
+    "model": "samsung SM-S916U"
+  },
+  {
+    "name": "samsung SM-S916U1",
+    "model": "samsung SM-S916U1"
+  },
+  {
+    "name": "samsung SM-S916W",
+    "model": "samsung SM-S916W"
+  },
+  {
+    "name": "samsung SM-S9180",
+    "model": "samsung SM-S9180"
+  },
+  {
+    "name": "samsung SM-S918B",
+    "model": "samsung SM-S918B"
+  },
+  {
+    "name": "samsung SM-S918N",
+    "model": "samsung SM-S918N"
+  },
+  {
+    "name": "samsung SM-S918U",
+    "model": "samsung SM-S918U"
+  },
+  {
+    "name": "samsung SM-S918U1",
+    "model": "samsung SM-S918U1"
+  },
+  {
+    "name": "samsung SM-S918W",
+    "model": "samsung SM-S918W"
+  },
+  {
+    "name": "samsung SM-S9210",
+    "model": "samsung SM-S9210"
+  },
+  {
+    "name": "samsung SM-S921B",
+    "model": "samsung SM-S921B"
+  },
+  {
+    "name": "samsung SM-S921E",
+    "model": "samsung SM-S921E"
+  },
+  {
+    "name": "samsung SM-S921N",
+    "model": "samsung SM-S921N"
+  },
+  {
+    "name": "samsung SM-S921U",
+    "model": "samsung SM-S921U"
+  },
+  {
+    "name": "samsung SM-S921U1",
+    "model": "samsung SM-S921U1"
+  },
+  {
+    "name": "samsung SM-S921W",
+    "model": "samsung SM-S921W"
+  },
+  {
+    "name": "samsung SM-S9260",
+    "model": "samsung SM-S9260"
+  },
+  {
+    "name": "samsung SM-S926B",
+    "model": "samsung SM-S926B"
+  },
+  {
+    "name": "samsung SM-S926N",
+    "model": "samsung SM-S926N"
+  },
+  {
+    "name": "samsung SM-S926U",
+    "model": "samsung SM-S926U"
+  },
+  {
+    "name": "samsung SM-S926U1",
+    "model": "samsung SM-S926U1"
+  },
+  {
+    "name": "samsung SM-S926W",
+    "model": "samsung SM-S926W"
+  },
+  {
+    "name": "samsung SM-S9280",
+    "model": "samsung SM-S9280"
+  },
+  {
+    "name": "samsung SM-S928B",
+    "model": "samsung SM-S928B"
+  },
+  {
+    "name": "samsung SM-S928N",
+    "model": "samsung SM-S928N"
+  },
+  {
+    "name": "samsung SM-S928U",
+    "model": "samsung SM-S928U"
+  },
+  {
+    "name": "samsung SM-S928U1",
+    "model": "samsung SM-S928U1"
+  },
+  {
+    "name": "samsung SM-S928W",
+    "model": "samsung SM-S928W"
+  },
+  {
+    "name": "samsung SM-S9310",
+    "model": "samsung SM-S9310"
+  },
+  {
+    "name": "samsung SM-S931B",
+    "model": "samsung SM-S931B"
+  },
+  {
+    "name": "samsung SM-S931N",
+    "model": "samsung SM-S931N"
+  },
+  {
+    "name": "samsung SM-S931Q",
+    "model": "samsung SM-S931Q"
+  },
+  {
+    "name": "samsung SM-S931U",
+    "model": "samsung SM-S931U"
+  },
+  {
+    "name": "samsung SM-S931U1",
+    "model": "samsung SM-S931U1"
+  },
+  {
+    "name": "samsung SM-S931W",
+    "model": "samsung SM-S931W"
+  },
+  {
+    "name": "samsung SM-S9360",
+    "model": "samsung SM-S9360"
+  },
+  {
+    "name": "samsung SM-S936B",
+    "model": "samsung SM-S936B"
+  },
+  {
+    "name": "samsung SM-S936N",
+    "model": "samsung SM-S936N"
+  },
+  {
+    "name": "samsung SM-S936U",
+    "model": "samsung SM-S936U"
+  },
+  {
+    "name": "samsung SM-S936U1",
+    "model": "samsung SM-S936U1"
+  },
+  {
+    "name": "samsung SM-S936W",
+    "model": "samsung SM-S936W"
+  },
+  {
+    "name": "samsung SM-S937B",
+    "model": "samsung SM-S937B"
+  },
+  {
+    "name": "samsung SM-S937N",
+    "model": "samsung SM-S937N"
+  },
+  {
+    "name": "samsung SM-S937U1",
+    "model": "samsung SM-S937U1"
+  },
+  {
+    "name": "samsung SM-S9380",
+    "model": "samsung SM-S9380"
+  },
+  {
+    "name": "samsung SM-S938B",
+    "model": "samsung SM-S938B"
+  },
+  {
+    "name": "samsung SM-S938N",
+    "model": "samsung SM-S938N"
+  },
+  {
+    "name": "samsung SM-S938Q",
+    "model": "samsung SM-S938Q"
+  },
+  {
+    "name": "samsung SM-S938U",
+    "model": "samsung SM-S938U"
+  },
+  {
+    "name": "samsung SM-S938U1",
+    "model": "samsung SM-S938U1"
+  },
+  {
+    "name": "samsung SM-S938W",
+    "model": "samsung SM-S938W"
+  },
+  {
+    "name": "samsung SM-T500",
+    "model": "samsung SM-T500"
+  },
+  {
+    "name": "samsung SM-T505",
+    "model": "samsung SM-T505"
+  },
+  {
+    "name": "samsung SM-T505N",
+    "model": "samsung SM-T505N"
+  },
+  {
+    "name": "samsung SM-T720",
+    "model": "samsung SM-T720"
+  },
+  {
+    "name": "samsung SM-T733",
+    "model": "samsung SM-T733"
+  },
+  {
+    "name": "samsung SM-T735",
+    "model": "samsung SM-T735"
+  },
+  {
+    "name": "samsung SM-T736B",
+    "model": "samsung SM-T736B"
+  },
+  {
+    "name": "samsung SM-T738U",
+    "model": "samsung SM-T738U"
+  },
+  {
+    "name": "samsung SM-T860",
+    "model": "samsung SM-T860"
+  },
+  {
+    "name": "samsung SM-T865",
+    "model": "samsung SM-T865"
+  },
+  {
+    "name": "samsung SM-T867U",
+    "model": "samsung SM-T867U"
+  },
+  {
+    "name": "samsung SM-T870",
+    "model": "samsung SM-T870"
+  },
+  {
+    "name": "samsung SM-T875",
+    "model": "samsung SM-T875"
+  },
+  {
+    "name": "samsung SM-T970",
+    "model": "samsung SM-T970"
+  },
+  {
+    "name": "samsung SM-T975",
+    "model": "samsung SM-T975"
+  },
+  {
+    "name": "samsung SM-T975N",
+    "model": "samsung SM-T975N"
+  },
+  {
+    "name": "samsung SM-T976B",
+    "model": "samsung SM-T976B"
+  },
+  {
+    "name": "samsung SM-T978U",
+    "model": "samsung SM-T978U"
+  },
+  {
+    "name": "samsung SM-X110",
+    "model": "samsung SM-X110"
+  },
+  {
+    "name": "samsung SM-X115",
+    "model": "samsung SM-X115"
+  },
+  {
+    "name": "samsung SM-X130",
+    "model": "samsung SM-X130"
+  },
+  {
+    "name": "samsung SM-X133",
+    "model": "samsung SM-X133"
+  },
+  {
+    "name": "samsung SM-X200",
+    "model": "samsung SM-X200"
+  },
+  {
+    "name": "samsung SM-X205",
+    "model": "samsung SM-X205"
+  },
+  {
+    "name": "samsung SM-X210",
+    "model": "samsung SM-X210"
+  },
+  {
+    "name": "samsung SM-X216B",
+    "model": "samsung SM-X216B"
+  },
+  {
+    "name": "samsung SM-X218U",
+    "model": "samsung SM-X218U"
+  },
+  {
+    "name": "samsung SM-X236B",
+    "model": "samsung SM-X236B"
+  },
+  {
+    "name": "samsung SM-X400",
+    "model": "samsung SM-X400"
+  },
+  {
+    "name": "samsung SM-X510",
+    "model": "samsung SM-X510"
+  },
+  {
+    "name": "samsung SM-X516B",
+    "model": "samsung SM-X516B"
+  },
+  {
+    "name": "samsung SM-X518U",
+    "model": "samsung SM-X518U"
+  },
+  {
+    "name": "samsung SM-X520",
+    "model": "samsung SM-X520"
+  },
+  {
+    "name": "samsung SM-X526B",
+    "model": "samsung SM-X526B"
+  },
+  {
+    "name": "samsung SM-X528U",
+    "model": "samsung SM-X528U"
+  },
+  {
+    "name": "samsung SM-X610",
+    "model": "samsung SM-X610"
+  },
+  {
+    "name": "samsung SM-X616B",
+    "model": "samsung SM-X616B"
+  },
+  {
+    "name": "samsung SM-X620",
+    "model": "samsung SM-X620"
+  },
+  {
+    "name": "samsung SM-X626B",
+    "model": "samsung SM-X626B"
+  },
+  {
+    "name": "samsung SM-X700",
+    "model": "samsung SM-X700"
+  },
+  {
+    "name": "samsung SM-X706B",
+    "model": "samsung SM-X706B"
+  },
+  {
+    "name": "samsung SM-X710",
+    "model": "samsung SM-X710"
+  },
+  {
+    "name": "samsung SM-X716B",
+    "model": "samsung SM-X716B"
+  },
+  {
+    "name": "samsung SM-X730",
+    "model": "samsung SM-X730"
+  },
+  {
+    "name": "samsung SM-X800",
+    "model": "samsung SM-X800"
+  },
+  {
+    "name": "samsung SM-X806B",
+    "model": "samsung SM-X806B"
+  },
+  {
+    "name": "samsung SM-X806C",
+    "model": "samsung SM-X806C"
+  },
+  {
+    "name": "samsung SM-X808U",
+    "model": "samsung SM-X808U"
+  },
+  {
+    "name": "samsung SM-X810",
+    "model": "samsung SM-X810"
+  },
+  {
+    "name": "samsung SM-X816B",
+    "model": "samsung SM-X816B"
+  },
+  {
+    "name": "samsung SM-X818U",
+    "model": "samsung SM-X818U"
+  },
+  {
+    "name": "samsung SM-X820",
+    "model": "samsung SM-X820"
+  },
+  {
+    "name": "samsung SM-X826B",
+    "model": "samsung SM-X826B"
+  },
+  {
+    "name": "samsung SM-X828U",
+    "model": "samsung SM-X828U"
+  },
+  {
+    "name": "samsung SM-X900",
+    "model": "samsung SM-X900"
+  },
+  {
+    "name": "samsung SM-X906B",
+    "model": "samsung SM-X906B"
+  },
+  {
+    "name": "samsung SM-X910",
+    "model": "samsung SM-X910"
+  },
+  {
+    "name": "samsung SM-X910N",
+    "model": "samsung SM-X910N"
+  },
+  {
+    "name": "samsung SM-X916B",
+    "model": "samsung SM-X916B"
+  },
+  {
+    "name": "samsung SM-X916N",
+    "model": "samsung SM-X916N"
+  },
+  {
+    "name": "samsung SM-X920",
+    "model": "samsung SM-X920"
+  },
+  {
+    "name": "samsung SM-X926B",
+    "model": "samsung SM-X926B"
+  },
+  {
+    "name": "samsung SM-X926N",
+    "model": "samsung SM-X926N"
+  },
+  {
+    "name": "samsung SM-X930",
+    "model": "samsung SM-X930"
+  },
+  {
+    "name": "samsung SM-X936B",
+    "model": "samsung SM-X936B"
+  },
+  {
+    "name": "samsung SMG991B",
+    "model": "samsung SMG991B"
+  },
+  {
+    "name": "unknown GammaOS Full",
+    "model": "unknown GammaOS Full"
+  },
+  {
+    "name": "unknown GammaOS Lite",
+    "model": "unknown GammaOS Lite"
+  },
+  {
+    "name": "unknown TrebleDroid vanilla",
+    "model": "unknown TrebleDroid vanilla"
+  },
+  {
+    "name": "unknown TrebleDroid with GApps",
+    "model": "unknown TrebleDroid with GApps"
+  },
+  {
+    "name": "vivo 1917",
+    "model": "vivo 1917"
+  },
+  {
+    "name": "vivo 1935",
+    "model": "vivo 1935"
+  },
+  {
+    "name": "vivo 1951",
+    "model": "vivo 1951"
+  },
+  {
+    "name": "vivo I2018",
+    "model": "vivo I2018"
+  },
+  {
+    "name": "vivo I2202",
+    "model": "vivo I2202"
+  },
+  {
+    "name": "vivo I2216",
+    "model": "vivo I2216"
+  },
+  {
+    "name": "vivo I2217",
+    "model": "vivo I2217"
+  },
+  {
+    "name": "vivo I2218",
+    "model": "vivo I2218"
+  },
+  {
+    "name": "vivo I2219",
+    "model": "vivo I2219"
+  },
+  {
+    "name": "vivo I2220",
+    "model": "vivo I2220"
+  },
+  {
+    "name": "vivo I2304",
+    "model": "vivo I2304"
+  },
+  {
+    "name": "vivo I2305",
+    "model": "vivo I2305"
+  },
+  {
+    "name": "vivo I2401",
+    "model": "vivo I2401"
+  },
+  {
+    "name": "vivo I2403",
+    "model": "vivo I2403"
+  },
+  {
+    "name": "vivo I2404",
+    "model": "vivo I2404"
+  },
+  {
+    "name": "vivo I2405",
+    "model": "vivo I2405"
+  },
+  {
+    "name": "vivo I2407",
+    "model": "vivo I2407"
+  },
+  {
+    "name": "vivo I2501",
+    "model": "vivo I2501"
+  },
+  {
+    "name": "vivo PA2573",
+    "model": "vivo PA2573"
+  },
+  {
+    "name": "vivo V1965A",
+    "model": "vivo V1965A"
+  },
+  {
+    "name": "vivo V2020CA",
+    "model": "vivo V2020CA"
+  },
+  {
+    "name": "vivo V2022",
+    "model": "vivo V2022"
+  },
+  {
+    "name": "vivo V2025",
+    "model": "vivo V2025"
+  },
+  {
+    "name": "vivo V2027",
+    "model": "vivo V2027"
+  },
+  {
+    "name": "vivo V2037",
+    "model": "vivo V2037"
+  },
+  {
+    "name": "vivo V2041",
+    "model": "vivo V2041"
+  },
+  {
+    "name": "vivo V2042",
+    "model": "vivo V2042"
+  },
+  {
+    "name": "vivo V2043",
+    "model": "vivo V2043"
+  },
+  {
+    "name": "vivo V2058",
+    "model": "vivo V2058"
+  },
+  {
+    "name": "vivo V2061",
+    "model": "vivo V2061"
+  },
+  {
+    "name": "vivo V2109",
+    "model": "vivo V2109"
+  },
+  {
+    "name": "vivo V2118",
+    "model": "vivo V2118"
+  },
+  {
+    "name": "vivo V2131",
+    "model": "vivo V2131"
+  },
+  {
+    "name": "vivo V2141",
+    "model": "vivo V2141"
+  },
+  {
+    "name": "vivo V2142",
+    "model": "vivo V2142"
+  },
+  {
+    "name": "vivo V2148A",
+    "model": "vivo V2148A"
+  },
+  {
+    "name": "vivo V2158",
+    "model": "vivo V2158"
+  },
+  {
+    "name": "vivo V2199A",
+    "model": "vivo V2199A"
+  },
+  {
+    "name": "vivo V2201",
+    "model": "vivo V2201"
+  },
+  {
+    "name": "vivo V2204",
+    "model": "vivo V2204"
+  },
+  {
+    "name": "vivo V2205",
+    "model": "vivo V2205"
+  },
+  {
+    "name": "vivo V2207",
+    "model": "vivo V2207"
+  },
+  {
+    "name": "vivo V2208",
+    "model": "vivo V2208"
+  },
+  {
+    "name": "vivo V2231A",
+    "model": "vivo V2231A"
+  },
+  {
+    "name": "vivo V2232A",
+    "model": "vivo V2232A"
+  },
+  {
+    "name": "vivo V2240",
+    "model": "vivo V2240"
+  },
+  {
+    "name": "vivo V2243A",
+    "model": "vivo V2243A"
+  },
+  {
+    "name": "vivo V2246",
+    "model": "vivo V2246"
+  },
+  {
+    "name": "vivo V2247",
+    "model": "vivo V2247"
+  },
+  {
+    "name": "vivo V2249",
+    "model": "vivo V2249"
+  },
+  {
+    "name": "vivo V2250",
+    "model": "vivo V2250"
+  },
+  {
+    "name": "vivo V2251",
+    "model": "vivo V2251"
+  },
+  {
+    "name": "vivo V2301A",
+    "model": "vivo V2301A"
+  },
+  {
+    "name": "vivo V2302A",
+    "model": "vivo V2302A"
+  },
+  {
+    "name": "vivo V2303",
+    "model": "vivo V2303"
+  },
+  {
+    "name": "vivo V2304A",
+    "model": "vivo V2304A"
+  },
+  {
+    "name": "vivo V2307A",
+    "model": "vivo V2307A"
+  },
+  {
+    "name": "vivo V2308",
+    "model": "vivo V2308"
+  },
+  {
+    "name": "vivo V2311",
+    "model": "vivo V2311"
+  },
+  {
+    "name": "vivo V2312",
+    "model": "vivo V2312"
+  },
+  {
+    "name": "vivo V2312A",
+    "model": "vivo V2312A"
+  },
+  {
+    "name": "vivo V2315",
+    "model": "vivo V2315"
+  },
+  {
+    "name": "vivo V2319",
+    "model": "vivo V2319"
+  },
+  {
+    "name": "vivo V2322",
+    "model": "vivo V2322"
+  },
+  {
+    "name": "vivo V2324A",
+    "model": "vivo V2324A"
+  },
+  {
+    "name": "vivo V2327",
+    "model": "vivo V2327"
+  },
+  {
+    "name": "vivo V2334A",
+    "model": "vivo V2334A"
+  },
+  {
+    "name": "vivo V2336",
+    "model": "vivo V2336"
+  },
+  {
+    "name": "vivo V2337",
+    "model": "vivo V2337"
+  },
+  {
+    "name": "vivo V2337A",
+    "model": "vivo V2337A"
+  },
+  {
+    "name": "vivo V2338A",
+    "model": "vivo V2338A"
+  },
+  {
+    "name": "vivo V2343",
+    "model": "vivo V2343"
+  },
+  {
+    "name": "vivo V2347",
+    "model": "vivo V2347"
+  },
+  {
+    "name": "vivo V2352A",
+    "model": "vivo V2352A"
+  },
+  {
+    "name": "vivo V2352GA",
+    "model": "vivo V2352GA"
+  },
+  {
+    "name": "vivo V2353A",
+    "model": "vivo V2353A"
+  },
+  {
+    "name": "vivo V2353DA",
+    "model": "vivo V2353DA"
+  },
+  {
+    "name": "vivo V2354A",
+    "model": "vivo V2354A"
+  },
+  {
+    "name": "vivo V2356",
+    "model": "vivo V2356"
+  },
+  {
+    "name": "vivo V2361A",
+    "model": "vivo V2361A"
+  },
+  {
+    "name": "vivo V2403A",
+    "model": "vivo V2403A"
+  },
+  {
+    "name": "vivo V2405A",
+    "model": "vivo V2405A"
+  },
+  {
+    "name": "vivo V2408A",
+    "model": "vivo V2408A"
+  },
+  {
+    "name": "vivo V2413",
+    "model": "vivo V2413"
+  },
+  {
+    "name": "vivo V2414",
+    "model": "vivo V2414"
+  },
+  {
+    "name": "vivo V2415A",
+    "model": "vivo V2415A"
+  },
+  {
+    "name": "vivo V2416",
+    "model": "vivo V2416"
+  },
+  {
+    "name": "vivo V2417A",
+    "model": "vivo V2417A"
+  },
+  {
+    "name": "vivo V2419A",
+    "model": "vivo V2419A"
+  },
+  {
+    "name": "vivo V2420",
+    "model": "vivo V2420"
+  },
+  {
+    "name": "vivo V2425A",
+    "model": "vivo V2425A"
+  },
+  {
+    "name": "vivo V2426",
+    "model": "vivo V2426"
+  },
+  {
+    "name": "vivo V2426A",
+    "model": "vivo V2426A"
+  },
+  {
+    "name": "vivo V2430",
+    "model": "vivo V2430"
+  },
+  {
+    "name": "vivo V2434",
+    "model": "vivo V2434"
+  },
+  {
+    "name": "vivo V2435",
+    "model": "vivo V2435"
+  },
+  {
+    "name": "vivo V2437",
+    "model": "vivo V2437"
+  },
+  {
+    "name": "vivo V2443",
+    "model": "vivo V2443"
+  },
+  {
+    "name": "vivo V2452A",
+    "model": "vivo V2452A"
+  },
+  {
+    "name": "vivo V2453A",
+    "model": "vivo V2453A"
+  },
+  {
+    "name": "vivo V2454A",
+    "model": "vivo V2454A"
+  },
+  {
+    "name": "vivo V2463A",
+    "model": "vivo V2463A"
+  },
+  {
+    "name": "vivo V2465A",
+    "model": "vivo V2465A"
+  },
+  {
+    "name": "vivo V2502",
+    "model": "vivo V2502"
+  },
+  {
+    "name": "vivo V2502A",
+    "model": "vivo V2502A"
+  },
+  {
+    "name": "vivo V2505A",
+    "model": "vivo V2505A"
+  },
+  {
+    "name": "vivo V2507",
+    "model": "vivo V2507"
+  },
+  {
+    "name": "vivo V2507A",
+    "model": "vivo V2507A"
+  },
+  {
+    "name": "vivo V2509A",
+    "model": "vivo V2509A"
+  },
+  {
+    "name": "vivo V2514",
+    "model": "vivo V2514"
+  },
+  {
+    "name": "vivo V2515",
+    "model": "vivo V2515"
+  },
+  {
+    "name": "vivo V2521",
+    "model": "vivo V2521"
+  },
+  {
+    "name": "vivo Y12",
+    "model": "vivo Y12"
+  },
+  {
+    "name": "vivo Y93S",
+    "model": "vivo Y93S"
+  },
+  {
+    "name": "volla Volla Tablet",
+    "model": "volla Volla Tablet"
+  },
+  {
+    "name": "xiaomi 2412DPC0AG",
+    "model": "xiaomi 2412DPC0AG"
+  }
+]

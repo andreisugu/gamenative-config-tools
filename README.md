@@ -36,7 +36,7 @@ Takes the "messy" raw text dump from community reports and instantly compiles it
 A powerful visual editor that lets you fine-tune every aspect of your configuration with an intuitive interface. Edit settings across 10 organized categories including graphics, emulation, controller, and more.
 
 ### 🔍 Config Browser
-Browse and search through community-submitted game configurations. Filter by game name or GPU to find optimal settings shared by other users.
+Browse and search through community-submitted game configurations with **intelligent local caching** and **respectful database usage**. Filter by game name, GPU, or device to find optimal settings shared by other users.
 
 **Stop typing. Start playing.**
 
@@ -60,10 +60,11 @@ Browse and search through community-submitted game configurations. Filter by gam
 * **Cross-Tool Integration:** Seamlessly switch between Converter and Editor as needed.
 
 ### Config Browser
-* **Community Database:** Access community-submitted game configurations from the GameNative compatibility database.
-* **Advanced Search:** Filter configurations by game name or GPU model to find relevant settings.
-* **Quick Preview:** View configuration details including rating, FPS, device specs, and user notes.
-* **One-Click Import:** Load configurations directly into the Config Editor for further customization.
+* **Local Filter Snapshots:** Pre-generated JSON files provide instant autocomplete suggestions for games, GPUs, and devices without hitting the database.
+* **Smart Autocomplete:** Client-side fuzzy matching with debounced search for responsive filter suggestions.
+* **Efficient Queries:** Separate count and data queries with proper joins and filtering to minimize database load.
+* **Rich Preview:** View configuration details including rating, FPS, device specs, user notes, and app version.
+* **Seamless Integration:** Load configurations directly into the Config Editor or download as JSON files.
 
 ---
 
@@ -132,11 +133,13 @@ The editor provides a structured interface for modifying configuration JSON:
 
 ### Config Browser Architecture
 
-The browser connects to the community database to provide searchable access:
-1. Server-side rendering with Next.js for optimal performance and SEO.
-2. Supabase integration for real-time access to community-submitted configurations.
-3. Server-side filtering to efficiently handle large datasets.
-4. Seamless integration with the Config Editor via local storage for one-click editing.
+The browser balances performance with database efficiency:
+1. **Local Filter Snapshots:** Pre-generated JSON files containing games, GPUs, and devices for instant autocomplete suggestions.
+2. **Client-Side Filtering:** Fuzzy matching and search suggestions processed locally to reduce database queries.
+3. **Debounced Input:** 250ms debounce on filter inputs to prevent excessive API calls during typing.
+4. **Efficient Queries:** Separate count and data queries with proper Supabase joins and range-based pagination.
+5. **Request Cancellation:** AbortController implementation to cancel outdated requests when filters change.
+6. **Seamless Integration:** Direct Config Editor loading and JSON export with proper metadata structure.
 
 ---
 

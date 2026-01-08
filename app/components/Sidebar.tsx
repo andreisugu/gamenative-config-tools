@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 
 export default function Sidebar() {
-  const [isExpanded, setIsExpanded] = useState(true); // Default to expanded
+  const [isExpanded, setIsExpanded] = useState(false); // Default to collapsed
   const [isMobile, setIsMobile] = useState(false);
   const pathname = usePathname();
 
@@ -30,13 +30,8 @@ export default function Sidebar() {
       if (mobile) {
         setIsExpanded(false);
       } else {
-        // On desktop, use saved preference or default to expanded
-        const saved = localStorage.getItem('sidebarExpanded');
-        if (saved !== null) {
-          setIsExpanded(saved === 'true');
-        } else {
-          setIsExpanded(true); // Default to expanded on desktop
-        }
+        // On desktop, always start collapsed
+        setIsExpanded(false);
       }
     };
 
@@ -46,17 +41,11 @@ export default function Sidebar() {
   }, []);
 
   const toggleSidebar = () => {
-    const newState = !isExpanded;
-    setIsExpanded(newState);
-    if (!isMobile) {
-      localStorage.setItem('sidebarExpanded', String(newState));
-    }
+    setIsExpanded(!isExpanded);
   };
 
   const closeSidebar = () => {
-    if (isMobile) {
-      setIsExpanded(false);
-    }
+    setIsExpanded(false);
   };
 
   const navItems = [
