@@ -377,12 +377,14 @@ export default function AdminPage() {
             if (response.error) throw response.error;
             data = response.data;
             success = true;
-          } catch (error: any) {
+          } catch (error: unknown) {
             retries++;
-            const isTimeout = error.message?.toLowerCase().includes('timeout') || 
-                            error.message?.toLowerCase().includes('fetch') ||
-                            error.code === 'ETIMEDOUT' ||
-                            error.code === 'ECONNRESET';
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            const errorCode = (error as any)?.code;
+            const isTimeout = errorMessage.toLowerCase().includes('timeout') || 
+                            errorMessage.toLowerCase().includes('fetch') ||
+                            errorCode === 'ETIMEDOUT' ||
+                            errorCode === 'ECONNRESET';
             
             if (isTimeout && retries < maxRetries) {
               // Exponential backoff: wait 1s, 2s, 4s before retrying
