@@ -18,6 +18,8 @@ interface GameConfig {
   app_version: string | null;
   tags: any[] | null;
   session_length_sec: number | null;
+  configs_id: number | null;
+  configs_executablePath: string | null;
   game: {
     id: number;
     name: string;
@@ -817,7 +819,31 @@ export default function CachedConfigBrowserClient() {
 
             {/* Grid Layout */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {displayConfigs.map((config) => (
+              {displayConfigs.map((config) => {
+                // Helper function to get display name
+                const getDisplayName = () => {
+                  const gameName = config.game?.name || 'Unknown Game';
+                  if (gameName === 'Unknown Game' && config.configs_executablePath) {
+                    // Extract filename from path
+                    const pathParts = config.configs_executablePath.split(/[/\\]/);
+                    return pathParts[pathParts.length - 1] || 'Unknown Game';
+                  }
+                  return gameName;
+                };
+
+                // Helper function to get display GPU
+                const getDisplayGpu = () => {
+                  const gpu = config.device?.gpu || 'Unknown';
+                  if (gpu === 'Unknown' && config.configs_id) {
+                    return `STEAM_${config.configs_id}`;
+                  }
+                  return gpu;
+                };
+
+                const displayName = getDisplayName();
+                const displayGpu = getDisplayGpu();
+
+                return (
                 <div
                   key={config.id}
                   className="group relative bg-slate-800/40 backdrop-blur-sm border border-slate-700/50 rounded-xl overflow-hidden hover:bg-slate-800/60 hover:border-cyan-500/30 transition-all duration-300 shadow-lg hover:shadow-cyan-900/10 flex flex-col"
@@ -825,8 +851,8 @@ export default function CachedConfigBrowserClient() {
                   {/* Card Header */}
                   <div className="p-5 pb-0">
                     <div className="flex justify-between items-start mb-2">
-                      <h3 className="text-lg font-bold text-white truncate pr-2 group-hover:text-cyan-400 transition-colors" title={config.game?.name}>
-                        {config.game?.name || 'Unknown Game'}
+                      <h3 className="text-lg font-bold text-white truncate pr-2 group-hover:text-cyan-400 transition-colors" title={displayName}>
+                        {displayName}
                       </h3>
                       {/* Rating Badge */}
                       <div className="flex items-center gap-1 px-2 py-1 bg-amber-500/10 border border-amber-500/20 rounded-md">
@@ -840,7 +866,7 @@ export default function CachedConfigBrowserClient() {
                       <div className="flex items-center gap-2 text-xs text-slate-400">
                         <Cpu size={14} className="text-slate-500" />
                         <span className="truncate">
-                          {config.device ? `${config.device.model} • ${config.device.gpu}` : 'Unknown Device'}
+                          {config.device ? `${config.device.model} • ${displayGpu}` : 'Unknown Device'}
                         </span>
                       </div>
                       {config.device?.android_ver && (
@@ -973,7 +999,8 @@ export default function CachedConfigBrowserClient() {
                     </div>
                   </div>
                 </div>
-              ))}
+              );
+              })}
             </div>
 
             {/* Pagination Controls */}

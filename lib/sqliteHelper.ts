@@ -14,6 +14,8 @@ export interface GameConfig {
   app_version: string | null;
   tags: any[] | null;
   session_length_sec: number | null;
+  configs_id: number | null;
+  configs_executablePath: string | null;
   game: {
     id: number;
     name: string;
@@ -177,6 +179,8 @@ function transformRow(row: any): GameConfig {
     app_version: row.configs_extraData_appVersion || null,
     tags: tags,
     session_length_sec: sessionLength,
+    configs_id: row.configs_id || null,
+    configs_executablePath: row.configs_executablePath || null,
     game: row.game_name ? {
       id: row.game_id,
       name: row.game_name
@@ -201,7 +205,9 @@ export async function fetchAllConfigs(basePath: string = ''): Promise<GameConfig
       g.name as game_name,
       dev.model as device_model,
       dev.gpu as device_gpu,
-      dev.android_ver as device_android_ver
+      dev.android_ver as device_android_ver,
+      d.configs_id,
+      d.configs_executablePath
     FROM data d
     LEFT JOIN games g ON d.game_id = g.id
     LEFT JOIN devices dev ON d.device_id = dev.id
