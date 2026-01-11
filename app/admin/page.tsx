@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Download, Lock } from 'lucide-react';
 
@@ -47,6 +47,10 @@ const verifyPassword = async (encryptedData: string, password: string): Promise<
   }
 };
 
+// Constants for retry logic
+const MAX_RETRIES = 5;
+const RETRY_DELAY_MS = 5000;
+
 export default function AdminPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -54,6 +58,45 @@ export default function AdminPage() {
   const [authError, setAuthError] = useState('');
   const [batchSize, setBatchSize] = useState(1000);
   const [initialOffset, setInitialOffset] = useState(0);
+  const [autoRetry, setAutoRetry] = useState(true);
+
+  // Helper function to retry requests with exponential backoff
+  const retryRequest = useCallback(async <T,>(
+    requestFn: () => Promise<T>,
+    maxRetries: number = MAX_RETRIES,
+    baseDelay: number = RETRY_DELAY_MS
+  ): Promise<T> => {
+    let retries = 0;
+    
+    while (retries <= maxRetries) {
+      try {
+        return await requestFn();
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        const errorCode = (error as any)?.code;
+        const statusCode = (error as any)?.status;
+        
+        // Check if it's a timeout or 500 error
+        const isTimeout = errorMessage.toLowerCase().includes('timeout') || 
+                         errorMessage.toLowerCase().includes('fetch') ||
+                         errorCode === 'ETIMEDOUT' ||
+                         errorCode === 'ECONNRESET';
+        const is500Error = statusCode === 500 || errorMessage.includes('500');
+        
+        // Only retry if autoRetry is enabled and it's a timeout/500 error
+        if (autoRetry && (isTimeout || is500Error) && retries < maxRetries) {
+          retries++;
+          const waitTime = baseDelay; // 5 seconds for all retries
+          console.log(`Error occurred (${isTimeout ? 'timeout' : '500 error'}), retrying in ${waitTime}ms (attempt ${retries}/${maxRetries})...`);
+          await new Promise(resolve => setTimeout(resolve, waitTime));
+        } else {
+          throw error;
+        }
+      }
+    }
+    
+    throw new Error('Max retries exceeded');
+  }, [autoRetry]);
 
   const handleAuth = async () => {
     try {
@@ -73,19 +116,28 @@ export default function AdminPage() {
     setIsLoading(true);
     let allData: any[] = [];
     let from = initialOffset;
+    let remainingRetries = MAX_RETRIES; // Reset to MAX_RETRIES
     try {
       
       while (true) {
-        const { data, error } = await supabase
-          .from('devices')
-          .select('gpu')
-          .not('gpu', 'is', null)
-          .range(from, from + batchSize - 1);
+        const fetchBatch = async () => {
+          const { data, error } = await supabase
+            .from('devices')
+            .select('gpu')
+            .not('gpu', 'is', null)
+            .range(from, from + batchSize - 1);
 
-        if (error) throw error;
+          if (error) throw error;
+          return data;
+        };
+
+        const data = await retryRequest(fetchBatch, remainingRetries);
+        
         if (!data || data.length === 0) break;
         
         allData.push(...data);
+        remainingRetries = MAX_RETRIES; // Reset to MAX_RETRIES after successful batch
+        
         if (data.length < batchSize) break;
         from += batchSize;
       }
@@ -131,22 +183,29 @@ export default function AdminPage() {
     const effectiveBatchSize = customBatchSize ?? batchSize;
     let allData = [];
     let from = 0;
+    let remainingRetries = MAX_RETRIES; // Reset to MAX_RETRIES
 
     try {
       while (true) {
-        const { data, error } = await supabase
-          .from(tableName)
-          .select('*')
-          .range(from, from + effectiveBatchSize - 1);
+        const fetchBatch = async () => {
+          const { data, error } = await supabase
+            .from(tableName)
+            .select('*')
+            .range(from, from + effectiveBatchSize - 1);
 
-        if (error) {
-          console.error(`Error fetching from ${tableName}:`, error);
-          throw error;
-        }
+          if (error) {
+            console.error(`Error fetching from ${tableName}:`, error);
+            throw error;
+          }
+          return data;
+        };
+
+        const data = await retryRequest(fetchBatch, remainingRetries);
 
         if (!data || data.length === 0) break;
 
         allData.push(...data);
+        remainingRetries = MAX_RETRIES; // Reset to MAX_RETRIES after successful batch
         console.log(`Downloaded ${allData.length} rows from ${tableName}...`);
 
         if (data.length < effectiveBatchSize) break;
@@ -322,19 +381,28 @@ export default function AdminPage() {
     setIsLoading(true);
     let allData: any[] = [];
     let from = initialOffset;
+    let remainingRetries = MAX_RETRIES; // Reset to MAX_RETRIES
     try {
       
       while (true) {
-        const { data, error } = await supabase
-          .from('game_runs')
-          .select('game:games!inner(name)')
-          .not('game.name', 'is', null)
-          .range(from, from + batchSize - 1);
+        const fetchBatch = async () => {
+          const { data, error } = await supabase
+            .from('game_runs')
+            .select('game:games!inner(name)')
+            .not('game.name', 'is', null)
+            .range(from, from + batchSize - 1);
 
-        if (error) throw error;
+          if (error) throw error;
+          return data;
+        };
+
+        const data = await retryRequest(fetchBatch, remainingRetries);
+        
         if (!data || data.length === 0) break;
         
         allData.push(...data);
+        remainingRetries = MAX_RETRIES; // Reset to MAX_RETRIES after successful batch
+        
         if (data.length < batchSize) break;
         from += batchSize;
       }
@@ -380,19 +448,28 @@ export default function AdminPage() {
     setIsLoading(true);
     let allData: any[] = [];
     let from = initialOffset;
+    let remainingRetries = MAX_RETRIES; // Reset to MAX_RETRIES
     try {
       
       while (true) {
-        const { data, error } = await supabase
-          .from('game_runs')
-          .select('device:devices!inner(model)')
-          .not('device.model', 'is', null)
-          .range(from, from + batchSize - 1);
+        const fetchBatch = async () => {
+          const { data, error } = await supabase
+            .from('game_runs')
+            .select('device:devices!inner(model)')
+            .not('device.model', 'is', null)
+            .range(from, from + batchSize - 1);
 
-        if (error) throw error;
+          if (error) throw error;
+          return data;
+        };
+
+        const data = await retryRequest(fetchBatch, remainingRetries);
+        
         if (!data || data.length === 0) break;
         
         allData.push(...data);
+        remainingRetries = MAX_RETRIES; // Reset to MAX_RETRIES after successful batch
+        
         if (data.length < batchSize) break;
         from += batchSize;
       }
@@ -438,50 +515,29 @@ export default function AdminPage() {
     setIsLoading(true);
     let allData: any[] = [];
     let from = initialOffset;
-    const maxRetries = 3;
+    let remainingRetries = MAX_RETRIES; // Reset to MAX_RETRIES
     
     try {
       
       while (true) {
-        let retries = 0;
-        let success = false;
-        let data = null;
-        
-        // Retry loop for each batch
-        while (retries < maxRetries && !success) {
-          try {
-            const response = await supabase
-              .from('game_runs')
-              .select('*')
-              .range(from, from + batchSize - 1);
+        const fetchBatch = async () => {
+          const response = await supabase
+            .from('game_runs')
+            .select('*')
+            .range(from, from + batchSize - 1);
 
-            if (response.error) throw response.error;
-            data = response.data;
-            success = true;
-          } catch (error: unknown) {
-            retries++;
-            const errorMessage = error instanceof Error ? error.message : String(error);
-            const errorCode = (error as any)?.code;
-            const isTimeout = errorMessage.toLowerCase().includes('timeout') || 
-                            errorMessage.toLowerCase().includes('fetch') ||
-                            errorCode === 'ETIMEDOUT' ||
-                            errorCode === 'ECONNRESET';
-            
-            if (isTimeout && retries < maxRetries) {
-              // Exponential backoff: wait 1s, 2s, 4s before retrying
-              const waitTime = Math.pow(2, retries - 1) * 1000;
-              console.log(`Timeout occurred, retrying in ${waitTime}ms (attempt ${retries}/${maxRetries})...`);
-              await new Promise(resolve => setTimeout(resolve, waitTime));
-            } else {
-              throw error;
-            }
-          }
-        }
+          if (response.error) throw response.error;
+          return response.data;
+        };
+
+        const data = await retryRequest(fetchBatch, remainingRetries);
 
         if (!data || data.length === 0) break;
         
         allData.push(...data);
+        remainingRetries = MAX_RETRIES; // Reset to MAX_RETRIES after successful batch
         console.log(`Downloaded ${allData.length} game runs so far...`);
+        
         if (data.length < batchSize) break;
         from += batchSize;
       }
@@ -564,11 +620,11 @@ export default function AdminPage() {
           <input
             id="batchSize"
             type="number"
-            min="10"
+            min="1"
             max="10000"
             step="10"
             value={batchSize}
-            onChange={(e) => setBatchSize(Math.min(10000, Math.max(10, parseInt(e.target.value) || 1000)))}
+            onChange={(e) => setBatchSize(Math.min(10000, Math.max(1, parseInt(e.target.value) || 1000)))}
             className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-cyan-500"
             placeholder="1000"
           />
@@ -593,6 +649,24 @@ export default function AdminPage() {
           />
           <p className="text-xs text-slate-400 mt-1">
             Start downloading from this row. Use this to resume after an error. Default is 0.
+          </p>
+        </div>
+        
+        <div className="mb-6 p-4 bg-slate-800 rounded-lg border border-slate-700">
+          <label className="flex items-center cursor-pointer">
+            <input
+              id="autoRetry"
+              type="checkbox"
+              checked={autoRetry}
+              onChange={(e) => setAutoRetry(e.target.checked)}
+              className="w-5 h-5 bg-slate-700 border border-slate-600 rounded text-cyan-600 focus:ring-2 focus:ring-cyan-500 focus:ring-offset-0 focus:ring-offset-slate-800 cursor-pointer"
+            />
+            <span className="ml-3 text-sm font-medium text-slate-300">
+              Auto-Retry on Timeout/500 Errors
+            </span>
+          </label>
+          <p className="text-xs text-slate-400 mt-2 ml-8">
+            When enabled, automatically retries failed requests up to {MAX_RETRIES} times with {RETRY_DELAY_MS / 1000}-second intervals. Retry counter resets to {MAX_RETRIES} after each successful batch.
           </p>
         </div>
         

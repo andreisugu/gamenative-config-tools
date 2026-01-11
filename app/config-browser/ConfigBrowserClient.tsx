@@ -138,6 +138,9 @@ export default function ConfigBrowserClient() {
   const [currentPage, setCurrentPage] = useState(1);
   const [goToPage, setGoToPage] = useState('');
   
+  // Batch size for pagination
+  const [batchSize, setBatchSize] = useState(15);
+  
   // Expanded notes state
   const [expandedNotes, setExpandedNotes] = useState<Set<number>>(new Set());
 
@@ -362,8 +365,8 @@ export default function ConfigBrowserClient() {
       }
 
       // Calculate range for pagination
-      const from = (page - 1) * ITEMS_PER_PAGE;
-      const to = from + ITEMS_PER_PAGE - 1;
+      const from = (page - 1) * batchSize;
+      const to = from + batchSize - 1;
       dataQuery = dataQuery.range(from, to);
 
       // Check if request was aborted before continuing
@@ -446,7 +449,7 @@ export default function ConfigBrowserClient() {
         setIsLoading(false);
       }
     }
-  }, [committedSearchTerm, committedGpuFilter, committedDeviceFilter, committedSelectedGame, committedSelectedGpu, committedSelectedDevice, sortOption]);
+  }, [committedSearchTerm, committedGpuFilter, committedDeviceFilter, committedSelectedGame, committedSelectedGpu, committedSelectedDevice, sortOption, batchSize]);
 
   // Fetch with count when filters or sort changes or search button is clicked
   useEffect(() => {
@@ -458,7 +461,7 @@ export default function ConfigBrowserClient() {
       abortController.abort();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchTrigger, sortOption]);
+  }, [searchTrigger, sortOption, batchSize]);
 
   // Fetch without count when page changes, but skip when page is 1 (already handled by filter change effect)
   useEffect(() => {
@@ -494,8 +497,8 @@ export default function ConfigBrowserClient() {
 
   // --- 3. Pagination Logic ---
   const totalPages = useMemo(() => {
-    return Math.ceil(totalCount / ITEMS_PER_PAGE);
-  }, [totalCount]);
+    return Math.ceil(totalCount / batchSize);
+  }, [totalCount, batchSize]);
 
   // Generate page numbers for pagination
   const getPageNumbers = useMemo(() => {
@@ -666,7 +669,7 @@ export default function ConfigBrowserClient() {
           <div className="grid grid-cols-1 gap-4">
             
             {/* Filter Row */}
-            <div className="grid grid-cols-1 md:grid-cols-14 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-15 gap-4">
               
               {/* 1. Game Autocomplete Search */}
               <div className="md:col-span-4 relative" ref={wrapperRef}>
@@ -835,7 +838,25 @@ export default function ConfigBrowserClient() {
                 </div>
               </div>
 
-              {/* 5. Search Button */}
+              {/* 5. Batch Size Input */}
+              <div className="md:col-span-1 relative">
+                <input
+                  type="number"
+                  min="1"
+                  max="100"
+                  value={batchSize}
+                  onChange={(e) => {
+                    const value = Math.min(100, Math.max(1, parseInt(e.target.value) || 15));
+                    setBatchSize(value);
+                    setCurrentPage(1); // Reset to page 1 when batch size changes
+                  }}
+                  className="w-full px-3 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white text-center focus:outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 transition-all"
+                  title="Batch Size (results per page)"
+                  placeholder="15"
+                />
+              </div>
+
+              {/* 6. Search Button */}
               <div className="md:col-span-1 flex items-center">
                 <button
                   onClick={handleSearch}
