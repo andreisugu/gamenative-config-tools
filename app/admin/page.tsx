@@ -68,6 +68,9 @@ export default function AdminPage() {
   ): Promise<T> => {
     let retries = 0;
     
+    // Error codes that should trigger a retry
+    const RETRYABLE_ERROR_CODES = new Set(['ETIMEDOUT', 'ECONNRESET', '57014']);
+    
     while (retries <= maxRetries) {
       try {
         return await requestFn();
@@ -80,13 +83,11 @@ export default function AdminPage() {
         // PostgreSQL error code 57014 = statement timeout
         const isTimeout = errorMessage.toLowerCase().includes('timeout') || 
                          errorMessage.toLowerCase().includes('fetch') ||
-                         errorCode === 'ETIMEDOUT' ||
-                         errorCode === 'ECONNRESET' ||
-                         errorCode === '57014';
+                         RETRYABLE_ERROR_CODES.has(errorCode);
         const is500Error = statusCode === 500 || errorMessage.includes('500');
         
         // Log error details for debugging
-        console.log('Error details:', { errorMessage, errorCode, statusCode, isTimeout, is500Error, autoRetry });
+        console.warn('Request error details:', { errorMessage, errorCode, statusCode, isTimeout, is500Error, autoRetry });
         
         // Only retry if autoRetry is enabled and it's a timeout/500 error
         if (autoRetry && (isTimeout || is500Error) && retries < maxRetries) {
@@ -95,7 +96,7 @@ export default function AdminPage() {
           console.log(`Error occurred (${isTimeout ? 'timeout' : '500 error'}), retrying in ${waitTime}ms (attempt ${retries}/${maxRetries})...`);
           await new Promise(resolve => setTimeout(resolve, waitTime));
         } else {
-          console.log(`Not retrying: autoRetry=${autoRetry}, isRetryable=${isTimeout || is500Error}, retries=${retries}, maxRetries=${maxRetries}`);
+          console.error(`Not retrying: autoRetry=${autoRetry}, isRetryable=${isTimeout || is500Error}, retries=${retries}, maxRetries=${maxRetries}`);
           throw error;
         }
       }
