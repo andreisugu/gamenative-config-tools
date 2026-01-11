@@ -17,59 +17,16 @@ The Cached Configs Browser is similar to the Config Browser, but instead of quer
 
 ## Data Structure
 
-The cached configs are stored in `/public/cached-configs.json` with the following structure:
+The cached configs are now loaded from `/public/cached-configs.sqlite`, a SQLite database file that contains all configuration data in a denormalized format. The database includes:
 
-```json
-[
-  {
-    "id": 1,
-    "rating": 5,
-    "avg_fps": 60,
-    "notes": "Excellent performance on high settings.",
-    "configs": {
-      "containerVariant": "default",
-      "graphicsDriver": "vulkan",
-      "screenSize": "1920x1080"
-    },
-    "created_at": "2024-01-15T10:30:00Z",
-    "app_version": "1.2.0",
-    "tags": ["high-performance", "tested"],
-    "session_length_sec": 3600,
-    "game": {
-      "id": 1,
-      "name": "Example Game 1"
-    },
-    "device": {
-      "id": 1,
-      "model": "Samsung Galaxy S23",
-      "gpu": "Adreno 740",
-      "android_ver": "14"
-    }
-  }
-]
-```
+- **data table**: Contains all game configurations with flattened config fields
+- **games table**: Lookup table mapping game_id to game names
+- **devices table**: Lookup table mapping device_id to device information
 
-## Future Enhancement: SQLite Database Support
-
-While currently using JSON for data storage, the implementation is designed to be easily adaptable to use a SQLite database when available. The data structure and querying logic can be updated to work with SQLite without changing the UI components.
-
-### Potential SQLite Integration
-
-When an SQLite database becomes available:
-
-1. Replace the JSON fetch in `CachedConfigBrowserClient.tsx` with SQLite queries
-2. Use a library like `sql.js` for browser-based SQLite support
-3. Store the database file (e.g., `cached-configs.db`) in the `/public` folder
-4. Update the fetch logic to query the database instead of loading JSON
-
-Example SQLite query structure:
-```sql
-SELECT * FROM game_runs 
-WHERE game_name LIKE '%search%' 
-AND device_gpu LIKE '%gpu%'
-ORDER BY created_at DESC
-LIMIT 15 OFFSET 0;
-```
+The sql.js library is used to query the SQLite database directly in the browser, providing:
+- Fast querying and filtering of 3,345+ configurations
+- Offline access without requiring large JSON files
+- Efficient storage (4.8MB database vs larger JSON files)
 
 ## Usage
 
@@ -82,9 +39,12 @@ LIMIT 15 OFFSET 0;
 
 ## Updating Cached Configs
 
-To update the cached configurations:
+The cached configurations are stored in the SQLite database at `/public/cached-configs.sqlite`. To update:
 
-1. Edit `/public/cached-configs.json`
-2. Follow the data structure format above
-3. Rebuild the site or refresh in development mode
-4. The new configs will be available immediately
+1. Run the data export script to download data from Supabase (requires network access)
+2. Run the lookup population script to add game/device names to the database
+3. The updated database file will be automatically included in the next build
+
+Scripts available in `/scripts`:
+- `download-database.js` - Downloads data from Supabase
+- `populate-lookups.js` - Populates game/device lookup tables
