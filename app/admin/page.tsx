@@ -108,16 +108,71 @@ export default function AdminPage() {
     }
   };
 
+  const downloadTable = async (tableName: string, batchSize = 1000) => {
+    let allData = [];
+    let from = 0;
+
+    try {
+      while (true) {
+        const { data, error } = await supabase
+          .from(tableName)
+          .select('*')
+          .range(from, from + batchSize - 1);
+
+        if (error) {
+          console.error(`Error fetching from ${tableName}:`, error);
+          throw error;
+        }
+
+        if (!data || data.length === 0) break;
+
+        allData.push(...data);
+
+        if (data.length < batchSize) break;
+        from += batchSize;
+      }
+
+      return allData;
+    } catch (error) {
+      console.error(`Failed to download ${tableName}:`, error);
+      return [];
+    }
+  };
+
   const downloadEntireDatabase = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/download-database');
-      if (!response.ok) {
-        throw new Error(`Failed to download database: ${response.statusText}`);
+      // List of tables to download
+      const tables = [
+        'devices',
+        'games',
+        'game_runs',
+        'gpus',
+        'filters',
+        'users',
+        'configurations',
+        'config_entries'
+      ];
+
+      const database: Record<string, any[]> = {};
+      let totalRows = 0;
+
+      for (const table of tables) {
+        const tableData = await downloadTable(table);
+        if (tableData.length > 0) {
+          database[table] = tableData;
+          totalRows += tableData.length;
+        }
       }
-      
-      const data = await response.json();
-      const jsonString = JSON.stringify(data, null, 2);
+
+      const output = {
+        exportedAt: new Date().toISOString(),
+        version: '1.0',
+        totalRows,
+        tables: database
+      };
+
+      const jsonString = JSON.stringify(output, null, 2);
       const blob = new Blob([jsonString], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
