@@ -359,17 +359,46 @@ export default function AdminPage() {
       let allData: any[] = [];
       let from = 0;
       const batchSize = 1000;
+      const maxRetries = 3;
       
       while (true) {
-        const { data, error } = await supabase
-          .from('game_runs')
-          .select('*')
-          .range(from, from + batchSize - 1);
+        let retries = 0;
+        let success = false;
+        let data = null;
+        
+        // Retry loop for each batch
+        while (retries < maxRetries && !success) {
+          try {
+            const response = await supabase
+              .from('game_runs')
+              .select('*')
+              .range(from, from + batchSize - 1);
 
-        if (error) throw error;
+            if (response.error) throw response.error;
+            data = response.data;
+            success = true;
+          } catch (error: any) {
+            retries++;
+            const isTimeout = error.message?.toLowerCase().includes('timeout') || 
+                            error.message?.toLowerCase().includes('fetch') ||
+                            error.code === 'ETIMEDOUT' ||
+                            error.code === 'ECONNRESET';
+            
+            if (isTimeout && retries < maxRetries) {
+              // Exponential backoff: wait 1s, 2s, 4s before retrying
+              const waitTime = Math.pow(2, retries - 1) * 1000;
+              console.log(`Timeout occurred, retrying in ${waitTime}ms (attempt ${retries}/${maxRetries})...`);
+              await new Promise(resolve => setTimeout(resolve, waitTime));
+            } else {
+              throw error;
+            }
+          }
+        }
+
         if (!data || data.length === 0) break;
         
         allData.push(...data);
+        console.log(`Downloaded ${allData.length} game runs so far...`);
         if (data.length < batchSize) break;
         from += batchSize;
       }
@@ -386,6 +415,7 @@ export default function AdminPage() {
       URL.revokeObjectURL(url);
     } catch (e) {
       console.error('Error downloading game runs:', e);
+      alert('Failed to download game runs. Please try again.');
     } finally {
       setIsLoading(false);
     }
