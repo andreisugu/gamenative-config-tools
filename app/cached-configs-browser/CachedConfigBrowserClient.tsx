@@ -532,6 +532,26 @@ export default function CachedConfigBrowserClient() {
     }
   };
 
+  // Helper function to get display name for a config
+  const getDisplayName = (config: GameConfig) => {
+    const gameName = config.game?.name || 'Unknown Game';
+    if (gameName === 'Unknown Game' && config.configs_executablePath) {
+      // Extract filename from path
+      const pathParts = config.configs_executablePath.split(/[/\\]/);
+      return pathParts[pathParts.length - 1] || 'Unknown Game';
+    }
+    return gameName;
+  };
+
+  // Helper function to get display GPU for a config
+  const getDisplayGpu = (config: GameConfig) => {
+    const gpu = config.device?.gpu || 'Unknown';
+    if (gpu === 'Unknown' && config.configs_id) {
+      return `STEAM_${config.configs_id}`;
+    }
+    return gpu;
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-slate-200 font-sans selection:bg-cyan-500/30">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -820,28 +840,8 @@ export default function CachedConfigBrowserClient() {
             {/* Grid Layout */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {displayConfigs.map((config) => {
-                // Helper function to get display name
-                const getDisplayName = () => {
-                  const gameName = config.game?.name || 'Unknown Game';
-                  if (gameName === 'Unknown Game' && config.configs_executablePath) {
-                    // Extract filename from path
-                    const pathParts = config.configs_executablePath.split(/[/\\]/);
-                    return pathParts[pathParts.length - 1] || 'Unknown Game';
-                  }
-                  return gameName;
-                };
-
-                // Helper function to get display GPU
-                const getDisplayGpu = () => {
-                  const gpu = config.device?.gpu || 'Unknown';
-                  if (gpu === 'Unknown' && config.configs_id) {
-                    return `STEAM_${config.configs_id}`;
-                  }
-                  return gpu;
-                };
-
-                const displayName = getDisplayName();
-                const displayGpu = getDisplayGpu();
+                const displayName = getDisplayName(config);
+                const displayGpu = getDisplayGpu(config);
 
                 return (
                 <div
