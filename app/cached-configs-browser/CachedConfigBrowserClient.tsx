@@ -60,6 +60,8 @@ type SortOption = 'newest' | 'oldest' | 'rating_desc' | 'rating_asc' | 'fps_desc
 const ITEMS_PER_PAGE = 15;
 const SUGGESTION_DEBOUNCE_MS = 250;
 const SUGGESTION_LIMIT = 15;
+const UNKNOWN_GAME = 'Unknown Game';
+const UNKNOWN_GPU = 'Unknown';
 
 // --- Helper Hook: useDebounce ---
 function useDebounce<T>(value: T, delay: number): T {
@@ -534,19 +536,18 @@ export default function CachedConfigBrowserClient() {
 
   // Helper function to get display name for a config
   const getDisplayName = useCallback((config: GameConfig) => {
-    const gameName = config.game?.name || 'Unknown Game';
-    if (gameName === 'Unknown Game' && config.configs_executablePath) {
+    const gameName = config.game?.name || UNKNOWN_GAME;
+    if (gameName === UNKNOWN_GAME && config.configs_executablePath) {
       // Extract filename from path
-      const pathParts = config.configs_executablePath.split(/[/\\]/);
-      return pathParts[pathParts.length - 1] || 'Unknown Game';
+      return config.configs_executablePath.split(/[/\\]/).pop() || UNKNOWN_GAME;
     }
     return gameName;
   }, []);
 
   // Helper function to get display GPU for a config
   const getDisplayGpu = useCallback((config: GameConfig) => {
-    const gpu = config.device?.gpu || 'Unknown';
-    if (gpu === 'Unknown' && config.configs_id) {
+    const gpu = config.device?.gpu || UNKNOWN_GPU;
+    if (gpu === UNKNOWN_GPU && config.configs_id) {
       return `STEAM_${config.configs_id}`;
     }
     return gpu;
