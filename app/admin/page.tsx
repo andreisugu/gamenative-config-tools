@@ -356,7 +356,7 @@ export default function AdminPage() {
   const downloadGameRuns = async () => {
     setIsLoading(true);
     try {
-      let allData = [];
+      let allData: any[] = [];
       let from = 0;
       const batchSize = 1000;
       
