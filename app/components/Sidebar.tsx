@@ -53,6 +53,7 @@ export default function Sidebar() {
     { href: '/config-converter', icon: RefreshCw, label: 'Config Converter' },
     { href: '/config-editor', icon: FileEdit, label: 'Config Editor' },
     { href: '/config-browser', icon: Search, label: 'Config Browser' },
+    { href: '/cached-configs-browser', icon: Search, label: 'Cached Configs' },
   ];
 
   const externalLinks = [
