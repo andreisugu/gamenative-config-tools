@@ -533,7 +533,7 @@ export default function CachedConfigBrowserClient() {
   };
 
   // Helper function to get display name for a config
-  const getDisplayName = (config: GameConfig) => {
+  const getDisplayName = useCallback((config: GameConfig) => {
     const gameName = config.game?.name || 'Unknown Game';
     if (gameName === 'Unknown Game' && config.configs_executablePath) {
       // Extract filename from path
@@ -541,16 +541,16 @@ export default function CachedConfigBrowserClient() {
       return pathParts[pathParts.length - 1] || 'Unknown Game';
     }
     return gameName;
-  };
+  }, []);
 
   // Helper function to get display GPU for a config
-  const getDisplayGpu = (config: GameConfig) => {
+  const getDisplayGpu = useCallback((config: GameConfig) => {
     const gpu = config.device?.gpu || 'Unknown';
     if (gpu === 'Unknown' && config.configs_id) {
       return `STEAM_${config.configs_id}`;
     }
     return gpu;
-  };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-slate-200 font-sans selection:bg-cyan-500/30">
