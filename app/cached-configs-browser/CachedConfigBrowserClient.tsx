@@ -68,9 +68,12 @@ const UNKNOWN_GPU = 'Unknown';
 /**
  * Extracts the filename from a file path
  * Handles both Windows (\) and Unix (/) path separators
- * Returns the default value if the filename cannot be extracted
+ * Returns the default value if the filename cannot be extracted or path is null/undefined
  */
-function getFilenameFromPath(path: string, defaultValue: string = UNKNOWN_GAME): string {
+function getFilenameFromPath(path: string | null, defaultValue: string = UNKNOWN_GAME): string {
+  if (!path) {
+    return defaultValue;
+  }
   const filename = path.split(/[/\\]/).pop();
   return filename?.trim() || defaultValue;
 }
@@ -549,7 +552,7 @@ export default function CachedConfigBrowserClient() {
   // Helper function to get display name for a config
   const getDisplayName = useCallback((config: GameConfig) => {
     const gameName = config.game?.name || UNKNOWN_GAME;
-    if (gameName === UNKNOWN_GAME && config.configs_executablePath) {
+    if (gameName === UNKNOWN_GAME) {
       return getFilenameFromPath(config.configs_executablePath, UNKNOWN_GAME);
     }
     return gameName;
