@@ -205,9 +205,7 @@ export async function fetchAllConfigs(basePath: string = ''): Promise<GameConfig
       g.name as game_name,
       dev.model as device_model,
       dev.gpu as device_gpu,
-      dev.android_ver as device_android_ver,
-      d.configs_id,
-      d.configs_executablePath
+      dev.android_ver as device_android_ver
     FROM data d
     LEFT JOIN games g ON d.game_id = g.id
     LEFT JOIN devices dev ON d.device_id = dev.id

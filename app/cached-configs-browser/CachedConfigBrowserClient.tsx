@@ -538,8 +538,9 @@ export default function CachedConfigBrowserClient() {
   const getDisplayName = useCallback((config: GameConfig) => {
     const gameName = config.game?.name || UNKNOWN_GAME;
     if (gameName === UNKNOWN_GAME && config.configs_executablePath) {
-      // Extract filename from path
-      return config.configs_executablePath.split(/[/\\]/).pop() || UNKNOWN_GAME;
+      // Extract filename from path, handling edge cases
+      const filename = config.configs_executablePath.split(/[/\\]/).pop();
+      return (filename && filename.trim()) || UNKNOWN_GAME;
     }
     return gameName;
   }, []);
