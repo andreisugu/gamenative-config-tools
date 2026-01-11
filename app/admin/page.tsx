@@ -353,6 +353,44 @@ export default function AdminPage() {
     }
   };
 
+  const downloadGameRuns = async () => {
+    setIsLoading(true);
+    try {
+      let allData = [];
+      let from = 0;
+      const batchSize = 1000;
+      
+      while (true) {
+        const { data, error } = await supabase
+          .from('game_runs')
+          .select('*')
+          .range(from, from + batchSize - 1);
+
+        if (error) throw error;
+        if (!data || data.length === 0) break;
+        
+        allData.push(...data);
+        if (data.length < batchSize) break;
+        from += batchSize;
+      }
+      
+      const jsonString = JSON.stringify(allData, null, 2);
+      const blob = new Blob([jsonString], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'game_runs.json';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error('Error downloading game runs:', e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-slate-200 flex items-center justify-center">
@@ -419,6 +457,14 @@ export default function AdminPage() {
           </button>
           
           <h2 className="text-lg font-semibold mb-4 mt-8">Database Fallback Data</h2>
+          <button
+            onClick={downloadGameRuns}
+            disabled={isLoading}
+            className="flex items-center gap-2 px-6 py-3 bg-cyan-600 hover:bg-cyan-500 disabled:bg-cyan-800 text-white rounded-lg transition-colors w-full"
+          >
+            <Download size={16} />
+            {isLoading ? 'Downloading...' : 'Download Game Runs (game_runs.json)'}
+          </button>
           <button
             onClick={downloadDatabaseGames}
             disabled={isLoading}
