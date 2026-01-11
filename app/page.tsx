@@ -49,6 +49,19 @@ export default function Home() {
               </div>
             </div>
           </Link>
+
+          <Link
+            href="/cached-configs-browser"
+            className="block w-full bg-gray-800/50 hover:bg-gray-800/70 border-2 border-gray-700 hover:border-cyan-500 rounded-xl p-6 transition-all transform hover:scale-105 backdrop-blur-sm"
+          >
+            <div className="flex items-center gap-4">
+              <span className="text-4xl">💾</span>
+              <div>
+                <h2 className="text-2xl font-bold text-cyan-400">Cached Configs Browser</h2>
+                <p className="text-gray-400 text-sm mt-1">Browse cached game configurations stored locally</p>
+              </div>
+            </div>
+          </Link>
         </div>
 
         {/* External Links */}
