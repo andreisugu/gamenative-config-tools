@@ -75,14 +75,29 @@ export default function AdminPage() {
       try {
         return await requestFn();
       } catch (error: unknown) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
+        // Extract error message from various error structures
+        let errorMessage = '';
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        } else if (typeof error === 'object' && error !== null) {
+          // Handle Supabase error objects
+          errorMessage = (error as any).message || 
+                        (error as any).error?.message || 
+                        JSON.stringify(error);
+        } else {
+          errorMessage = String(error);
+        }
+        
         const errorCode = (error as any)?.code;
         const statusCode = (error as any)?.status;
         
         // Check if it's a timeout or 500 error
         // PostgreSQL error code 57014 = statement timeout
+        // Also check for "upstream request timeout" from Supabase
+        // 504 = Gateway Timeout
         const isTimeout = errorMessage.toLowerCase().includes('timeout') || 
                          errorMessage.toLowerCase().includes('fetch') ||
+                         statusCode === 504 ||
                          RETRYABLE_ERROR_CODES.has(errorCode);
         const is500Error = statusCode === 500 || errorMessage.includes('500');
         
