@@ -53,6 +53,7 @@ export default function AdminPage() {
   const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState('');
   const [batchSize, setBatchSize] = useState(1000);
+  const [initialOffset, setInitialOffset] = useState(0);
 
   const handleAuth = async () => {
     try {
@@ -70,9 +71,9 @@ export default function AdminPage() {
 
   const downloadAllGpus = async () => {
     setIsLoading(true);
+    let allData: any[] = [];
+    let from = initialOffset;
     try {
-      let allData = [];
-      let from = 0;
       
       while (true) {
         const { data, error } = await supabase
@@ -103,6 +104,24 @@ export default function AdminPage() {
       URL.revokeObjectURL(url);
     } catch (e) {
       console.error('Error downloading GPUs:', e);
+      
+      // Save partial data if any was downloaded
+      if (allData.length > 0) {
+        const uniqueGpus = [...new Set(allData.map(d => d.gpu))].sort();
+        const jsonString = JSON.stringify(uniqueGpus, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'gpus_partial.json';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+      
+      alert(`Error at offset ${from}. Downloaded ${allData.length} rows. Please set Initial Offset to ${from} and try again.`);
+      setInitialOffset(from);
     } finally {
       setIsLoading(false);
     }
@@ -143,6 +162,10 @@ export default function AdminPage() {
 
   const downloadEntireDatabase = async () => {
     setIsLoading(true);
+    const database: Record<string, any[]> = {};
+    let totalRows = 0;
+    let currentTable = '';
+    
     try {
       // List of tables to download
       // Note: 'gpus' table doesn't exist - GPU data is extracted from 'devices' table
@@ -156,10 +179,8 @@ export default function AdminPage() {
         'config_entries'
       ];
 
-      const database: Record<string, any[]> = {};
-      let totalRows = 0;
-
       for (const table of tables) {
+        currentTable = table;
         const tableData = await downloadTable(table);
         if (tableData.length > 0) {
           database[table] = tableData;
@@ -186,6 +207,31 @@ export default function AdminPage() {
       URL.revokeObjectURL(url);
     } catch (e) {
       console.error('Error downloading entire database:', e);
+      
+      // Save partial data if any was downloaded
+      if (totalRows > 0) {
+        const output = {
+          exportedAt: new Date().toISOString(),
+          version: '1.0',
+          totalRows,
+          partial: true,
+          failedAt: currentTable,
+          tables: database
+        };
+
+        const jsonString = JSON.stringify(output, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'cached-configs_partial.json';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+      
+      alert(`Error downloading table: ${currentTable}. Downloaded ${totalRows} rows from previous tables.`);
     } finally {
       setIsLoading(false);
     }
@@ -274,9 +320,9 @@ export default function AdminPage() {
 
   const downloadDatabaseGames = async () => {
     setIsLoading(true);
+    let allData: any[] = [];
+    let from = initialOffset;
     try {
-      let allData = [];
-      let from = 0;
       
       while (true) {
         const { data, error } = await supabase
@@ -307,6 +353,24 @@ export default function AdminPage() {
       URL.revokeObjectURL(url);
     } catch (e) {
       console.error('Error downloading database games:', e);
+      
+      // Save partial data if any was downloaded
+      if (allData.length > 0) {
+        const uniqueGames = [...new Set(allData.map((d: any) => d.game.name))].sort().map(name => ({ name }));
+        const jsonString = JSON.stringify(uniqueGames, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'games_partial.json';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+      
+      alert(`Error at offset ${from}. Downloaded ${allData.length} rows. Please set Initial Offset to ${from} and try again.`);
+      setInitialOffset(from);
     } finally {
       setIsLoading(false);
     }
@@ -314,9 +378,9 @@ export default function AdminPage() {
 
   const downloadDatabaseDevices = async () => {
     setIsLoading(true);
+    let allData: any[] = [];
+    let from = initialOffset;
     try {
-      let allData = [];
-      let from = 0;
       
       while (true) {
         const { data, error } = await supabase
@@ -347,6 +411,24 @@ export default function AdminPage() {
       URL.revokeObjectURL(url);
     } catch (e) {
       console.error('Error downloading database devices:', e);
+      
+      // Save partial data if any was downloaded
+      if (allData.length > 0) {
+        const uniqueDevices = [...new Set(allData.map((d: any) => d.device.model))].sort().map(model => ({ name: model, model }));
+        const jsonString = JSON.stringify(uniqueDevices, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'devices_partial.json';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+      
+      alert(`Error at offset ${from}. Downloaded ${allData.length} rows. Please set Initial Offset to ${from} and try again.`);
+      setInitialOffset(from);
     } finally {
       setIsLoading(false);
     }
@@ -354,10 +436,11 @@ export default function AdminPage() {
 
   const downloadGameRuns = async () => {
     setIsLoading(true);
+    let allData: any[] = [];
+    let from = initialOffset;
+    const maxRetries = 3;
+    
     try {
-      let allData: any[] = [];
-      let from = 0;
-      const maxRetries = 3;
       
       while (true) {
         let retries = 0;
@@ -415,7 +498,23 @@ export default function AdminPage() {
       URL.revokeObjectURL(url);
     } catch (e) {
       console.error('Error downloading game runs:', e);
-      alert('Failed to download game runs. Please try again.');
+      
+      // Save partial data if any was downloaded
+      if (allData.length > 0) {
+        const jsonString = JSON.stringify(allData, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'game_runs_partial.json';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+      
+      alert(`Error at offset ${from}. Downloaded ${allData.length} rows. Please set Initial Offset to ${from} and try again.`);
+      setInitialOffset(from);
     } finally {
       setIsLoading(false);
     }
@@ -475,6 +574,25 @@ export default function AdminPage() {
           />
           <p className="text-xs text-slate-400 mt-1">
             Lower values (e.g., 100-500) help prevent timeouts. Default is 1000.
+          </p>
+        </div>
+        
+        <div className="mb-6 p-4 bg-slate-800 rounded-lg border border-slate-700">
+          <label htmlFor="initialOffset" className="block text-sm font-medium mb-2 text-slate-300">
+            Initial Offset (starting row)
+          </label>
+          <input
+            id="initialOffset"
+            type="number"
+            min="0"
+            step="1"
+            value={initialOffset}
+            onChange={(e) => setInitialOffset(Math.max(0, parseInt(e.target.value) || 0))}
+            className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-cyan-500"
+            placeholder="0"
+          />
+          <p className="text-xs text-slate-400 mt-1">
+            Start downloading from this row. Use this to resume after an error. Default is 0.
           </p>
         </div>
         
