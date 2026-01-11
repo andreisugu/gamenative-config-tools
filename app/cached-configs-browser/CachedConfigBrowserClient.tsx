@@ -566,9 +566,8 @@ export default function CachedConfigBrowserClient() {
   // Helper function to get display GPU for a config
   const getDisplayGpu = useCallback((config: GameConfig) => {
     const gpu = config.device?.gpu || UNKNOWN_GPU;
-    if (gpu === UNKNOWN_GPU && config.configs_id != null) {
-      // Check if configs_id already starts with STEAM_ to avoid duplication
-      // Cast to string to handle both string and number types
+    if (gpu === UNKNOWN_GPU && config.configs_id !== null) {
+      // Convert to string to check for STEAM_ prefix (configs_id may contain string values from data)
       const configIdStr = String(config.configs_id);
       if (configIdStr.startsWith('STEAM_')) {
         return configIdStr;
