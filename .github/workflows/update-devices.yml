@@ -1,7 +1,7 @@
 name: Update Devices
 on:
-  schedule:
-    - cron: '0 0 */14 * *' # Run every 14 days
+  #schedule:
+  #  - cron: '0 0 */14 * *' # Run every 14 days
   workflow_dispatch:
 
 permissions:

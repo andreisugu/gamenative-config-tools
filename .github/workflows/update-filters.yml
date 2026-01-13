@@ -1,7 +1,7 @@
 name: Update All Filters
 on:
-  schedule:
-    - cron: '0 2 * * 0' # Run weekly on Sunday at 2 AM
+  #schedule:
+  #  - cron: '0 2 * * 0' # Run weekly on Sunday at 2 AM
   workflow_dispatch:
 
 permissions:

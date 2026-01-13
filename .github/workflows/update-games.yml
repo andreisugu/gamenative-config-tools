@@ -1,7 +1,7 @@
 name: Update Steam Games
 on:
-  schedule:
-    - cron: '0 0 1 * *' # Run on 1st of every month
+  #schedule:
+  #  - cron: '0 0 1 * *' # Run on 1st of every month
   workflow_dispatch:
 
 permissions:
