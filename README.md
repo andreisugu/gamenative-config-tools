@@ -2,165 +2,216 @@
 
 > **Complete configuration management for your GameNative emulator.**
 
-Built with **Next.js**, **TypeScript**, and **Tailwind CSS** for a modern, type-safe, and responsive experience.
-
-### [**🏠 Main Site**](https://andreisugu.github.io/gamenative-config-tools/) - Central hub for all tools
-### 🔄 [**Launch Config Converter**](https://andreisugu.github.io/gamenative-config-tools/config-converter)
-### ✏️ [**Launch Config Editor**](https://andreisugu.github.io/gamenative-config-tools/config-editor)
-### 🔍 [**Launch Config Browser**](https://andreisugu.github.io/gamenative-config-tools/config-browser)
-
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Status: Active](https://img.shields.io/badge/Status-Active-brightgreen.svg)](https://andreisugu.github.io/gamenative-config-tools/)
 [![Platform: Web](https://img.shields.io/badge/Platform-Web-blue.svg)](https://andreisugu.github.io/gamenative-config-tools/)
+
+Built with **Next.js**, **TypeScript**, and **Tailwind CSS** for a modern, type-safe, and responsive experience.
+
+## 🔗 Quick Links
+
+| Tool | Description |
+|------|-------------|
+| [🏠 **Main Site**](https://andreisugu.github.io/gamenative-config-tools/) | Central hub for all tools |
+| [🔄 **Config Converter**](https://andreisugu.github.io/gamenative-config-tools/config-converter) | Convert raw text to JSON |
+| [✏️ **Config Editor**](https://andreisugu.github.io/gamenative-config-tools/config-editor) | Edit configurations visually |
+| [🔍 **Config Browser**](https://andreisugu.github.io/gamenative-config-tools/config-browser) | Browse community configs |
+
+## 📑 Table of Contents
+
+- [The Problem](#-the-problem)
+- [The Solution](#-the-solution)
+- [Features](#-features)
+- [Getting Started](#-getting-started)
+- [Detailed Usage](#-detailed-usage)
+- [Technical Details](#-technical-details)
+- [Community & Support](#-community--support)
+- [License](#-license)
 
 ---
 
 ## 🚨 The Problem
 
-The GameNative/Winlator community is amazing. Users rigorously test games and upload configuration data (FPS, drivers, environment variables) to community databases.
+GameNative/Winlator users share game configurations (FPS, drivers, environment variables) in community databases, but there's a disconnect:
 
-**But there is a disconnect:**
+- **Database:** Perfect settings in raw text format
+- **App:** Manual entry required, one setting at a time
+- **Result:** Typos, frustration, and wasted time
 
-1.  **The Database** contains the perfect settings in raw text format.
-2.  **The App** requires you to manually type these settings one by one.
-3.  **The Result:** Typos, frustration, and 10 minutes wasted just to crash on launch.
+**Stop typing. Start playing.**
 
 ## ✅ The Solution
 
-This project provides **three complementary web tools** to streamline your GameNative configuration workflow:
+Three complementary web tools to streamline your GameNative configuration workflow:
 
-### 🔄 Config Converter
-Takes the "messy" raw text dump from community reports and instantly compiles it into a clean, structured `.json` file that the GameNative app can import directly.
-
-### ✏️ Config Editor
-A powerful visual editor that lets you fine-tune every aspect of your configuration with an intuitive interface. Edit settings across 10 organized categories including graphics, emulation, controller, and more.
-
-### 🔍 Config Browser
-Browse and search through community-submitted game configurations with **intelligent local caching** and **respectful database usage**. Filter by game name, GPU, or device to find optimal settings shared by other users.
-
-**Stop typing. Start playing.**
+| Tool | Purpose |
+|------|---------|
+| **🔄 Config Converter** | Converts raw text from community reports into clean, importable JSON files |
+| **✏️ Config Editor** | Visual editor for fine-tuning configurations across 10 organized categories |
+| **🔍 Config Browser** | Search community configurations with intelligent caching and filtering |
 
 ---
 
 ## ✨ Features
 
-### Config Converter
-* **Intelligent Parsing:** Handles "dense" raw text where keys and values are packed without spacing.
-* **Smart Type Inference:** Automatically detects and converts `true`/`false` to booleans and numeric strings to integers/floats.
-* **Complex Data Handling:** Detects and correctly parses nested JSON strings found in fields like `extraData` and `sessionMetadata`.
-* **Data Normalization:** Automatically fixes property naming inconsistencies (e.g., converting `lc all` to `lc_all`).
-* **Junk Filtration:** Automatically strips out useless runtime metadata (e.g., `avg fps`, `session length`, `profileId`) that clogs up config files.
-* **Android-Ready Structure:** Outputs the exact nested JSON structure required by the GameNative Import/Export source code.
+<details>
+<summary><strong>🔄 Config Converter</strong></summary>
 
-### Config Editor
-* **Visual Interface:** Edit all configuration settings through an intuitive, organized interface.
-* **10 Organized Categories:** Settings grouped into General, Graphics, Emulation, Controller, Wine, Components, Environment, Drives, Advanced, and Hidden sections.
-* **Real-Time Validation:** Visual feedback and smart defaults ensure valid configurations.
-* **Import/Export:** Load existing JSON configs, make changes, and export updated versions.
-* **Cross-Tool Integration:** Seamlessly switch between Converter and Editor as needed.
+* **Intelligent Parsing:** Handles dense raw text where keys and values are packed without spacing
+* **Smart Type Inference:** Auto-converts `true`/`false` to booleans and numeric strings to numbers
+* **Complex Data Handling:** Detects and parses nested JSON in fields like `extraData` and `sessionMetadata`
+* **Data Normalization:** Fixes property naming inconsistencies (e.g., `lc all` → `lc_all`)
+* **Junk Filtration:** Strips useless runtime metadata (e.g., `avg fps`, `session length`)
+* **Android-Ready:** Outputs the exact structure required by GameNative Import/Export
 
-### Config Browser
-* **Local Filter Snapshots:** Pre-generated JSON files provide instant autocomplete suggestions for games, GPUs, and devices without hitting the database.
-* **Smart Autocomplete:** Client-side fuzzy matching with debounced search for responsive filter suggestions.
-* **Efficient Queries:** Separate count and data queries with proper joins and filtering to minimize database load.
-* **Rich Preview:** View configuration details including rating, FPS, device specs, user notes, and app version.
-* **Seamless Integration:** Load configurations directly into the Config Editor or download as JSON files.
+</details>
+
+<details>
+<summary><strong>✏️ Config Editor</strong></summary>
+
+* **Visual Interface:** Intuitive, organized UI for all configuration settings
+* **10 Organized Categories:** General, Graphics, Emulation, Controller, Wine, Components, Environment, Drives, Advanced, and Hidden
+* **Real-Time Validation:** Visual feedback and smart defaults ensure valid configurations
+* **Import/Export:** Load existing configs, modify, and export updated versions
+* **Cross-Tool Integration:** Seamlessly switch between Converter and Editor
+
+</details>
+
+<details>
+<summary><strong>🔍 Config Browser</strong></summary>
+
+* **Local Filter Snapshots:** Pre-generated JSON files for instant autocomplete suggestions
+* **Smart Autocomplete:** Client-side fuzzy matching with debounced search
+* **Efficient Queries:** Separate count and data queries to minimize database load
+* **Rich Preview:** View ratings, FPS, device specs, notes, and app versions
+* **Seamless Integration:** Load directly into Editor or download as JSON
+
+</details>
 
 ---
 
-## 🚀 How to Use
+## 🚀 Getting Started
 
-### Quick Start: Get a Config from the Community
+### Quick Start Guide
 
-1. Visit the [**Main Site**](https://andreisugu.github.io/gamenative-config-tools/) to access all tools
-2. Go to the [GameNative Compatibility List](https://gamenative.app/compatibility/) or use the [Config Browser](https://andreisugu.github.io/gamenative-config-tools/config-browser)
-3. Select a report for the game you want
-4. Click **"View Config"**
-5. Copy everything inside the popup
-6. Paste into the [Config Converter](https://andreisugu.github.io/gamenative-config-tools/config-converter)
-7. Convert it and copy the JSON output
-8. Paste into the [Config Editor](https://andreisugu.github.io/gamenative-config-tools/config-editor) if you want to make changes, or import directly into GameNative
+1. **Find a configuration:**
+   - Visit [GameNative Compatibility List](https://gamenative.app/compatibility/) or [Config Browser](https://andreisugu.github.io/gamenative-config-tools/config-browser)
+   - Select a game report and click **"View Config"**
+   - Copy all the text
 
-### Workflow 1: Converting Raw Configs
+2. **Convert to JSON:**
+   - Open [Config Converter](https://andreisugu.github.io/gamenative-config-tools/config-converter)
+   - Paste the text and click **"Download Clean Config"**
 
-#### 1. Get the Raw Data
-Go to your preferred GameNative/Winlator config database or spreadsheet. Click "View" on a config report and copy **all** the text.
+3. **Optional - Edit settings:**
+   - Open [Config Editor](https://andreisugu.github.io/gamenative-config-tools/config-editor)
+   - Paste JSON, make changes, and export
 
-#### 2. Convert to JSON
-1.  Open the [Config Converter](https://andreisugu.github.io/gamenative-config-tools/config-converter).
-2.  Paste the raw text into the input box.
-3.  Click **"Download Clean Config"**.
+4. **Import to GameNative:**
+   - Transfer `config.json` to your Android device
+   - In GameNative, press on any game → 3 dots → **Import Config**
 
-#### 3. Import to App
-1.  Transfer the downloaded `config.json` to your Android device.
-2.  Open **GameNative**, press on any game, and press the 3 dots in the upper right corner.
-3.  Select **Import Config** and choose your file.
+## 📖 Detailed Usage
 
-### Workflow 2: Editing Existing Configs
+<details>
+<summary><strong>Converting Raw Configs</strong></summary>
 
-#### 1. Load Your Config
-1.  Open the [Config Editor](https://andreisugu.github.io/gamenative-config-tools/config-editor).
-2.  Paste your JSON configuration (either exported from GameNative or converted using the Config Converter).
-3.  Click **"Load Config"**.
+### Step-by-Step
 
-#### 2. Make Changes
-Navigate through the organized tabs (General, Graphics, Emulation, etc.) and adjust any settings you need.
+1. **Get Raw Data**
+   - Navigate to a GameNative/Winlator config database
+   - Click "View" on a config report
+   - Copy all the text
 
-#### 3. Export and Import
-1.  Click **"Export JSON"** to download your modified configuration.
-2.  Transfer to your Android device and import through GameNative as usual.
+2. **Convert to JSON**
+   - Open [Config Converter](https://andreisugu.github.io/gamenative-config-tools/config-converter)
+   - Paste the raw text
+   - Click **"Download Clean Config"**
+
+3. **Import to App**
+   - Transfer `config.json` to Android
+   - GameNative → Select game → 3 dots → **Import Config**
+
+</details>
+
+<details>
+<summary><strong>Editing Existing Configs</strong></summary>
+
+### Step-by-Step
+
+1. **Load Config**
+   - Open [Config Editor](https://andreisugu.github.io/gamenative-config-tools/config-editor)
+   - Paste JSON (from GameNative export or Converter)
+   - Click **"Load Config"**
+
+2. **Make Changes**
+   - Navigate tabs: General, Graphics, Emulation, etc.
+   - Adjust settings as needed
+
+3. **Export and Import**
+   - Click **"Export JSON"**
+   - Transfer to Android and import via GameNative
+
+</details>
 
 ---
 
 ## 🧩 Technical Details
 
-These tools were built to support the **Import/Export JSON Schema** defined in the GameNative Android source code.
+<details>
+<summary><strong>Implementation Overview</strong></summary>
 
-### Config Converter Logic
+Built to support the **Import/Export JSON Schema** from GameNative Android source code.
 
-The converter performs a "Lookahead" parse:
-1. It iterates through the raw text line by line.
-2. It checks a strictly defined `KNOWN_KEYS` set to differentiate between a Key and a Value.
-3. It gathers individual controller buttons (`A`, `B`, `DPAD UP`) and nests them into a `controllerEmulationBindings` object.
+### Config Converter
 
-### Config Editor Architecture
+**Lookahead Parser:**
+- Iterates through raw text line by line
+- Uses `KNOWN_KEYS` set to differentiate keys from values
+- Nests controller buttons into `controllerEmulationBindings` object
 
-The editor provides a structured interface for modifying configuration JSON:
-1. Settings are organized into 10 logical categories for easy navigation, with the first 9 designed to mimic the in-app "Edit Container" style.
-2. Form controls are dynamically generated based on the configuration schema.
-3. Special handling for complex fields like CPU affinity grids, environment variables, and drive mappings.
-4. Real-time synchronization between related fields (e.g., GPU name and renderer) to maintain consistency with the "Edit Container" interface.
+### Config Editor
 
-### Config Browser Architecture
+**Structured Interface:**
+- 10 logical categories mirroring in-app "Edit Container" style
+- Dynamic form controls based on configuration schema
+- Special handling for CPU affinity grids, environment variables, and drive mappings
+- Real-time synchronization between related fields (GPU name ↔ renderer)
 
-The browser balances performance with database efficiency:
-1. **Local Filter Snapshots:** Pre-generated JSON files containing games, GPUs, and devices for instant autocomplete suggestions.
-2. **Client-Side Filtering:** Fuzzy matching and search suggestions processed locally to reduce database queries.
-3. **Debounced Input:** 250ms debounce on filter inputs to prevent excessive API calls during typing.
-4. **Efficient Queries:** Separate count and data queries with proper Supabase joins and range-based pagination.
-5. **Request Cancellation:** AbortController implementation to cancel outdated requests when filters change.
-6. **Seamless Integration:** Direct Config Editor loading and JSON export with proper metadata structure.
+### Config Browser
+
+**Performance-Optimized Architecture:**
+
+The browser balances performance with database efficiency through:
+- **Local snapshots:** Pre-generated JSON for instant autocomplete
+- **Client-side filtering:** Fuzzy matching without database queries
+- **Debounced input:** 250ms delay prevents excessive API calls
+- **Efficient queries:** Separate count/data queries with proper joins
+- **Request cancellation:** AbortController cancels outdated requests
+- **Seamless integration:** Direct Config Editor loading and JSON export with proper metadata structure
+
+</details>
 
 ---
 
 ## 🌍 Community & Support
 
-These tools are designed to support the incredible work done by the GameNative developers and community. While these utilities are unofficial, you can find the official project and community hubs below:
+These tools support the incredible work of GameNative developers and community. Find the official project here:
 
-* **Official Website:** [GameNative.app](https://gamenative.app/)
-* **Source Code:** [GameNative GitHub Repository](https://github.com/utkarshdalal/GameNative)
-* **Discord Community:** [Join the GameNative Discord](https://discord.gg/2hKv4VfZfE)
+- 🌐 **Official Website:** [GameNative.app](https://gamenative.app/)
+- 📦 **Source Code:** [GameNative GitHub](https://github.com/utkarshdalal/GameNative)
+- 💬 **Discord:** [Join the Community](https://discord.gg/2hKv4VfZfE)
+
+### ⚠️ Compatibility Note
+
+These tools generate JSON files compatible with GameNative builds that include **Import/Export PR (#232)**. Update to the latest release if the Import button is unavailable.
 
 ---
-
-## ⚠️ Compatibility Note
-
-These tools generate JSON files compatible with GameNative builds that include the **Import/Export PR (#232)**. If you are using an older version of the app, you may need to update to the latest release to use the "Import" button.
 
 ## 📄 License
 
-This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+MIT License - see [LICENSE](https://opensource.org/licenses/MIT) for details.
 
 ---
 
-*Not affiliated with the official GameNative development team. Built by the community, for the community.*
+*Not affiliated with official GameNative development. Built by the community, for the community.*
