@@ -13,15 +13,17 @@ Built with **Next.js**, **TypeScript**, and **Tailwind CSS** for a modern, type-
 | Tool | Description |
 |------|-------------|
 | [🏠 **Main Site**](https://andreisugu.github.io/gamenative-config-tools/) | Central hub for all tools |
-| [🔄 **Config Converter**](https://andreisugu.github.io/gamenative-config-tools/config-converter) | Convert raw text to JSON |
-| [✏️ **Config Editor**](https://andreisugu.github.io/gamenative-config-tools/config-editor) | Edit configurations visually |
-| [🔍 **Config Browser**](https://andreisugu.github.io/gamenative-config-tools/config-browser) | Browse community configs |
+| [🔍 **Config Browser**](https://andreisugu.github.io/gamenative-config-tools/config-browser) | Browse, compare, and transfer community configs |
+| [✏️ **Config Editor**](https://andreisugu.github.io/gamenative-config-tools/config-editor) | Edit configurations visually with smart presets |
+| [🔄 **Config Converter**](https://andreisugu.github.io/gamenative-config-tools/config-converter) | Convert raw reports & drag-and-drop JSON |
+| [📊 **Live Diagnostics**](https://andreisugu.github.io/gamenative-config-tools/test-connection) | Test API connectivity, latency, and schemas |
 
 ## 📑 Table of Contents
 
 - [The Problem](#-the-problem)
 - [The Solution](#-the-solution)
 - [Features](#-features)
+- [Testing & Quality Assurance](#-testing--quality-assurance)
 - [Getting Started](#-getting-started)
 - [Detailed Usage](#-detailed-usage)
 - [Technical Details](#-technical-details)
@@ -34,7 +36,7 @@ Built with **Next.js**, **TypeScript**, and **Tailwind CSS** for a modern, type-
 
 GameNative/Winlator users share game configurations (FPS, drivers, environment variables) in community databases, but there's a disconnect:
 
-- **Database:** Perfect settings in raw text format
+- **Database:** Perfect settings in raw text format or web listings
 - **App:** Manual entry required, one setting at a time
 - **Result:** Typos, frustration, and wasted time
 
@@ -42,51 +44,93 @@ GameNative/Winlator users share game configurations (FPS, drivers, environment v
 
 ## ✅ The Solution
 
-Three complementary web tools to streamline your GameNative configuration workflow:
+A unified suite of web tools to streamline your GameNative configuration workflow:
 
 | Tool | Purpose |
 |------|---------|
-| **🔄 Config Converter** | Converts raw text from community reports into clean, importable JSON files |
-| **✏️ Config Editor** | Visual editor for fine-tuning configurations across 10 organized categories |
-| **🔍 Config Browser** | Search community configurations with intelligent caching and filtering |
+| **🔍 Config Browser** | Search official community configurations, compare side-by-side, send to phone via QR, and bookmark favorites |
+| **✏️ Config Editor** | Visual container editor with drag-and-drop file import, 1-click smart hardware presets, and sanity checks |
+| **🔄 Config Converter** | Converts raw community report dumps into clean, importable GameNative JSON files |
+| **📊 Live Diagnostics** | Real-time endpoint health, latency benchmarking, and schema validation against `api.gamenative.app` |
 
 ---
 
 ## ✨ Features
 
 <details>
+<summary><strong>🔍 Config Browser & Comparison</strong></summary>
+
+* **Live Community Search:** Fast, debounced typeahead connected directly to the official `api.gamenative.app` database
+* **Side-by-Side Diff & Comparison:** Select any 2 configurations to compare parameter-by-parameter across 5 categories (Performance, Wine, Graphics, Emulation, Environment) with diff badges and a "Differences Only" toggle
+* **Send to Phone (QR Code):** One-click QR code modal to instantly transfer configuration links straight to Android cameras or mobile browsers without cables
+* **Shareable Deep Links:** Direct URL parameter linking (`?game=3405&run=723866`) for instant community sharing and forum discussions
+* **Saved Configs (Local Favorites):** Bookmark tested configurations with star (★) for instant offline access
+* **Batch JSON Export:** Download all favorited configs as a single combined JSON backup bundle
+* **Hardware & GPU Filtering:** Filter by tested hardware GPU (Adreno, Mali, Immortalis, etc.), star rating, and custom sorting (`created_at`, `rating`, `avg_fps`)
+* **Seamless Integration:** Open any card directly in the visual Config Editor or download as Android-ready `config.json`
+
+</details>
+
+<details>
+<summary><strong>✏️ Config Editor & Smart Presets</strong></summary>
+
+* **Visual Interface:** Intuitive, organized UI mirroring GameNative's container setup across 10 categories
+* **Drag-and-Drop Import:** Drag `.json` files straight onto the editor or browse via the file picker ("Open File")
+* **Smart Hardware Presets:** 1-click presets for *Snapdragon Performance* (Dynarec flags, big cores), *Balanced (Big Cores)*, and *Safe Compatibility*
+* **Real-Time Sanity Validation:** Non-blocking warning banners alert you to Box64 SAFE performance drops, unconfigured CPU affinity, or empty executable paths with direct shortcut navigation
+* **10 Organized Categories:** General, Graphics, Emulation, Controller, Wine, Components, Environment, Drives, Advanced, and Hidden
+* **Import/Export:** Export Android-ready `config.json` with visual copy confirmation and clipboard toast feedback
+
+</details>
+
+<details>
 <summary><strong>🔄 Config Converter</strong></summary>
 
+* **Drag-and-Drop Upload:** Drag raw config files directly into the input area or use the file upload selector
 * **Intelligent Parsing:** Handles dense raw text where keys and values are packed without spacing
 * **Smart Type Inference:** Auto-converts `true`/`false` to booleans and numeric strings to numbers
 * **Complex Data Handling:** Detects and parses nested JSON in fields like `extraData` and `sessionMetadata`
 * **Data Normalization:** Fixes property naming inconsistencies (e.g., `lc all` → `lc_all`)
 * **Junk Filtration:** Strips useless runtime metadata (e.g., `avg fps`, `session length`)
-* **Android-Ready:** Outputs the exact structure required by GameNative Import/Export
+* **Android-Ready:** Outputs the exact container structure required by GameNative Import/Export
 
 </details>
 
 <details>
-<summary><strong>✏️ Config Editor</strong></summary>
+<summary><strong>📱 PWA & Handheld Optimization</strong></summary>
 
-* **Visual Interface:** Intuitive, organized UI for all configuration settings
-* **10 Organized Categories:** General, Graphics, Emulation, Controller, Wine, Components, Environment, Drives, Advanced, and Hidden
-* **Real-Time Validation:** Visual feedback and smart defaults ensure valid configurations
-* **Import/Export:** Load existing configs, modify, and export updated versions
-* **Cross-Tool Integration:** Seamlessly switch between Converter and Editor
+* **Progressive Web App (PWA):** Installable web application with standalone window support, tailored for Android gaming handhelds (Ayn Odin, Steam Deck, ROG Ally, Retroid Pocket, etc.)
+* **Extension & Dark Reader Resilience:** Hardened DOM rendering preventing hydration mismatches from dark mode browser extensions, translation tools, or injected scripts
+* **Offline-Ready Favorites:** Cached bookmarks and local storage support ensure your favorited configurations remain accessible without active internet
 
 </details>
 
 <details>
-<summary><strong>🔍 Config Browser</strong></summary>
+<summary><strong>📊 Live API Diagnostics</strong></summary>
 
-* **Live Community Search:** Fast, debounced typeahead connected directly to `api.gamenative.app`
-* **Real-time Filtering:** Filter by tested hardware GPU, star rating, and custom sorting
-* **Rich Preview:** View ratings, FPS, device models, notes, and container specifications
-* **Seamless Integration:** Load directly into Config Editor or download as Android-ready JSON
-* **Zero Bloat:** No massive database dumps or heavy client-side databases
+* **Live Latency Benchmark:** Real-time round-trip latency metrics for GameNative API services
+* **Schema Validation:** Validates API JSON payloads against strict runtime schemas (Zod)
+* **Status Dashboard:** Visual indicator badges for Game Search, Device Catalog, and Compatibility queries
 
 </details>
+
+---
+
+## 🧪 Testing & Quality Assurance
+
+The codebase includes full automated test coverage across live API contracts, browser interaction, and hydration resilience using headless Firefox WebDriver BiDi:
+
+```bash
+# Run the complete test suite (API contracts + headless browser E2E)
+npm run test:all
+
+# Run live API contract and schema validation suite
+npm run test:api
+
+# Run headless Firefox WebDriver BiDi E2E suite
+# (Tests autocomplete, QR generation, deep linking, diff comparison, toasts, and extension resilience)
+npm run test:e2e
+```
 
 ---
 
