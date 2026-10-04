@@ -1,1189 +1,1247 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { Search, Star, Zap, ChevronLeft, ChevronRight, Cpu, Filter, Download, X, ChevronDown, Smartphone } from 'lucide-react';
-import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
-
-// --- Types ---
-
-interface GameConfig {
-  id: number;
-  rating: number;
-  avg_fps: number;
-  notes: string | null;
-  configs: any;
-  created_at: string;
-  app_version: string | null;
-  tags: string | null;
-  session_length_sec: number | null;
-  game: {
-    id: number;
-    name: string;
-  } | null;
-  device: {
-    id: number;
-    model: string;
-    gpu: string;
-    android_ver: string;
-  } | null;
-}
-
-interface SupabaseGameRun {
-  id: number;
-  rating: number;
-  avg_fps: number;
-  notes: string | null;
-  configs: any;
-  created_at: string;
-  app_version: { semver: string } | null;
-  tags: string | null;
-  session_length_sec: number | null;
-  game: { id: number; name: string } | null;
-  device: { id: number; model: string; gpu: string; android_ver: string } | null;
-}
-
-interface GameSuggestion {
-  id: number;
-  name: string;
-}
-
-interface GpuSuggestion {
-  gpu: string;
-}
-
-interface DeviceSuggestion {
-  name: string;
-  model: string;
-}
-
-interface FilterSnapshot {
-  games: GameSuggestion[];
-  gpus: string[];
-  devices: DeviceSuggestion[];
-  updatedAt: string;
-}
-
-type SortOption = 'newest' | 'oldest' | 'rating_desc' | 'rating_asc' | 'fps_desc' | 'fps_asc';
-
-interface ConfigBrowserClientProps {
-  // No props needed - searchParams are read from URL
-}
-
-// --- Constants ---
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import {
+  Search,
+  Star,
+  Zap,
+  ChevronLeft,
+  ChevronRight,
+  Cpu,
+  Filter,
+  Download,
+  X,
+  ExternalLink,
+  Smartphone,
+  Eye,
+  Check,
+  Layers,
+  ArrowUpDown,
+  RefreshCw,
+  Sliders,
+  Share2,
+  Trash2,
+  QrCode,
+  Bookmark,
+} from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import {
+  searchGames,
+  getDevices,
+  getCompatibility,
+  formatGameNativeExport,
+  downloadConfigJson,
+} from '@/lib/api';
+import type {
+  CompatibilityRun,
+  Device,
+  GameSuggestion,
+} from '@/lib/types';
+import {
+  getSavedConfigs,
+  toggleSaveConfig,
+  isConfigSaved,
+  onFavoritesChange,
+  clearAllSavedConfigs,
+  type SavedConfigItem,
+} from '@/lib/favorites';
+import SendToPhoneModal from '@/app/components/SendToPhoneModal';
 
 const ITEMS_PER_PAGE = 15;
-const SUGGESTION_DEBOUNCE_MS = 250; // Debounce for filter suggestions dropdown
-const SUGGESTION_LIMIT = 15;
-const GAME_RUNS_QUERY = 'id,rating,avg_fps,notes,configs,created_at,app_version:app_versions(semver),tags,session_length_sec,game:games!inner(id,name),device:devices!inner(id,model,gpu,android_ver)';
+const DEBOUNCE_MS = 250;
 
-// --- Helper Hook: useDebounce ---
-function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
-  useEffect(() => {
-    const handler = setTimeout(() => setDebouncedValue(value), delay);
-    return () => clearTimeout(handler);
-  }, [value, delay]);
-  return debouncedValue;
-}
+type SortOption = 'newest' | 'oldest' | 'rating_desc' | 'rating_asc' | 'fps_desc' | 'fps_asc';
 
 export default function ConfigBrowserClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const pathname = usePathname();
-  
-  // --- State ---
-  const [configs, setConfigs] = useState<GameConfig[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
-  
-  // Filters - initialize from URL searchParams
-  const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
+
+  // Mode: 'search' vs 'favorites'
+  const [activeTab, setActiveTab] = useState<'search' | 'favorites'>(
+    searchParams.get('tab') === 'favorites' ? 'favorites' : 'search'
+  );
+
+  // Search & Game Selection
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedGame, setSelectedGame] = useState<GameSuggestion | null>(null);
-  const [gpuFilter, setGpuFilter] = useState(searchParams.get('gpu') || '');
-  const [selectedGpu, setSelectedGpu] = useState<GpuSuggestion | null>(null);
-  const [deviceFilter, setDeviceFilter] = useState(searchParams.get('device') || '');
-  const [selectedDevice, setSelectedDevice] = useState<DeviceSuggestion | null>(null);
-  const [sortOption, setSortOption] = useState<SortOption>('newest');
-  
-  // Search trigger state - only search when button is clicked
-  const [searchTrigger, setSearchTrigger] = useState(0);
-  
-  // Committed filter values - these are used for actual database queries
-  const [committedSearchTerm, setCommittedSearchTerm] = useState(searchParams.get('search') || '');
-  const [committedSelectedGame, setCommittedSelectedGame] = useState<GameSuggestion | null>(null);
-  const [committedGpuFilter, setCommittedGpuFilter] = useState(searchParams.get('gpu') || '');
-  const [committedSelectedGpu, setCommittedSelectedGpu] = useState<GpuSuggestion | null>(null);
-  const [committedDeviceFilter, setCommittedDeviceFilter] = useState(searchParams.get('device') || '');
-  const [committedSelectedDevice, setCommittedSelectedDevice] = useState<DeviceSuggestion | null>(null);
-  
-  // Static Filter Snapshot
-  const [snapshot, setSnapshot] = useState<FilterSnapshot>({ games: [], gpus: [], devices: [], updatedAt: '' });
-  const [filtersLoading, setFiltersLoading] = useState(true);
-  const [filtersError, setFiltersError] = useState<string | null>(null);
-  
-  // Autocomplete State
+  const [suggestions, setSuggestions] = useState<GameSuggestion[]>([]);
+  const [isSearchingGames, setIsSearchingGames] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  
-  // GPU Autocomplete State
+  const searchBoxRef = useRef<HTMLDivElement>(null);
+
+  // Filters
+  const [gpuFilter, setGpuFilter] = useState(searchParams.get('gpu') || '');
+  const [ratingMin, setRatingMin] = useState<number | null>(
+    searchParams.get('rating') ? Number(searchParams.get('rating')) : null
+  );
+  const [sortOption, setSortOption] = useState<SortOption>(
+    (searchParams.get('sort') as SortOption) || 'newest'
+  );
+
+  // Devices catalog for GPU suggestions
+  const [devices, setDevices] = useState<Device[]>([]);
+  const [gpuSuggestions, setGpuSuggestions] = useState<string[]>([]);
   const [showGpuSuggestions, setShowGpuSuggestions] = useState(false);
-  const gpuWrapperRef = useRef<HTMLDivElement>(null);
-  
-  // Device Autocomplete State
-  const [showDeviceSuggestions, setShowDeviceSuggestions] = useState(false);
-  const deviceWrapperRef = useRef<HTMLDivElement>(null);
-  
-  // Pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const [goToPage, setGoToPage] = useState('');
-  
-  // Batch size for pagination
-  const [batchSize, setBatchSize] = useState(15);
-  
-  // Expanded notes state
-  const [expandedNotes, setExpandedNotes] = useState<Set<number>>(new Set());
+  const gpuBoxRef = useRef<HTMLDivElement>(null);
 
-  // Fast debounce for showing filter suggestions (250ms)
-  const debouncedSearchTermFast = useDebounce(searchTerm, SUGGESTION_DEBOUNCE_MS);
-  const debouncedGpuFast = useDebounce(gpuFilter, SUGGESTION_DEBOUNCE_MS);
-  const debouncedDeviceFast = useDebounce(deviceFilter, SUGGESTION_DEBOUNCE_MS);
+  // Results & Pagination
+  const [runs, setRuns] = useState<CompatibilityRun[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(
+    searchParams.get('page') ? Number(searchParams.get('page')) : 1
+  );
+  const [isLoadingRuns, setIsLoadingRuns] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // --- Load Static Filter Data ---
+  // Favorites state
+  const [savedConfigs, setSavedConfigs] = useState<SavedConfigItem[]>([]);
+  const [savedSearchQuery, setSavedSearchQuery] = useState('');
+  const [savedRunIds, setSavedRunIds] = useState<Set<number>>(new Set());
+
+  // Modal inspection & Mobile QR Share
+  const [activeModalRun, setActiveModalRun] = useState<CompatibilityRun | null>(null);
+  const [phoneModalRun, setPhoneModalRun] = useState<{
+    run: CompatibilityRun;
+    gameName?: string;
+  } | null>(null);
+  const [copiedRaw, setCopiedRaw] = useState(false);
+  const [copiedShareLink, setCopiedShareLink] = useState(false);
+
+  // ── Load Favorites & Register Listener ──────────────────────────────
   useEffect(() => {
-    const abortController = new AbortController();
-    setFiltersLoading(true);
-    const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-    fetch(`${basePath}/filters.json`, { signal: abortController.signal })
-      .then(res => {
-        if (!res.ok) throw new Error(`Failed to load filters: ${res.status}`);
-        return res.json();
-      })
-      .then(data => {
-        setSnapshot(data);
-        setFiltersError(null);
-      })
-      .catch(error => {
-        // Don't set error state if the request was aborted (component unmounted)
-        if (error.name === 'AbortError') {
-          console.log('Filter loading was aborted');
-          return;
+    const list = getSavedConfigs();
+    setSavedConfigs(list);
+    setSavedRunIds(new Set(list.map((item) => item.runId)));
+
+    return onFavoritesChange(() => {
+      const updated = getSavedConfigs();
+      setSavedConfigs(updated);
+      setSavedRunIds(new Set(updated.map((item) => item.runId)));
+    });
+  }, []);
+
+  // ── Load Devices Catalog for GPU filter ─────────────────────────────
+  useEffect(() => {
+    let cancelled = false;
+    getDevices()
+      .then((data) => {
+        if (!cancelled) {
+          setDevices(data);
+          const distinctGpus = Array.from(
+            new Set(data.map((d) => d.gpu?.trim()).filter(Boolean) as string[])
+          ).sort();
+          setGpuSuggestions(distinctGpus);
         }
-        console.error('Error loading filters:', error);
-        setFiltersError('Failed to load search filters');
-        setSnapshot({ games: [], gpus: [], devices: [], updatedAt: '' });
       })
-      .finally(() => {
-        // Only update loading state if not aborted
-        if (!abortController.signal.aborted) {
-          setFiltersLoading(false);
-        }
+      .catch((err) => {
+        console.error('Failed to load device catalogue:', err);
       });
-    
-    // Cleanup function to abort the fetch if component unmounts
     return () => {
-      abortController.abort();
+      cancelled = true;
     };
   }, []);
 
-  // --- Local Search with useMemo ---
-  const gameSuggestions = useMemo(() => {
-    if (debouncedSearchTermFast.length < 2 || selectedGame) return [];
-    const searchTerm = debouncedSearchTermFast.toLowerCase();
-    return snapshot.games
-      .filter(g => {
-        const name = g.name.toLowerCase();
-        const cleanName = name.replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
-        const cleanSearch = searchTerm.replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
-        
-        const searchWords = cleanSearch.split(' ');
-        const nameWords = cleanName.split(' ');
-        const allWordsMatch = searchWords.every(searchWord => 
-          nameWords.some(nameWord => nameWord.includes(searchWord))
-        );
-        
-        return cleanName.includes(cleanSearch) || name.includes(searchTerm) || allWordsMatch;
-      })
-      .slice(0, SUGGESTION_LIMIT);
-  }, [debouncedSearchTermFast, selectedGame, snapshot.games]);
+  // ── Deep Link Initializer ──────────────────────────────────────────
+  useEffect(() => {
+    const gameParam = searchParams.get('game') || searchParams.get('gameId');
+    if (!gameParam) return;
 
-  const gpuSuggestions = useMemo(() => {
-    if (debouncedGpuFast.length < 2 || selectedGpu) return [];
-    const searchTerm = debouncedGpuFast.toLowerCase();
-    return snapshot.gpus
-      .filter(gpu => {
-        const name = gpu.toLowerCase();
-        const cleanName = name.replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
-        const cleanSearch = searchTerm.replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
-        
-        const searchWords = cleanSearch.split(' ');
-        const nameWords = cleanName.split(' ');
-        const allWordsMatch = searchWords.every(searchWord => 
-          nameWords.some(nameWord => nameWord.includes(searchWord))
-        );
-        
-        return cleanName.includes(cleanSearch) || name.includes(searchTerm) || allWordsMatch;
-      })
-      .slice(0, SUGGESTION_LIMIT)
-      .map(gpu => ({ gpu }));
-  }, [debouncedGpuFast, selectedGpu, snapshot.gpus]);
-
-  const deviceSuggestions = useMemo(() => {
-    if (debouncedDeviceFast.length < 2 || selectedDevice) return [];
-    const searchTerm = debouncedDeviceFast.toLowerCase();
-    return snapshot.devices
-      .filter(device => {
-        const deviceName = device.name.toLowerCase();
-        const deviceModel = device.model.toLowerCase();
-        
-        const cleanDeviceName = deviceName.replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
-        const cleanDeviceModel = deviceModel.replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
-        const cleanSearch = searchTerm.replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
-        
-        const searchWords = cleanSearch.split(' ');
-        const allWordsMatchName = searchWords.every(searchWord => {
-          const regex = new RegExp(`\\b${searchWord}`, 'i');
-          return regex.test(cleanDeviceName);
+    const isNumeric = /^\d+$/.test(gameParam.trim());
+    if (isNumeric) {
+      const gId = Number(gameParam.trim());
+      getCompatibility({ gameId: gId, page: 1, limit: 1 })
+        .then((res) => {
+          const firstRun = res.runs[0];
+          const name =
+            searchParams.get('gameName') ||
+            firstRun?.game?.name ||
+            firstRun?.gameName ||
+            `Game #${gId}`;
+          setSelectedGame({ id: gId, name });
+          setSearchTerm(name);
+        })
+        .catch((err) => {
+          console.error('Failed to resolve game from URL:', err);
         });
-        const allWordsMatchModel = searchWords.every(searchWord => {
-          const regex = new RegExp(`\\b${searchWord}`, 'i');
-          return regex.test(cleanDeviceModel);
-        });
-        
-        return deviceName.includes(searchTerm) ||
-               deviceModel.includes(searchTerm) ||
-               cleanDeviceName.includes(cleanSearch) ||
-               cleanDeviceModel.includes(cleanSearch) ||
-               allWordsMatchName ||
-               allWordsMatchModel;
-      })
-      .slice(0, SUGGESTION_LIMIT);
-  }, [debouncedDeviceFast, selectedDevice, snapshot.devices]);
+    } else if (gameParam.trim().length >= 2) {
+      searchGames(gameParam.trim())
+        .then((games) => {
+          if (games.length > 0) {
+            setSelectedGame(games[0]);
+            setSearchTerm(games[0].name);
+          }
+        })
+        .catch(console.error);
+    }
+  }, []);
 
-  // --- Show/Hide Suggestions Based on Results ---
+  // ── Auto-Open Run from URL Parameter ───────────────────────────────
   useEffect(() => {
-    setShowSuggestions(gameSuggestions.length > 0 && debouncedSearchTermFast.length >= 2 && !selectedGame);
-  }, [gameSuggestions.length, debouncedSearchTermFast.length, selectedGame]);
+    const runIdParam = searchParams.get('run');
+    if (!runIdParam || runs.length === 0) return;
 
-  useEffect(() => {
-    setShowGpuSuggestions(gpuSuggestions.length > 0 && debouncedGpuFast.length >= 2 && !selectedGpu);
-  }, [gpuSuggestions.length, debouncedGpuFast.length, selectedGpu]);
+    const targetRun = runs.find((r) => r.id === Number(runIdParam));
+    if (targetRun) {
+      setActiveModalRun(targetRun);
+    }
+  }, [runs, searchParams]);
 
+  // ── Synchronize URL Search Parameters ──────────────────────────────
   useEffect(() => {
-    setShowDeviceSuggestions(deviceSuggestions.length > 0 && debouncedDeviceFast.length >= 2 && !selectedDevice);
-  }, [deviceSuggestions.length, debouncedDeviceFast.length, selectedDevice]);
+    if (typeof window === 'undefined') return;
 
-  // Handle clicking outside autocomplete
+    const params = new URLSearchParams();
+    if (activeTab === 'favorites') {
+      params.set('tab', 'favorites');
+    } else {
+      if (selectedGame) {
+        params.set('game', String(selectedGame.id));
+        params.set('gameName', selectedGame.name);
+      }
+      if (gpuFilter) params.set('gpu', gpuFilter);
+      if (ratingMin) params.set('rating', String(ratingMin));
+      if (sortOption !== 'newest') params.set('sort', sortOption);
+      if (currentPage > 1) params.set('page', String(currentPage));
+    }
+    if (activeModalRun) {
+      params.set('run', String(activeModalRun.id));
+    }
+
+    const queryStr = params.toString();
+    const targetUrl = queryStr
+      ? `${window.location.pathname}?${queryStr}`
+      : window.location.pathname;
+
+    window.history.replaceState(null, '', targetUrl);
+  }, [
+    selectedGame,
+    gpuFilter,
+    ratingMin,
+    sortOption,
+    currentPage,
+    activeTab,
+    activeModalRun,
+  ]);
+
+  // ── Debounced Game Search ──────────────────────────────────────────
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+    if (selectedGame && selectedGame.name === searchTerm) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    if (!searchTerm || searchTerm.trim().length < 2) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      setIsSearchingGames(true);
+      try {
+        const results = await searchGames(searchTerm);
+        setSuggestions(results);
+        setShowSuggestions(results.length > 0);
+      } catch (err) {
+        console.error('Error searching games:', err);
+      } finally {
+        setIsSearchingGames(false);
+      }
+    }, DEBOUNCE_MS);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm, selectedGame]);
+
+  // ── Handle outside clicks for autocomplete ─────────────────────────
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (searchBoxRef.current && !searchBoxRef.current.contains(e.target as Node)) {
         setShowSuggestions(false);
       }
-      if (gpuWrapperRef.current && !gpuWrapperRef.current.contains(event.target as Node)) {
+      if (gpuBoxRef.current && !gpuBoxRef.current.contains(e.target as Node)) {
         setShowGpuSuggestions(false);
       }
-      if (deviceWrapperRef.current && !deviceWrapperRef.current.contains(event.target as Node)) {
-        setShowDeviceSuggestions(false);
-      }
     }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // --- 2. Main Data Fetching ---
-  const fetchConfigs = useCallback(async (needsCount: boolean, page: number, signal?: AbortSignal) => {
-    setIsLoading(true);
+  // ── Map Sort Option to API Sort & Dir ──────────────────────────────
+  const { sortField, sortDir } = useMemo(() => {
+    switch (sortOption) {
+      case 'newest':
+        return { sortField: 'created_at' as const, sortDir: 'desc' as const };
+      case 'oldest':
+        return { sortField: 'created_at' as const, sortDir: 'asc' as const };
+      case 'rating_desc':
+        return { sortField: 'rating' as const, sortDir: 'desc' as const };
+      case 'rating_asc':
+        return { sortField: 'rating' as const, sortDir: 'asc' as const };
+      case 'fps_desc':
+        return { sortField: 'avg_fps' as const, sortDir: 'desc' as const };
+      case 'fps_asc':
+        return { sortField: 'avg_fps' as const, sortDir: 'asc' as const };
+    }
+  }, [sortOption]);
+
+  // ── Fetch Compatibility Runs from API ──────────────────────────────
+  const fetchRuns = useCallback(async () => {
+    if (!selectedGame) {
+      setRuns([]);
+      setTotalCount(0);
+      setErrorMessage(null);
+      return;
+    }
+
+    setIsLoadingRuns(true);
+    setErrorMessage(null);
+
     try {
-      // Build base query for data fetch
-      let dataQuery = supabase
-        .from('game_runs')
-        .select(GAME_RUNS_QUERY);
+      const response = await getCompatibility({
+        gameId: selectedGame.id,
+        gpu: gpuFilter || undefined,
+        ratingMin: ratingMin || undefined,
+        sort: sortField,
+        dir: sortDir,
+        page: currentPage,
+        limit: ITEMS_PER_PAGE,
+      });
 
-      // --- Filter by Game ---
-      if (committedSelectedGame) {
-        dataQuery = dataQuery.eq('game.name', committedSelectedGame.name);
-      } else if (committedSearchTerm) {
-        dataQuery = dataQuery.ilike('game.name', `%${committedSearchTerm}%`);
-      }
-
-      // --- Filter by GPU ---
-      if (committedSelectedGpu) {
-        dataQuery = dataQuery.ilike('device.gpu', committedSelectedGpu.gpu); 
-      } else if (committedGpuFilter) {
-        dataQuery = dataQuery.ilike('device.gpu', `%${committedGpuFilter}%`);
-      }
-
-      // --- Filter by Device ---
-      if (committedSelectedDevice) {
-        dataQuery = dataQuery.ilike('device.model', committedSelectedDevice.model);
-      } else if (committedDeviceFilter) {
-        dataQuery = dataQuery.ilike('device.model', `%${committedDeviceFilter}%`);
-      }
-
-      // Apply sorting to data query
-      switch (sortOption) {
-        case 'newest':
-          dataQuery = dataQuery
-            .order('created_at', { ascending: false, nullsFirst: false });
-          break;
-
-        case 'oldest':
-          dataQuery = dataQuery
-            .order('created_at', { ascending: true, nullsFirst: false });
-          break;
-
-        case 'rating_desc': // Highest Rated
-          dataQuery = dataQuery
-            .order('rating', { ascending: false, nullsFirst: false })
-            // Tie-breaker: If ratings are equal, show higher FPS first
-            .order('avg_fps', { ascending: false, nullsFirst: false });
-          break;
-
-        case 'rating_asc': // Lowest Rated
-          dataQuery = dataQuery
-            // We use nullsFirst: false here so "Unrated" (null) items don't appear before "1 Star" items
-            .order('rating', { ascending: true, nullsFirst: false })
-            // Tie-breaker: If ratings are equal, show lower FPS first
-            .order('avg_fps', { ascending: true, nullsFirst: false });
-          break;
-
-        case 'fps_desc': // Highest FPS
-          dataQuery = dataQuery
-            .order('avg_fps', { ascending: false, nullsFirst: false })
-            // Tie-breaker: If FPS is equal, show higher Rating first
-            .order('rating', { ascending: false, nullsFirst: false });
-          break;
-
-        case 'fps_asc': // Lowest FPS
-          dataQuery = dataQuery
-            // We strictly use nullsFirst: false. 
-            // This ensures valid low numbers (e.g. 5 FPS) appear at the top, 
-            // and empty/null configs appear at the bottom.
-            .order('avg_fps', { ascending: true, nullsFirst: false })
-            .order('rating', { ascending: false, nullsFirst: false });
-          break;
-      }
-
-      // Calculate range for pagination
-      const from = (page - 1) * batchSize;
-      const to = from + batchSize - 1;
-      dataQuery = dataQuery.range(from, to);
-
-      // Check if request was aborted before continuing
-      if (signal?.aborted) {
-        return;
-      }
-
-      // Fetch count only when filters change, not on every page change
-      let countResult = null;
-      if (needsCount) {
-        let countQuery = supabase
-          .from('game_runs')
-          .select('id, games!inner(name), devices!inner(gpu, model)', { count: 'exact', head: true });
-
-        // Apply same filters to count query
-        if (committedSelectedGame) {
-          countQuery = countQuery.eq('games.name', committedSelectedGame.name);
-        } else if (committedSearchTerm) {
-          countQuery = countQuery.ilike('games.name', `%${committedSearchTerm}%`);
-        }
-
-        if (committedSelectedGpu) {
-          countQuery = countQuery.ilike('devices.gpu', committedSelectedGpu.gpu);
-        } else if (committedGpuFilter) {
-          countQuery = countQuery.ilike('devices.gpu', `%${committedGpuFilter}%`);
-        }
-
-        if (committedSelectedDevice) {
-          countQuery = countQuery.ilike('devices.model', committedSelectedDevice.model);
-        } else if (committedDeviceFilter) {
-          countQuery = countQuery.ilike('devices.model', `%${committedDeviceFilter}%`);
-        }
-
-        countResult = await countQuery;
-        if (countResult.error) throw countResult.error;
-        
-        // Check if request was aborted before updating state
-        if (signal?.aborted) {
-          return;
-        }
-        setTotalCount(countResult.count || 0);
-      }
-
-      // Execute data query
-      const dataResult = await dataQuery;
-      if (dataResult.error) throw dataResult.error;
-
-      // Check if request was aborted before updating state
-      if (signal?.aborted) {
-        return;
-      }
-
-      // Transform Data
-      const transformedData: GameConfig[] = (dataResult.data as unknown as SupabaseGameRun[] || []).map(item => ({
-        id: item.id,
-        rating: item.rating,
-        avg_fps: item.avg_fps,
-        notes: item.notes,
-        configs: item.configs,
-        created_at: item.created_at,
-        app_version: item.app_version?.semver || null,
-        tags: item.tags,
-        session_length_sec: item.session_length_sec,
-        game: item.game || null,
-        device: item.device || null
-      }));
-
-      setConfigs(transformedData);
-    } catch (error: any) {
-      // Don't log error if request was aborted
-      if (signal?.aborted || error?.name === 'AbortError') {
-        return;
-      }
-      console.error('Error fetching configs:', error);
-      setConfigs([]);
+      setRuns(response.runs);
+      setTotalCount(response.total);
+    } catch (err: any) {
+      console.error('Error fetching compatibility runs:', err);
+      setErrorMessage(err.message || 'Failed to fetch compatibility configurations.');
+      setRuns([]);
       setTotalCount(0);
     } finally {
-      // Only update loading state if not aborted
-      if (!signal?.aborted) {
-        setIsLoading(false);
-      }
+      setIsLoadingRuns(false);
     }
-  }, [committedSearchTerm, committedGpuFilter, committedDeviceFilter, committedSelectedGame, committedSelectedGpu, committedSelectedDevice, sortOption, batchSize]);
+  }, [selectedGame, gpuFilter, ratingMin, sortField, sortDir, currentPage]);
 
-  // Fetch with count when filters or sort changes or search button is clicked
+  // Reset page when filters change
   useEffect(() => {
-    const abortController = new AbortController();
-    setCurrentPage(1); // Reset to page 1 before fetching
-    fetchConfigs(true, 1, abortController.signal);
-    
-    return () => {
-      abortController.abort();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchTrigger, sortOption, batchSize]);
+    setCurrentPage(1);
+  }, [selectedGame, gpuFilter, ratingMin, sortOption]);
 
-  // Fetch without count when page changes, but skip when page is 1 (already handled by filter change effect)
+  // Trigger fetch when parameters or page change
   useEffect(() => {
-    const abortController = new AbortController();
-    
-    // Skip if page is 1 (handled by filter change effect)
-    if (currentPage !== 1) {
-      fetchConfigs(false, currentPage, abortController.signal);
-    }
-    
-    return () => {
-      abortController.abort();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage]);
+    fetchRuns();
+  }, [fetchRuns]);
 
-  // Update URL Params (Optional, for sharing links)
-  useEffect(() => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (committedSearchTerm) params.set('search', committedSearchTerm);
-    else params.delete('search');
-    
-    if (committedGpuFilter) params.set('gpu', committedGpuFilter);
-    else params.delete('gpu');
-
-    if (committedDeviceFilter) params.set('device', committedDeviceFilter);
-    else params.delete('device');
-
-    const newUrl = `${pathname}?${params.toString()}`;
-    router.replace(newUrl, { scroll: false });
-  }, [committedSearchTerm, committedGpuFilter, committedDeviceFilter, pathname, router, searchParams]);
-
-
-  // --- 3. Pagination Logic ---
-  const totalPages = useMemo(() => {
-    return Math.ceil(totalCount / batchSize);
-  }, [totalCount, batchSize]);
-
-  // Generate page numbers for pagination
-  const getPageNumbers = useMemo(() => {
-    if (totalPages <= 7) {
-      return Array.from({ length: totalPages }, (_, i) => i + 1);
-    }
-
-    const pages: (number | 'ellipsis')[] = [];
-    
-    // Always show first 3 pages
-    pages.push(1, 2, 3);
-    
-    // Add ellipsis if there's a gap
-    if (currentPage > 5) {
-      pages.push('ellipsis');
-    }
-    
-    // Add current page and neighbors (if not already included)
-    const start = Math.max(4, currentPage - 1);
-    const end = Math.min(totalPages - 3, currentPage + 1);
-    
-    for (let i = start; i <= end; i++) {
-      if (!pages.includes(i)) {
-        pages.push(i);
-      }
-    }
-    
-    // Add ellipsis if there's a gap before last pages
-    if (currentPage < totalPages - 4) {
-      pages.push('ellipsis');
-    }
-    
-    // Always show last 3 pages (if not already included)
-    const lastThree = [totalPages - 2, totalPages - 1, totalPages];
-    lastThree.forEach(page => {
-      if (page > 3 && !pages.includes(page)) {
-        pages.push(page);
-      }
-    });
-    
-    return pages;
-  }, [currentPage, totalPages]);
-
-  // Scroll to top when changing pages
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [currentPage]);
-
-
-  // --- 4. Handlers ---
-
-  const handleSearch = () => {
-    // Commit the current filter values
-    setCommittedSearchTerm(searchTerm);
-    setCommittedSelectedGame(selectedGame);
-    setCommittedGpuFilter(gpuFilter);
-    setCommittedSelectedGpu(selectedGpu);
-    setCommittedDeviceFilter(deviceFilter);
-    setCommittedSelectedDevice(selectedDevice);
-    // Trigger search
-    setSearchTrigger(prev => prev + 1);
-  };
-
-  const handleGameSelect = (game: GameSuggestion) => {
-    setSearchTerm(game.name);
+  // ── Actions ────────────────────────────────────────────────────────
+  const handleSelectGame = (game: GameSuggestion) => {
     setSelectedGame(game);
+    setSearchTerm(game.name);
     setShowSuggestions(false);
   };
 
-  const clearGameSearch = () => {
-    setSearchTerm('');
+  const handleClearGame = () => {
     setSelectedGame(null);
+    setSearchTerm('');
+    setSuggestions([]);
+    setRuns([]);
+    setTotalCount(0);
   };
 
-  const handleGpuSelect = (gpu: GpuSuggestion) => {
-    setGpuFilter(gpu.gpu);
-    setSelectedGpu(gpu);
-    setShowGpuSuggestions(false);
-  };
-
-  const clearGpuSearch = () => {
-    setGpuFilter('');
-    setSelectedGpu(null);
-  };
-
-  const handleDeviceSelect = (device: DeviceSuggestion) => {
-    setDeviceFilter(device.name);
-    setSelectedDevice(device);
-    setShowDeviceSuggestions(false);
-  };
-
-  const clearDeviceSearch = () => {
-    setDeviceFilter('');
-    setSelectedDevice(null);
-  };
-
-  const handleClearAllFilters = () => {
-    clearGameSearch();
-    clearGpuSearch();
-    clearDeviceSearch();
-    handleSearch();
-  };
-
-  const handleOpenInEditor = (config: GameConfig) => {
-    const exportData = {
-      version: 1,
-      exportedFrom: "CommunityBrowser",
-      timestamp: Date.now(),
-      containerName: config.game?.name || "Community Config",
-      config: config.configs
-    };
+  const handleLoadInEditor = (run: CompatibilityRun, gameName?: string) => {
+    const exportData = formatGameNativeExport(run, gameName || selectedGame?.name);
     try {
       localStorage.setItem('pendingConfig', JSON.stringify(exportData));
       router.push('/config-editor');
-    } catch (e) { console.error(e); }
-  };
-
-  const handleDownloadConfig = (config: GameConfig) => {
-    const exportData = {
-      version: 1,
-      exportedFrom: "CommunityBrowser",
-      timestamp: Date.now(),
-      containerName: config.game?.name || "Community Config",
-      config: config.configs
-    };
-    
-    try {
-      const jsonString = JSON.stringify(exportData, null, 2);
-      const blob = new Blob([jsonString], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      const fileName = `${(config.game?.name || 'config').replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${Date.now()}.json`;
-      link.download = fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
     } catch (e) {
-      console.error('Error downloading config:', e);
+      console.error('Failed to store pendingConfig:', e);
     }
   };
 
-  const handleGoToPage = () => {
-    const pageNum = parseInt(goToPage);
-    if (pageNum >= 1 && pageNum <= totalPages) {
-      setCurrentPage(pageNum);
-      setGoToPage('');
+  const handleCopyRaw = (configs: any) => {
+    if (typeof navigator !== 'undefined') {
+      navigator.clipboard.writeText(JSON.stringify(configs, null, 2));
+      setCopiedRaw(true);
+      setTimeout(() => setCopiedRaw(false), 2000);
     }
   };
+
+  const handleCopyShareView = () => {
+    if (typeof window !== 'undefined') {
+      navigator.clipboard.writeText(window.location.href);
+      setCopiedShareLink(true);
+      setTimeout(() => setCopiedShareLink(false), 2000);
+    }
+  };
+
+  const handleToggleFavorite = (run: CompatibilityRun, gameName?: string) => {
+    toggleSaveConfig(run, gameName || selectedGame?.name);
+  };
+
+  // ── Filtered Favorites for Local View ──────────────────────────────
+  const filteredSavedConfigs = useMemo(() => {
+    if (!savedSearchQuery.trim()) return savedConfigs;
+    const q = savedSearchQuery.toLowerCase();
+    return savedConfigs.filter(
+      (item) =>
+        item.gameName.toLowerCase().includes(q) ||
+        (item.run.device?.model && item.run.device.model.toLowerCase().includes(q)) ||
+        (item.run.device?.gpu && item.run.device.gpu.toLowerCase().includes(q)) ||
+        (item.run.configs?.emulator && item.run.configs.emulator.toLowerCase().includes(q)) ||
+        (item.run.configs?.wineVersion && item.run.configs.wineVersion.toLowerCase().includes(q))
+    );
+  }, [savedConfigs, savedSearchQuery]);
+
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-slate-200 font-sans selection:bg-cyan-500/30">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        
-        {/* --- Header Section --- */}
-        <div className="mb-10">
-          <h1 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent mb-4 tracking-tight leading-tight pb-1">
-            Community Configs
-          </h1>
-          <p className="text-slate-400 text-base md:text-lg max-w-2xl">
-            Discover optimized settings shared by the community. Search by game or GPU to find the perfect setup for your device.
-          </p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100 p-4 md:p-8">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-800 pb-6">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-300 to-blue-500">
+              Community Configurations
+            </h1>
+            <p className="text-gray-400 text-sm mt-1">
+              Search, customize, and share tested game configurations submitted by the GameNative and Winlator community.
+            </p>
+          </div>
 
-        {/* --- Control Bar (Search, Sort, Filter) --- */}
-        <div className="relative md:sticky top-4 z-50 mb-8 bg-slate-900/80 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-4 shadow-2xl shadow-black/20">
-          <div className="grid grid-cols-1 gap-4">
-            
-            {/* Filter Row */}
-            <div className="grid grid-cols-1 md:grid-cols-15 gap-4">
-              
-              {/* 1. Game Autocomplete Search */}
-              <div className="md:col-span-4 relative" ref={wrapperRef}>
-                <div className="relative group">
-                  <Search className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 text-slate-500 group-focus-within:text-cyan-400`} size={18} />
-                  <input
-                    type="text"
-                    placeholder="Search game name..."
-                    value={searchTerm}
-                    onChange={(e) => {
-                      setSearchTerm(e.target.value);
-                      if (selectedGame) setSelectedGame(null); // Clear ID selection if typing new text
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleSearch();
-                        setShowSuggestions(false);
-                      }
-                    }}
-                    onFocus={() => {
-                      if (gameSuggestions.length > 0) setShowSuggestions(true);
-                    }}
-                    className="w-full pl-11 pr-10 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 focus:bg-slate-800 focus:ring-1 focus:ring-cyan-500/20 transition-all"
-                  />
-                  {searchTerm && (
-                    <button onClick={clearGameSearch} className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-slate-700 rounded-full text-slate-500 hover:text-white transition-colors">
-                      <X size={14} />
-                    </button>
-                  )}
-                </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleCopyShareView}
+              title="Copy link to current browser search and filters"
+              className="text-xs px-3.5 py-2 bg-gray-800 hover:bg-gray-700 text-cyan-300 rounded-lg border border-gray-700 transition flex items-center gap-1.5"
+            >
+              {copiedShareLink ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Share2 className="h-3.5 w-3.5" />}
+              {copiedShareLink ? 'Link Copied!' : 'Share View'}
+            </button>
 
-                {/* Suggestions Dropdown */}
-                {showSuggestions && gameSuggestions.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden z-50 max-h-80 overflow-y-auto">
-                    <div className="text-xs font-semibold text-slate-500 px-4 py-2 bg-slate-800/80 sticky top-0">SUGGESTED GAMES</div>
-                    {gameSuggestions.map((game) => (
-                      <button
-                        key={game.id}
-                        onClick={() => handleGameSelect(game)}
-                        className="w-full text-left px-4 py-3 hover:bg-cyan-900/20 text-slate-200 hover:text-cyan-400 transition-colors flex items-center justify-between group"
-                      >
-                        <span>{game.name}</span>
-                        <ChevronRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* 2. GPU Filter with Autocomplete */}
-              <div className="md:col-span-3 relative" ref={gpuWrapperRef}>
-                <div className="relative group">
-                  <Cpu className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 text-slate-500 group-focus-within:text-purple-400`} size={18} />
-                  <input
-                    type="text"
-                    placeholder="GPU (e.g. Adreno 740)"
-                    value={gpuFilter}
-                    onChange={(e) => {
-                      setGpuFilter(e.target.value);
-                      if (selectedGpu) setSelectedGpu(null);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleSearch();
-                        setShowGpuSuggestions(false);
-                      }
-                    }}
-                    onFocus={() => {
-                      if (gpuSuggestions.length > 0) setShowGpuSuggestions(true);
-                    }}
-                    className="w-full pl-11 pr-10 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:bg-slate-800 focus:ring-1 focus:ring-purple-500/20 transition-all"
-                  />
-                  {gpuFilter && (
-                    <button onClick={clearGpuSearch} className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-slate-700 rounded-full text-slate-500 hover:text-white transition-colors">
-                      <X size={14} />
-                    </button>
-                  )}
-                </div>
-
-                {/* GPU Suggestions Dropdown */}
-                {showGpuSuggestions && gpuSuggestions.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden z-[99999] max-h-80 overflow-y-auto">
-                    <div className="text-xs font-semibold text-slate-500 px-4 py-2 bg-slate-800/80 sticky top-0">SUGGESTED GPUs</div>
-                    {gpuSuggestions.map((gpu, index) => (
-                      <button
-                        key={index}
-                        onClick={() => handleGpuSelect(gpu)}
-                        className="w-full text-left px-4 py-3 hover:bg-purple-900/20 text-slate-200 hover:text-purple-400 transition-colors flex items-center justify-between group"
-                      >
-                        <span>{gpu.gpu}</span>
-                        <ChevronRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* 3. Device Filter with Autocomplete */}
-              <div className="md:col-span-3 relative" ref={deviceWrapperRef}>
-                <div className="relative group">
-                  <Smartphone className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 text-slate-500 group-focus-within:text-green-400`} size={18} />
-                  <input
-                    type="text"
-                    placeholder="Device (e.g. Pixel, Galaxy)"
-                    value={deviceFilter}
-                    onChange={(e) => {
-                      setDeviceFilter(e.target.value);
-                      if (selectedDevice) setSelectedDevice(null);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleSearch();
-                        setShowDeviceSuggestions(false);
-                      }
-                    }}
-                    onFocus={() => {
-                      if (deviceSuggestions.length > 0) setShowDeviceSuggestions(true);
-                    }}
-                    className="w-full pl-11 pr-10 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-green-500/50 focus:bg-slate-800 focus:ring-1 focus:ring-green-500/20 transition-all"
-                  />
-                  {deviceFilter && (
-                    <button onClick={clearDeviceSearch} className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-slate-700 rounded-full text-slate-500 hover:text-white transition-colors">
-                      <X size={14} />
-                    </button>
-                  )}
-                </div>
-
-                {/* Device Suggestions Dropdown */}
-                {showDeviceSuggestions && deviceSuggestions.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden z-[99999] max-h-80 overflow-y-auto">
-                    <div className="text-xs font-semibold text-slate-500 px-4 py-2 bg-slate-800/80 sticky top-0">SUGGESTED DEVICES</div>
-                    {deviceSuggestions.map((device, index) => (
-                      <button
-                        key={index}
-                        onClick={() => handleDeviceSelect(device)}
-                        className="w-full text-left px-4 py-3 hover:bg-green-900/20 text-slate-200 hover:text-green-400 transition-colors flex items-center justify-between group"
-                      >
-                        <div className="flex flex-col">
-                          <span className="font-medium">{device.name.replace(/[<>"'&]/g, '')}</span>
-                          <span className="text-xs text-slate-500">{device.model.replace(/[<>"'&]/g, '')}</span>
-                        </div>
-                        <ChevronRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* 4. Sort Dropdown */}
-              <div className="md:col-span-3 relative">
-                <div className="relative">
-                  <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
-                  <select
-                    value={sortOption}
-                    onChange={(e) => setSortOption(e.target.value as SortOption)}
-                    className="w-full pl-11 pr-10 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white appearance-none cursor-pointer focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all"
-                  >
-                    <option value="newest">Newest First</option>
-                    <option value="oldest">Oldest First</option>
-                    <option value="rating_desc">Highest Rated</option>
-                    <option value="rating_asc">Lowest Rated</option>
-                    <option value="fps_desc">Highest FPS</option>
-                    <option value="fps_asc">Lowest FPS</option>
-                  </select>
-                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" size={16} />
-                </div>
-              </div>
-
-              {/* 5. Batch Size Input */}
-              <div className="md:col-span-1 relative">
-                <input
-                  type="number"
-                  min="1"
-                  max="100"
-                  value={batchSize}
-                  onChange={(e) => {
-                    const value = Math.min(100, Math.max(1, parseInt(e.target.value) || 15));
-                    setBatchSize(value);
-                    setCurrentPage(1); // Reset to page 1 when batch size changes
-                  }}
-                  className="w-full px-3 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white text-center focus:outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 transition-all"
-                  title="Batch Size (results per page)"
-                  placeholder="15"
-                />
-              </div>
-
-              {/* 6. Search Button */}
-              <div className="md:col-span-1 flex items-center">
-                <button
-                  onClick={handleSearch}
-                  className="w-full flex items-center justify-center px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-cyan-900/20 hover:shadow-cyan-500/30 active:scale-[0.98]"
-                >
-                  <Search size={18} />
-                </button>
-              </div>
-
-            </div>
-
-
+            <button
+              onClick={() => router.push('/')}
+              className="text-xs px-3.5 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg border border-gray-700 transition"
+            >
+              ← Back to Home
+            </button>
           </div>
         </div>
 
-        {/* --- Content Area --- */}
-        {filtersLoading ? (
-          <div className="flex flex-col items-center justify-center py-20">
-            <div className="relative w-16 h-16">
-              <div className="absolute top-0 left-0 w-full h-full border-4 border-slate-700 rounded-full"></div>
-              <div className="absolute top-0 left-0 w-full h-full border-4 border-t-cyan-500 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
-            </div>
-            <p className="mt-4 text-slate-400 animate-pulse">Loading search filters...</p>
-          </div>
-        ) : filtersError ? (
-          <div className="text-center py-20 bg-red-900/20 rounded-2xl border border-red-700/50">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-800 mb-4">
-              <X className="text-red-400" size={32} />
-            </div>
-            <h3 className="text-xl font-bold text-white mb-2">Error Loading Filters</h3>
-            <p className="text-red-400 max-w-md mx-auto mb-4">{filtersError}</p>
-            <button 
-              onClick={() => window.location.reload()}
-              className="px-6 py-2 bg-red-700 hover:bg-red-600 text-white rounded-lg transition-colors font-medium"
-            >
-              Retry
-            </button>
-          </div>
-        ) : isLoading ? (
-          <div className="flex flex-col items-center justify-center py-20">
-            <div className="relative w-16 h-16">
-              <div className="absolute top-0 left-0 w-full h-full border-4 border-slate-700 rounded-full"></div>
-              <div className="absolute top-0 left-0 w-full h-full border-4 border-t-cyan-500 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
-            </div>
-            <p className="mt-4 text-slate-400 animate-pulse">Fetching configurations...</p>
-          </div>
-        ) : configs.length === 0 && (!committedSearchTerm && !committedGpuFilter && !committedDeviceFilter && !committedSelectedGame && !committedSelectedGpu && !committedSelectedDevice) ? (
-          <div className="text-center py-20 bg-slate-800/30 rounded-2xl border border-slate-700/50 border-dashed">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-800 mb-4">
-              <Search className="text-slate-500" size={32} />
-            </div>
-            <h3 className="text-xl font-bold text-white mb-2">Start searching</h3>
-            <p className="text-slate-400 max-w-md mx-auto">
-              Enter a game name, GPU, or device and click the Search button to discover community configurations.
-            </p>
-          </div>
-        ) : configs.length === 0 ? (
-          <div className="text-center py-20 bg-slate-800/30 rounded-2xl border border-slate-700/50 border-dashed">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-800 mb-4">
-              <Search className="text-slate-500" size={32} />
-            </div>
-            <h3 className="text-xl font-bold text-white mb-2">No results found</h3>
-            <p className="text-slate-400 max-w-md mx-auto">
-              We couldn't find any configs matching your search. Try adjusting filters or searching for a different game.
-            </p>
-            <button 
-              onClick={handleClearAllFilters}
-              className="mt-6 px-6 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors font-medium"
-            >
-              Clear All Filters
-            </button>
-          </div>
-        ) : (
-          <>
-            {/* Results Count */}
-            {(committedSearchTerm || committedGpuFilter || committedDeviceFilter || committedSelectedGame || committedSelectedGpu || committedSelectedDevice) && (
-              <div className="flex items-center justify-between mb-4 text-sm px-1">
-                <span className="text-slate-400">
-                  Found <strong className="text-white">{totalCount}</strong> configurations
-                </span>
-                <span className="text-slate-500">
-                  Page {currentPage} of {totalPages}
-                </span>
-              </div>
+        {/* Tab Switcher: Live Search vs Saved Favorites */}
+        <div className="flex rounded-2xl bg-gray-900/80 p-1 border border-gray-800 max-w-md">
+          <button
+            data-testid="tab-live-search"
+            onClick={() => setActiveTab('search')}
+            className={`flex-1 py-2 px-4 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2 ${
+              activeTab === 'search'
+                ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-600/20'
+                : 'text-gray-400 hover:text-gray-200'
+            }`}
+          >
+            <Search className="h-4 w-4" />
+            Live Search
+          </button>
+          <button
+            data-testid="tab-saved-configs"
+            onClick={() => setActiveTab('favorites')}
+            className={`flex-1 py-2 px-4 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2 ${
+              activeTab === 'favorites'
+                ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-600/20'
+                : 'text-gray-400 hover:text-gray-200'
+            }`}
+          >
+            <Star className={`h-4 w-4 ${savedConfigs.length > 0 ? 'fill-amber-400 text-amber-400' : ''}`} />
+            Saved Configs
+            {savedConfigs.length > 0 && (
+              <span className="bg-gray-800 text-cyan-300 text-[10px] px-2 py-0.5 rounded-full border border-gray-700 font-mono">
+                {savedConfigs.length}
+              </span>
             )}
+          </button>
+        </div>
 
-            {/* Grid Layout */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {configs.map((config) => (
-                <div
-                  key={config.id}
-                  className="group relative bg-slate-800/40 backdrop-blur-sm border border-slate-700/50 rounded-xl overflow-hidden hover:bg-slate-800/60 hover:border-cyan-500/30 transition-all duration-300 shadow-lg hover:shadow-cyan-900/10 flex flex-col"
-                >
-                  {/* Card Header */}
-                  <div className="p-5 pb-0">
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="text-lg font-bold text-white truncate pr-2 group-hover:text-cyan-400 transition-colors" title={config.game?.name}>
-                        {config.game?.name || 'Unknown Game'}
-                      </h3>
-                      {/* Rating Badge */}
-                      <div className="flex items-center gap-1 px-2 py-1 bg-amber-500/10 border border-amber-500/20 rounded-md">
-                        <Star size={12} className="text-amber-500 fill-amber-500" />
-                        <span className="text-xs font-bold text-amber-500">{config.rating}</span>
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        {/* VIEW 1: LIVE SEARCH                                            */}
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        {activeTab === 'search' && (
+          <div className="space-y-6">
+            {/* Search & Filter Controls Card */}
+            <div className="bg-gray-800/60 backdrop-blur-md p-6 rounded-2xl border border-gray-700 shadow-xl space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                {/* Game Search Box */}
+                <div className="md:col-span-6 relative" ref={searchBoxRef}>
+                  <label htmlFor="game-search" className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">
+                    Game Search <span className="text-cyan-400">*</span>
+                  </label>
+                  <div className="relative">
+                    <Search className="absolute left-3.5 top-3 h-5 w-5 text-gray-400" />
+                    <input
+                      id="game-search"
+                      type="text"
+                      placeholder="Type to search games (e.g. Elden Ring, GTA V, Fallout)..."
+                      value={searchTerm}
+                      onChange={(e) => {
+                        setSearchTerm(e.target.value);
+                        if (selectedGame && e.target.value !== selectedGame.name) {
+                          setSelectedGame(null);
+                        }
+                      }}
+                      onFocus={() => {
+                        if (suggestions.length > 0) setShowSuggestions(true);
+                      }}
+                      className="w-full pl-10 pr-10 py-2.5 bg-gray-900 border border-gray-700 rounded-xl focus:outline-none focus:border-cyan-500 text-gray-100 placeholder-gray-500 text-sm transition"
+                    />
+                    {isSearchingGames && (
+                      <div className="absolute right-10 top-3">
+                        <RefreshCw className="h-4 w-4 text-cyan-400 animate-spin" />
                       </div>
-                    </div>
-                    
-                    {/* Device Info */}
-                    <div className="space-y-1 mb-4">
-                      <div className="flex items-center gap-2 text-xs text-slate-400">
-                        <Cpu size={14} className="text-slate-500" />
-                        <span className="truncate">
-                          {config.device ? `${config.device.model} • ${config.device.gpu}` : 'Unknown Device'}
-                        </span>
-                      </div>
-                      {config.device?.android_ver && (
-                        <div className="flex items-center gap-2 text-xs text-slate-500">
-                          <span className="ml-6">Android {config.device.android_ver}</span>
-                        </div>
-                      )}
-                      {config.app_version && (
-                        <div className="flex items-center gap-2 text-xs text-slate-500">
-                          <span className="ml-6">App Ver: {config.app_version}</span>
-                        </div>
-                      )}
-                      {config.configs?.containerVariant && (
-                        <div className="flex items-center gap-2 text-xs text-slate-500">
-                          <span className="ml-6">Container: {config.configs.containerVariant}</span>
-                        </div>
-                      )}
-                      {config.configs?.graphicsDriver && (
-                        <div className="flex items-center gap-2 text-xs text-slate-500">
-                          <span className="ml-6">Driver: {config.configs.graphicsDriver}</span>
-                        </div>
-                      )}
-                      {config.configs?.screenSize && (
-                        <div className="flex items-center gap-2 text-xs text-slate-500">
-                          <span className="ml-6">Screen: {config.configs.screenSize}</span>
-                        </div>
-                      )}
-                      {config.tags && Array.isArray(config.tags) && config.tags.length > 0 && (
-                        <div className="flex items-start gap-2 text-xs text-slate-500">
-                          <span className="ml-6">Tags:</span>
-                          <div className="flex flex-wrap gap-1">
-                            {config.tags.map((tag, index) => (
-                              <span key={index} className="px-2 py-1 bg-slate-700/50 text-slate-300 rounded-md text-xs">
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* FPS & Notes Section */}
-                  <div className="px-5 py-3 bg-slate-900/30 border-y border-slate-700/30 flex-grow">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        {/* Dynamic color for icon: Grey if null, Red if low, Green if high */}
-                        <div className={`p-1.5 rounded-md ${
-                          config.avg_fps === null || config.avg_fps === 0
-                            ? 'bg-slate-700/50 text-slate-500' // Style for NULL or 0
-                            : config.avg_fps >= 30 
-                              ? 'bg-green-500/20 text-green-400' 
-                              : 'bg-red-500/20 text-red-400'
-                        }`}>
-                          <Zap size={14} />
-                        </div>
-                        <div>
-                          {/* Check for NULL explicitly. Math.round(null) === 0, which is misleading. */}
-                          <span className={`block text-sm font-bold leading-none ${config.avg_fps === null || config.avg_fps === 0 ? 'text-slate-500' : 'text-slate-200'}`}>
-                            {config.avg_fps !== null && config.avg_fps !== 0 ? `${Math.round(config.avg_fps)} FPS` : '--'}
-                          </span>
-                          <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Average</span>
-                        </div>
-                        {config.session_length_sec && config.session_length_sec > 0 && (
-                          <div className="text-center ml-4">
-                            <span className="block text-sm font-bold text-slate-200">
-                              {Math.round(config.session_length_sec / 60)}m
-                            </span>
-                            <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Playtime</span>
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <div className="text-right">
-                           <span className="block text-xs text-slate-500">
-                             {new Date(config.created_at).toLocaleString(undefined, { 
-                               month: 'short', 
-                               day: 'numeric', 
-                               year: 'numeric',
-                               hour: '2-digit',
-                               minute: '2-digit'
-                             })}
-                           </span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {config.notes ? (
-                      <div className="text-sm text-slate-400 italic">
-                        <div className={expandedNotes.has(config.id) ? '' : 'line-clamp-2 h-10'}>
-                          "{config.notes}"
-                        </div>
-                        {config.notes.length > 100 && (
-                          <button
-                            onClick={() => {
-                              const newExpanded = new Set(expandedNotes);
-                              if (expandedNotes.has(config.id)) {
-                                newExpanded.delete(config.id);
-                              } else {
-                                newExpanded.add(config.id);
-                              }
-                              setExpandedNotes(newExpanded);
-                            }}
-                            className="text-cyan-400 hover:text-cyan-300 text-xs mt-1 transition-colors"
-                          >
-                            {expandedNotes.has(config.id) ? 'Show less' : 'Show more'}
-                          </button>
-                        )}
-                      </div>
-                    ) : (
-                      <p className="text-sm text-slate-600 italic h-10">No notes provided.</p>
+                    )}
+                    {searchTerm && (
+                      <button
+                        onClick={handleClearGame}
+                        className="absolute right-3 top-2.5 text-gray-400 hover:text-white"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
                     )}
                   </div>
 
-                  {/* Footer Action */}
-                  <div className="p-4">
-                    <div className="flex gap-2">
+                  {/* Suggestions Dropdown */}
+                  {showSuggestions && suggestions.length > 0 && (
+                    <div className="absolute z-30 w-full mt-1.5 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl overflow-hidden max-h-60 overflow-y-auto divide-y divide-gray-800">
+                      {suggestions.map((game) => (
+                        <button
+                          key={game.id}
+                          onClick={() => handleSelectGame(game)}
+                          className="w-full text-left px-4 py-2.5 text-sm hover:bg-gray-800 text-gray-200 hover:text-cyan-400 transition flex items-center justify-between"
+                        >
+                          <span className="font-medium">{game.name}</span>
+                          <span className="text-xs text-gray-500 bg-gray-800/80 px-2 py-0.5 rounded font-mono">
+                            ID: {game.id}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* GPU Filter Box */}
+                <div className="md:col-span-3 relative" ref={gpuBoxRef}>
+                  <label htmlFor="gpu-filter" className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">
+                    GPU Architecture
+                  </label>
+                  <div className="relative">
+                    <Cpu className="absolute left-3.5 top-3 h-4 w-4 text-gray-400" />
+                    <input
+                      id="gpu-filter"
+                      type="text"
+                      placeholder="e.g. Adreno 750, Mali..."
+                      value={gpuFilter}
+                      onChange={(e) => setGpuFilter(e.target.value)}
+                      onFocus={() => setShowGpuSuggestions(true)}
+                      className="w-full pl-9 pr-8 py-2.5 bg-gray-900 border border-gray-700 rounded-xl focus:outline-none focus:border-cyan-500 text-gray-100 placeholder-gray-500 text-sm transition"
+                    />
+                    {gpuFilter && (
                       <button
-                        onClick={() => handleOpenInEditor(config)}
-                        className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-sm font-bold rounded-lg transition-all shadow-lg shadow-cyan-900/20 group-hover:shadow-cyan-500/20 active:scale-[0.98]"
+                        onClick={() => setGpuFilter('')}
+                        className="absolute right-3 top-2.5 text-gray-400 hover:text-white"
                       >
-                        <Download size={16} />
-                        Load Config
+                        <X className="h-4 w-4" />
                       </button>
-                      <button
-                        onClick={() => handleDownloadConfig(config)}
-                        className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white text-sm font-bold rounded-lg transition-all shadow-lg shadow-purple-900/20 group-hover:shadow-purple-500/20 active:scale-[0.98]"
-                      >
-                        <Download size={16} />
-                        Download JSON
-                      </button>
+                    )}
+                  </div>
+
+                  {showGpuSuggestions && gpuSuggestions.length > 0 && (
+                    <div className="absolute z-30 w-full mt-1.5 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl overflow-hidden max-h-48 overflow-y-auto divide-y divide-gray-800">
+                      {gpuSuggestions
+                        .filter((g) => g.toLowerCase().includes(gpuFilter.toLowerCase()))
+                        .slice(0, 10)
+                        .map((gpu) => (
+                          <button
+                            key={gpu}
+                            onClick={() => {
+                              setGpuFilter(gpu);
+                              setShowGpuSuggestions(false);
+                            }}
+                            className="w-full text-left px-3.5 py-2 text-xs hover:bg-gray-800 text-gray-200 hover:text-cyan-400 transition"
+                          >
+                            {gpu}
+                          </button>
+                        ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Minimum Rating Filter */}
+                <div className="md:col-span-3">
+                  <label htmlFor="rating-filter" className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">
+                    Minimum Rating
+                  </label>
+                  <div className="relative">
+                    <select
+                      id="rating-filter"
+                      value={ratingMin ?? ''}
+                      onChange={(e) => setRatingMin(e.target.value ? Number(e.target.value) : null)}
+                      className="w-full py-2.5 px-3 bg-gray-900 border border-gray-700 rounded-xl focus:outline-none focus:border-cyan-500 text-gray-100 text-sm appearance-none transition"
+                    >
+                      <option value="">Any Rating</option>
+                      <option value="5">⭐⭐⭐⭐⭐ (5 Stars)</option>
+                      <option value="4">⭐⭐⭐⭐ & above (4+ Stars)</option>
+                      <option value="3">⭐⭐⭐ & above (3+ Stars)</option>
+                      <option value="2">⭐⭐ & above (2+ Stars)</option>
+                      <option value="1">⭐ & above (1+ Star)</option>
+                    </select>
+                    <div className="pointer-events-none absolute right-3 top-3 text-gray-400 text-xs">
+                      ▼
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
 
-            {/* Pagination Controls */}
-            {totalPages > 1 && (
-              <div className="mt-10 flex flex-col items-center gap-4 select-none">
-                <div className="flex items-center justify-center gap-2">
-                  <button
-                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                    disabled={currentPage === 1}
-                    className="p-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-400 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-700 hover:text-white transition-colors"
-                  >
-                    <ChevronLeft size={20} />
-                  </button>
-                  
-                  <div className="flex gap-1 px-2">
-                    {getPageNumbers.map((item, index) => {
-                      if (item === 'ellipsis') {
-                        return (
-                          <span key={`ellipsis-${index}`} className="text-slate-600 px-2 flex items-center">
-                            ...
-                          </span>
-                        );
-                      }
-                      
-                      const page = item as number;
-                      return (
-                        <button
-                          key={page}
-                          onClick={() => setCurrentPage(page)}
-                          className={`w-10 h-10 rounded-lg text-sm font-bold transition-all ${
-                            currentPage === page
-                              ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-500/25 scale-110'
-                              : 'bg-slate-800 border border-slate-700 text-slate-400 hover:bg-slate-700 hover:text-white'
-                          }`}
-                        >
-                          {page}
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  <button
-                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                    disabled={currentPage === totalPages}
-                    className="p-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-400 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-700 hover:text-white transition-colors"
-                  >
-                    <ChevronRight size={20} />
-                  </button>
+              {/* Sub-bar: Sort & Results Count */}
+              <div className="flex flex-col sm:flex-row justify-between items-center pt-3 border-t border-gray-800/80 gap-3 text-xs text-gray-400">
+                <div className="flex items-center gap-2">
+                  {selectedGame ? (
+                    <span>
+                      Showing results for <strong className="text-cyan-400">{selectedGame.name}</strong>
+                      {totalCount > 0 && ` (${totalCount} configurations found)`}
+                    </span>
+                  ) : (
+                    <span className="text-yellow-400/90 flex items-center gap-1.5">
+                      <Sliders className="h-3.5 w-3.5" />
+                      Select a game above to browse community configurations.
+                    </span>
+                  )}
                 </div>
-                
-                {/* Go to Page Input */}
-                <div className="flex items-center gap-2 text-sm">
-                  <span className="text-slate-400">Go to:</span>
-                  <input
-                    type="number"
-                    min="1"
-                    max={totalPages}
-                    value={goToPage}
-                    onChange={(e) => setGoToPage(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleGoToPage();
-                      }
-                    }}
-                    className="w-16 px-2 py-1 bg-slate-800 border border-slate-700 rounded text-white text-center focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20 transition-all"
-                    placeholder={currentPage.toString()}
-                  />
-                  <button
-                    onClick={handleGoToPage}
-                    disabled={!goToPage || parseInt(goToPage) < 1 || parseInt(goToPage) > totalPages}
-                    className="px-3 py-1 bg-slate-700 hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded text-sm transition-colors"
+
+                {/* Sort Dropdown */}
+                <div className="flex items-center gap-2">
+                  <ArrowUpDown className="h-3.5 w-3.5 text-gray-500" />
+                  <span>Sort by:</span>
+                  <select
+                    value={sortOption}
+                    onChange={(e) => setSortOption(e.target.value as SortOption)}
+                    disabled={!selectedGame}
+                    className="bg-gray-900 border border-gray-700 rounded-lg px-2.5 py-1 text-gray-200 focus:outline-none focus:border-cyan-500 disabled:opacity-50"
                   >
-                    Go
-                  </button>
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="rating_desc">Highest Rating</option>
+                    <option value="rating_asc">Lowest Rating</option>
+                    <option value="fps_desc">Highest FPS</option>
+                    <option value="fps_asc">Lowest FPS</option>
+                  </select>
                 </div>
               </div>
+            </div>
+
+            {/* Loading Spinner */}
+            {isLoadingRuns && (
+              <div className="py-20 flex flex-col items-center justify-center space-y-3">
+                <div className="w-10 h-10 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin" />
+                <p className="text-gray-400 text-sm animate-pulse">Fetching configurations from api.gamenative.app...</p>
+              </div>
             )}
-          </>
+
+            {/* Error Banner */}
+            {errorMessage && !isLoadingRuns && (
+              <div className="p-4 bg-red-950/40 border border-red-800/60 rounded-xl text-red-200 text-sm flex items-center justify-between">
+                <span>{errorMessage}</span>
+                <button
+                  onClick={() => fetchRuns()}
+                  className="px-3 py-1 bg-red-900/60 hover:bg-red-800 rounded text-xs transition"
+                >
+                  Retry
+                </button>
+              </div>
+            )}
+
+            {/* Empty State / Initial Prompt */}
+            {!selectedGame && !isLoadingRuns && (
+              <div className="text-center py-20 bg-gray-800/20 border border-dashed border-gray-800 rounded-2xl p-8">
+                <div className="w-16 h-16 bg-cyan-950/40 border border-cyan-700/30 rounded-2xl mx-auto flex items-center justify-center text-3xl mb-4">
+                  🎮
+                </div>
+                <h2 className="text-lg font-bold text-gray-200 mb-2">Search for a Game</h2>
+                <p className="text-gray-400 text-sm max-w-md mx-auto">
+                  Type any game title in the search box above to browse and download tested community configurations directly from the live GameNative database.
+                </p>
+              </div>
+            )}
+
+            {/* Zero Results State */}
+            {selectedGame && !isLoadingRuns && runs.length === 0 && !errorMessage && (
+              <div className="text-center py-16 bg-gray-800/30 rounded-2xl border border-gray-800 p-8">
+                <div className="text-3xl mb-3">🔍</div>
+                <h2 className="text-lg font-semibold text-gray-200">No Configurations Found</h2>
+                <p className="text-gray-400 text-sm max-w-sm mx-auto mt-1">
+                  No reports match your current filters for <strong>{selectedGame.name}</strong>. Try clearing GPU or Rating filters.
+                </p>
+              </div>
+            )}
+
+            {/* Configurations Grid */}
+            {!isLoadingRuns && runs.length > 0 && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {runs.map((run) => {
+                    const isSaved = savedRunIds.has(run.id);
+
+                    return (
+                      <div
+                        key={run.id}
+                        className="bg-gray-800/40 hover:bg-gray-800/70 border border-gray-700/80 hover:border-cyan-500/50 rounded-2xl p-5 flex flex-col justify-between transition-all shadow-lg hover:shadow-cyan-500/5 group relative"
+                      >
+                        <div className="space-y-3">
+                          {/* Header Row: Rating, FPS & Favorite Star */}
+                          <div className="flex justify-between items-start gap-2">
+                            <div className="flex items-center gap-1.5">
+                              <div className="flex text-amber-400">
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                  <Star
+                                    key={i}
+                                    className={`h-4 w-4 ${
+                                      i < run.rating ? 'fill-amber-400' : 'text-gray-600'
+                                    }`}
+                                  />
+                                ))}
+                              </div>
+                              <span className="text-xs font-bold text-amber-400/90 ml-1">
+                                {run.rating}/5
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-1.5">
+                              {run.avgFps != null && (
+                                <div className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-cyan-950/60 border border-cyan-800/40 text-cyan-300 font-mono text-xs font-semibold">
+                                  <Zap className="h-3 w-3" />
+                                  <span>{run.avgFps} FPS</span>
+                                </div>
+                              )}
+
+                              {/* Favorite Star Button */}
+                              <button
+                                data-testid="favorite-card-button"
+                                onClick={() => handleToggleFavorite(run)}
+                                title={isSaved ? 'Remove from saved configs' : 'Save configuration'}
+                                className={`p-1 rounded-lg transition ${
+                                  isSaved
+                                    ? 'text-amber-400 hover:text-amber-300 bg-amber-950/40'
+                                    : 'text-gray-500 hover:text-amber-400 hover:bg-gray-800'
+                                }`}
+                              >
+                                <Star className={`h-4 w-4 ${isSaved ? 'fill-amber-400' : ''}`} />
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Device & Hardware Specs */}
+                          <div className="space-y-1.5 pt-1">
+                            <div className="flex items-center gap-1.5 text-sm font-semibold text-gray-200 truncate">
+                              <Smartphone className="h-4 w-4 text-cyan-400 shrink-0" />
+                              <span className="truncate">{run.device?.model || 'Generic Device'}</span>
+                            </div>
+
+                            <div className="text-xs text-gray-400 flex flex-wrap gap-2">
+                              {run.device?.gpu && (
+                                <span className="bg-gray-900/80 px-2 py-0.5 rounded border border-gray-800 font-mono">
+                                  {run.device.gpu}
+                                </span>
+                              )}
+                              {run.device?.androidVer && (
+                                <span className="bg-gray-900/80 px-2 py-0.5 rounded border border-gray-800">
+                                  Android {run.device.androidVer}
+                                </span>
+                              )}
+                              {run.appVersion && (
+                                <span className="bg-gray-900/80 px-2 py-0.5 rounded border border-gray-800">
+                                  v{run.appVersion}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Tags */}
+                          {run.tags && run.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-1 pt-1">
+                              {run.tags.map((tag) => (
+                                <span
+                                  key={tag}
+                                  className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-teal-950/40 text-teal-300 border border-teal-800/30"
+                                >
+                                  {tag.replace(/_/g, ' ')}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+
+                          {/* Notes */}
+                          {run.notes && (
+                            <p className="text-xs text-gray-400 bg-gray-900/50 p-2.5 rounded-xl border border-gray-800/80 line-clamp-3 italic">
+                              "{run.notes}"
+                            </p>
+                          )}
+
+                          {/* Config Preview Chips */}
+                          {run.configs && (
+                            <div className="text-[11px] font-mono grid grid-cols-2 gap-1.5 pt-1 bg-gray-900/40 p-2 rounded-xl border border-gray-800/60">
+                              {run.configs.emulator && (
+                                <div className="truncate text-gray-300">
+                                  <span className="text-gray-500">Emu: </span>
+                                  {run.configs.emulator}
+                                </div>
+                              )}
+                              {run.configs.wineVersion && (
+                                <div className="truncate text-gray-300">
+                                  <span className="text-gray-500">Wine: </span>
+                                  {run.configs.wineVersion}
+                                </div>
+                              )}
+                              {run.configs.dxwrapper && (
+                                <div className="truncate text-gray-300">
+                                  <span className="text-gray-500">DX: </span>
+                                  {run.configs.dxwrapper}
+                                </div>
+                              )}
+                              {run.configs.screenSize && (
+                                <div className="truncate text-gray-300">
+                                  <span className="text-gray-500">Res: </span>
+                                  {run.configs.screenSize}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Actions Row */}
+                        <div className="pt-4 mt-3 border-t border-gray-800/80 flex items-center justify-between gap-1.5">
+                          <button
+                            onClick={() => setActiveModalRun(run)}
+                            className="px-2.5 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs font-medium rounded-lg transition flex items-center gap-1 border border-gray-700"
+                          >
+                            <Eye className="h-3.5 w-3.5 text-cyan-400" />
+                            View
+                          </button>
+
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              data-testid="qr-button"
+                              onClick={() => setPhoneModalRun({ run, gameName: selectedGame?.name })}
+                              title="Send to Android Phone via QR Code"
+                              className="p-1.5 bg-gray-800 hover:bg-cyan-950/80 text-gray-300 hover:text-cyan-400 border border-gray-700 hover:border-cyan-700/60 rounded-lg transition"
+                            >
+                              <QrCode className="h-4 w-4" />
+                            </button>
+
+                            <button
+                              onClick={() => handleLoadInEditor(run)}
+                              title="Load into visual Config Editor"
+                              className="px-2.5 py-1.5 bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-700/50 text-cyan-300 text-xs font-semibold rounded-lg transition flex items-center gap-1"
+                            >
+                              <ExternalLink className="h-3.5 w-3.5" />
+                              Edit
+                            </button>
+
+                            <button
+                              onClick={() => downloadConfigJson(run, selectedGame?.name)}
+                              title="Download Android GameNative config.json"
+                              className="p-1.5 bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-700/50 text-emerald-300 rounded-lg transition"
+                            >
+                              <Download className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-between pt-6 border-t border-gray-800 text-sm text-gray-400">
+                    <div>
+                      Page <span className="font-semibold text-gray-200">{currentPage}</span> of{' '}
+                      <span className="font-semibold text-gray-200">{totalPages}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                        className="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed rounded-lg border border-gray-700 flex items-center gap-1 text-xs"
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                        Previous
+                      </button>
+
+                      <button
+                        onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                        disabled={currentPage >= totalPages}
+                        className="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed rounded-lg border border-gray-700 flex items-center gap-1 text-xs"
+                      >
+                        Next
+                        <ChevronRight className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        {/* VIEW 2: SAVED FAVORITES (OFFLINE & PERSISTED)                  */}
+        {/* ═══════════════════════════════════════════════════════════════ */}
+        {activeTab === 'favorites' && (
+          <div className="space-y-6">
+            {/* Favorites Control Bar */}
+            <div className="bg-gray-800/60 backdrop-blur-md p-5 rounded-2xl border border-gray-700 shadow-xl flex flex-col sm:flex-row justify-between items-center gap-4">
+              <div className="relative w-full sm:w-80">
+                <Search className="absolute left-3.5 top-2.5 h-4 w-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Filter saved configurations..."
+                  value={savedSearchQuery}
+                  onChange={(e) => setSavedSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 bg-gray-900 border border-gray-700 rounded-xl focus:outline-none focus:border-cyan-500 text-gray-100 text-xs transition"
+                />
+              </div>
+
+              <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                <span className="text-xs text-gray-400">
+                  {filteredSavedConfigs.length} saved configuration{filteredSavedConfigs.length !== 1 ? 's' : ''}
+                </span>
+
+                {savedConfigs.length > 0 && (
+                  <button
+                    onClick={() => {
+                      if (confirm('Clear all saved configurations from local storage?')) {
+                        clearAllSavedConfigs();
+                      }
+                    }}
+                    className="text-xs px-3 py-1.5 bg-red-950/40 hover:bg-red-900/60 border border-red-800/60 text-red-300 rounded-lg transition flex items-center gap-1.5"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    Clear All
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Empty Favorites State */}
+            {savedConfigs.length === 0 && (
+              <div className="text-center py-20 bg-gray-800/20 border border-dashed border-gray-800 rounded-2xl p-8 space-y-4">
+                <div className="w-16 h-16 bg-amber-950/40 border border-amber-700/30 rounded-2xl mx-auto flex items-center justify-center text-3xl">
+                  ⭐
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-200">No Saved Configurations Yet</h2>
+                  <p className="text-gray-400 text-sm max-w-md mx-auto mt-1">
+                    When browsing live configs, click the star (★) button on any card to bookmark it here for instant offline access and phone transfer.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setActiveTab('search')}
+                  className="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold rounded-xl transition"
+                >
+                  Browse Community Configs
+                </button>
+              </div>
+            )}
+
+            {/* Saved Configurations Grid */}
+            {filteredSavedConfigs.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredSavedConfigs.map((item) => {
+                  const run = item.run;
+                  return (
+                    <div
+                      key={item.runId}
+                      className="bg-gray-800/50 hover:bg-gray-800/80 border border-gray-700 rounded-2xl p-5 flex flex-col justify-between transition-all shadow-lg hover:shadow-cyan-500/5 relative"
+                    >
+                      <div className="space-y-3">
+                        {/* Game Title & Star */}
+                        <div className="flex justify-between items-start gap-2 border-b border-gray-800/80 pb-2.5">
+                          <div>
+                            <h3 className="text-sm font-bold text-cyan-400 truncate max-w-[200px]">
+                              {item.gameName}
+                            </h3>
+                            <span className="text-[10px] text-gray-500 font-mono">
+                              Saved {new Date(item.savedAt).toLocaleDateString()}
+                            </span>
+                          </div>
+
+                          <button
+                            onClick={() => handleToggleFavorite(run, item.gameName)}
+                            title="Remove from saved configs"
+                            className="p-1 text-amber-400 hover:text-red-400 transition"
+                          >
+                            <Star className="h-4 w-4 fill-amber-400" />
+                          </button>
+                        </div>
+
+                        {/* Rating & FPS */}
+                        <div className="flex justify-between items-center text-xs">
+                          <div className="flex items-center gap-1 text-amber-400">
+                            {Array.from({ length: 5 }).map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`h-3.5 w-3.5 ${
+                                  i < run.rating ? 'fill-amber-400' : 'text-gray-600'
+                                }`}
+                              />
+                            ))}
+                            <span className="font-bold ml-1">{run.rating}/5</span>
+                          </div>
+
+                          {run.avgFps != null && (
+                            <span className="bg-cyan-950/60 border border-cyan-800/40 text-cyan-300 px-2 py-0.5 rounded-full font-mono text-[11px] font-semibold flex items-center gap-1">
+                              <Zap className="h-3 w-3" />
+                              {run.avgFps} FPS
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Device Info */}
+                        <div className="text-xs text-gray-300 flex items-center gap-1.5 truncate">
+                          <Smartphone className="h-3.5 w-3.5 text-cyan-400 shrink-0" />
+                          <span className="truncate">{run.device?.model || 'Generic Device'}</span>
+                          {run.device?.gpu && (
+                            <span className="text-[10px] bg-gray-900 px-1.5 py-0.5 rounded text-gray-400 font-mono">
+                              {run.device.gpu}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Config Chips */}
+                        {run.configs && (
+                          <div className="text-[11px] font-mono grid grid-cols-2 gap-1.5 bg-gray-900/60 p-2 rounded-xl border border-gray-800">
+                            {run.configs.emulator && (
+                              <div className="truncate text-gray-300">
+                                <span className="text-gray-500">Emu: </span>
+                                {run.configs.emulator}
+                              </div>
+                            )}
+                            {run.configs.wineVersion && (
+                              <div className="truncate text-gray-300">
+                                <span className="text-gray-500">Wine: </span>
+                                {run.configs.wineVersion}
+                              </div>
+                            )}
+                            {run.configs.dxwrapper && (
+                              <div className="truncate text-gray-300">
+                                <span className="text-gray-500">DX: </span>
+                                {run.configs.dxwrapper}
+                              </div>
+                            )}
+                            {run.configs.screenSize && (
+                              <div className="truncate text-gray-300">
+                                <span className="text-gray-500">Res: </span>
+                                {run.configs.screenSize}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Actions */}
+                      <div className="pt-3 mt-3 border-t border-gray-800 flex items-center justify-between gap-1.5">
+                        <button
+                          onClick={() => setActiveModalRun(run)}
+                          className="px-2.5 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs font-medium rounded-lg transition flex items-center gap-1 border border-gray-700"
+                        >
+                          <Eye className="h-3.5 w-3.5 text-cyan-400" />
+                          View
+                        </button>
+
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={() => setPhoneModalRun({ run, gameName: item.gameName })}
+                            title="Send to Phone via QR Code"
+                            className="p-1.5 bg-gray-800 hover:bg-cyan-950/80 text-gray-300 hover:text-cyan-400 border border-gray-700 rounded-lg transition"
+                          >
+                            <QrCode className="h-4 w-4" />
+                          </button>
+
+                          <button
+                            onClick={() => handleLoadInEditor(run, item.gameName)}
+                            title="Load in visual Config Editor"
+                            className="px-2.5 py-1.5 bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-700/50 text-cyan-300 text-xs font-semibold rounded-lg transition flex items-center gap-1"
+                          >
+                            <ExternalLink className="h-3.5 w-3.5" />
+                            Edit
+                          </button>
+
+                          <button
+                            onClick={() => downloadConfigJson(run, item.gameName)}
+                            title="Download JSON"
+                            className="p-1.5 bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-700/50 text-emerald-300 rounded-lg transition"
+                          >
+                            <Download className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         )}
       </div>
+
+      {/* ═══════════════════════════════════════════════════════════════ */}
+      {/* MODAL 1: CONFIG DETAILS INSPECTION                             */}
+      {/* ═══════════════════════════════════════════════════════════════ */}
+      {activeModalRun && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-gray-900 border border-gray-700 rounded-2xl max-w-3xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+            {/* Modal Header */}
+            <div className="p-5 border-b border-gray-800 flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-bold text-gray-100 flex items-center gap-2">
+                  <Layers className="h-5 w-5 text-cyan-400" />
+                  Configuration Details
+                </h3>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  {selectedGame?.name || activeModalRun.game?.name || `Run #${activeModalRun.id}`} • {activeModalRun.device?.model}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => handleToggleFavorite(activeModalRun, selectedGame?.name)}
+                  title={savedRunIds.has(activeModalRun.id) ? 'Remove from favorites' : 'Save to favorites'}
+                  className={`p-1.5 rounded-lg border transition ${
+                    savedRunIds.has(activeModalRun.id)
+                      ? 'border-amber-700/60 bg-amber-950/40 text-amber-400'
+                      : 'border-gray-700 text-gray-400 hover:text-amber-400'
+                  }`}
+                >
+                  <Star className={`h-4 w-4 ${savedRunIds.has(activeModalRun.id) ? 'fill-amber-400' : ''}`} />
+                </button>
+
+                <button
+                  onClick={() => setActiveModalRun(null)}
+                  className="text-gray-400 hover:text-white p-1.5 rounded-lg hover:bg-gray-800 transition"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-5 overflow-y-auto space-y-4 text-xs font-mono text-gray-300">
+              {/* Essential Fields */}
+              <div className="grid grid-cols-2 gap-3 bg-gray-950 p-3 rounded-xl border border-gray-800">
+                <div>
+                  <span className="text-gray-500 uppercase text-[10px]">Emulator:</span>
+                  <div className="text-gray-200 font-semibold">{activeModalRun.configs?.emulator || 'N/A'}</div>
+                </div>
+                <div>
+                  <span className="text-gray-500 uppercase text-[10px]">Wine Version:</span>
+                  <div className="text-gray-200 font-semibold">{activeModalRun.configs?.wineVersion || 'N/A'}</div>
+                </div>
+                <div>
+                  <span className="text-gray-500 uppercase text-[10px]">DirectX Wrapper:</span>
+                  <div className="text-gray-200 font-semibold">{activeModalRun.configs?.dxwrapper || 'N/A'}</div>
+                </div>
+                <div>
+                  <span className="text-gray-500 uppercase text-[10px]">Screen Size:</span>
+                  <div className="text-gray-200 font-semibold">{activeModalRun.configs?.screenSize || 'N/A'}</div>
+                </div>
+                <div className="col-span-2">
+                  <span className="text-gray-500 uppercase text-[10px]">CPU Affinity List:</span>
+                  <div className="text-gray-200">{activeModalRun.configs?.cpuList || 'N/A'}</div>
+                </div>
+                <div className="col-span-2">
+                  <span className="text-gray-500 uppercase text-[10px]">Environment Variables:</span>
+                  <div className="text-gray-200 break-all">{activeModalRun.configs?.envVars || 'None'}</div>
+                </div>
+              </div>
+
+              {/* ExtraData JSON */}
+              {activeModalRun.configs?.extraData && (
+                <div>
+                  <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">
+                    Extra Data Settings
+                  </div>
+                  <pre className="bg-gray-950 p-3 rounded-xl border border-gray-800 overflow-x-auto text-[11px] text-teal-300">
+                    {JSON.stringify(activeModalRun.configs.extraData, null, 2)}
+                  </pre>
+                </div>
+              )}
+
+              {/* Full Raw JSON */}
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+                    Full JSON Payload
+                  </span>
+                  <button
+                    onClick={() => handleCopyRaw(activeModalRun.configs)}
+                    className="text-[11px] text-cyan-400 hover:text-cyan-300 flex items-center gap-1 font-sans"
+                  >
+                    {copiedRaw ? <Check className="h-3 w-3 text-emerald-400" /> : null}
+                    {copiedRaw ? 'Copied!' : 'Copy Raw JSON'}
+                  </button>
+                </div>
+                <pre className="bg-gray-950 p-3 rounded-xl border border-gray-800 overflow-x-auto text-[11px] text-gray-300 max-h-48">
+                  {JSON.stringify(activeModalRun.configs, null, 2)}
+                </pre>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 border-t border-gray-800 bg-gray-900/50 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setPhoneModalRun({ run: activeModalRun, gameName: selectedGame?.name })}
+                  className="px-3.5 py-2 bg-gray-800 hover:bg-gray-700 text-cyan-300 border border-gray-700 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition"
+                >
+                  <QrCode className="h-3.5 w-3.5" />
+                  Send to Phone
+                </button>
+
+                <button
+                  onClick={() => setActiveModalRun(null)}
+                  className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-xl text-xs font-semibold transition"
+                >
+                  Close
+                </button>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    handleLoadInEditor(activeModalRun);
+                    setActiveModalRun(null);
+                  }}
+                  className="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition"
+                >
+                  <ExternalLink className="h-3.5 w-3.5" />
+                  Load in Config Editor
+                </button>
+
+                <button
+                  onClick={() => downloadConfigJson(activeModalRun, selectedGame?.name)}
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition"
+                >
+                  <Download className="h-3.5 w-3.5" />
+                  Download JSON
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════════ */}
+      {/* MODAL 2: SEND TO PHONE VIA QR CODE & WEB SHARE                 */}
+      {/* ═══════════════════════════════════════════════════════════════ */}
+      <SendToPhoneModal
+        isOpen={Boolean(phoneModalRun)}
+        onClose={() => setPhoneModalRun(null)}
+        run={phoneModalRun?.run || null}
+        gameName={phoneModalRun?.gameName || selectedGame?.name}
+      />
     </div>
   );
 }
