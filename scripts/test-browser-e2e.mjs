@@ -528,8 +528,93 @@ async function main() {
     `);
     suite.assert(deepLinkResolved, 'Deep link (?game=3405) resolved to ELDEN RING configs');
 
+    // --- TEST 2e: Detail Modal Actions & Load in Config Editor ---
+    console.log(`\n--- Test 2e: Detail Modal & Load in Config Editor ---`);
+    await bidi.evaluate(`
+      (() => {
+        const viewBtns = Array.from(document.querySelectorAll('button'));
+        const viewBtn = viewBtns.find(b => b.innerText && b.innerText.trim() === 'View');
+        if (viewBtn) viewBtn.click();
+      })()
+    `);
+    await sleep(500);
+
+    const modalOpened = await bidi.evaluate(`
+      Boolean(
+        document.body.innerText.includes('Close') &&
+        document.body.innerText.includes('Load in Config Editor')
+      )
+    `);
+    suite.assert(modalOpened, 'Detail Modal opened from View button');
+
+    // Test Copy Link inside Detail Modal
+    await bidi.evaluate(`
+      (() => {
+        const btns = Array.from(document.querySelectorAll('button'));
+        const copyLinkBtn = btns.find(b => b.innerText && b.innerText.includes('Copy Link'));
+        if (copyLinkBtn) copyLinkBtn.click();
+      })()
+    `);
+    await sleep(400);
+
+    const modalCopyResult = await bidi.evaluate(`
+      (() => {
+        const btns = Array.from(document.querySelectorAll('button'));
+        const copyLinkBtn = btns.find(b => b.innerText && b.innerText.includes('Copied'));
+        if (!copyLinkBtn) return JSON.stringify(null);
+        return JSON.stringify({
+          hasEmerald: copyLinkBtn.className.includes('bg-emerald-600')
+        });
+      })()
+    `);
+    const modalCopyParsed = modalCopyResult ? JSON.parse(modalCopyResult) : null;
+    suite.assert(
+      modalCopyParsed && modalCopyParsed.hasEmerald,
+      'Detail Modal: Copy Link button turned emerald green with Copied text'
+    );
+
+    // Click "Load in Config Editor" button in Detail Modal
+    await bidi.evaluate(`
+      (() => {
+        const btns = Array.from(document.querySelectorAll('button'));
+        const loadBtn = btns.find(b => b.innerText && b.innerText.includes('Load in Config Editor'));
+        if (loadBtn) loadBtn.click();
+      })()
+    `);
+    await sleep(1500); // Allow navigation to /config-editor
+
+    const currentPath = await bidi.evaluate('window.location.pathname');
+    const editorLoadedConfig = await bidi.evaluate(`
+      Boolean(
+        document.body.innerText.toLowerCase().includes('gamenative config editor') &&
+        (document.body.innerText.toLowerCase().includes('export json') || document.body.innerText.toLowerCase().includes('copy json'))
+      )
+    `);
+    suite.assert(currentPath === '/config-editor', 'Navigated cleanly to /config-editor from detail modal');
+    suite.assert(editorLoadedConfig, 'Config Editor loaded config successfully from pendingConfig (active editor tabs visible)');
+
+    // Test Copy JSON button in Config Editor
+    await bidi.evaluate(`
+      (() => {
+        const btns = Array.from(document.querySelectorAll('button'));
+        const copyBtn = btns.find(b => b.innerText && b.innerText.toLowerCase().includes('copy json'));
+        if (copyBtn) copyBtn.click();
+      })()
+    `);
+    await sleep(400);
+
+    const editorCopyResult = await bidi.evaluate(`
+      (() => {
+        const btns = Array.from(document.querySelectorAll('button'));
+        const copyBtn = btns.find(b => b.innerText && b.innerText.toLowerCase().includes('copied'));
+        if (!copyBtn) return false;
+        return copyBtn.className.includes('bg-emerald-600');
+      })()
+    `);
+    suite.assert(editorCopyResult, 'Config Editor: Copy JSON button turned emerald green with confirmation text');
+
     // --- TEST 3: Config Editor Page ---
-    console.log(`\n--- Test 3: Config Editor (/config-editor) ---`);
+    console.log(`\n--- Test 3: Config Editor (/config-editor) Fresh Mount ---`);
     await bidi.navigate(`${APP_URL}/config-editor`);
     await sleep(1000);
 

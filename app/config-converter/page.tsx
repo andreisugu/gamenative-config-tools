@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { X } from 'lucide-react';
+import { copyToClipboard } from '@/lib/clipboard';
 
 // TypeScript interface for the Config object
 interface Config {
@@ -435,23 +436,18 @@ export default function ConfigConverterPage() {
       return;
     }
     
-    try {
-      await navigator.clipboard.writeText(jsonPreview);
+    const copied = await copyToClipboard(jsonPreview);
+    if (copied) {
       setCopySuccess(true);
-      
-      // Clear any existing timeout
       if (copyTimeoutRef.current) {
         clearTimeout(copyTimeoutRef.current);
       }
-      
-      // Set new timeout
       copyTimeoutRef.current = setTimeout(() => {
         setCopySuccess(false);
         copyTimeoutRef.current = null;
-      }, 2000);
-    } catch (err) {
-      setError('Failed to copy to clipboard. Please try again.');
-      console.error('Copy failed:', err);
+      }, 2500);
+    } else {
+      setError('Failed to copy to clipboard. Please copy manually from the preview box.');
     }
   };
 

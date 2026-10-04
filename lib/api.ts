@@ -114,12 +114,17 @@ export function formatGameNativeExport(
     run.gameName?.trim() ||
     `GameNative-${run.id}`;
 
+  const config = { ...(run.configs || {}) };
+  if (!config.id) {
+    config.id = String(run.id || run.gameId || 'config');
+  }
+
   return {
     version: 1,
     exportedFrom: 'GameNative Config Tools',
     timestamp: Date.now(),
     containerName,
-    config: run.configs || {},
+    config,
   };
 }
 

@@ -23,6 +23,7 @@ import {
     Fingerprint,
     X
 } from 'lucide-react';
+import { copyToClipboard } from '@/lib/clipboard';
 
 // --- TYPES ---
 
@@ -86,8 +87,10 @@ interface ContainerConfig {
 
 // --- UTILITIES ---
 
-const parseKV = (str: string): Record<string, string> => {
+const parseKV = (str: any): Record<string, string> => {
     if (!str) return {};
+    if (typeof str === 'object' && str !== null) return str as Record<string, string>;
+    if (typeof str !== 'string') return {};
     const obj: Record<string, string> = {};
     str.split(',').forEach(pair => {
         const idx = pair.indexOf('=');
@@ -390,23 +393,25 @@ export default function App() {
         if (pendingConfig) {
             try {
                 const parsed = JSON.parse(pendingConfig);
-                const data = parsed.config || parsed;
-                if (data.id) {
-                    const containerName = parsed.containerName || data.name || "Community Config";
-                    
-                    if (data.dxwrapperConfig) {
+                const data = { ...(parsed.config || parsed) };
+                if (!data.id) {
+                    data.id = String(parsed.containerName || 'config');
+                }
+                const containerName = parsed.containerName || data.name || "Community Config";
+                
+                if (data.dxwrapperConfig) {
+                    try {
                         const dxConfig = parseKV(data.dxwrapperConfig);
                         const syncedValue = dxConfig.gpuName || dxConfig.renderer || "";
                         dxConfig.renderer = syncedValue;
                         dxConfig.gpuName = syncedValue;
                         data.dxwrapperConfig = stringifyKV(dxConfig);
-                    }
-
-                    setConfig({ ...data, containerName });
-                    setIsImporting(false);
-                    // Clear the pending config
-                    localStorage.removeItem('pendingConfig');
+                    } catch {}
                 }
+
+                setConfig({ ...data, containerName });
+                setIsImporting(false);
+                localStorage.removeItem('pendingConfig');
             } catch (e) {
                 console.error('Failed to load pending config:', e);
                 localStorage.removeItem('pendingConfig');
@@ -422,8 +427,10 @@ export default function App() {
     const handleImport = () => {
         try {
             const parsed = JSON.parse(rawJson);
-            const data = parsed.config || parsed;
-            if (!data.id) throw new Error("Invalid configuration.");
+            const data = { ...(parsed.config || parsed) };
+            if (!data.id) {
+                data.id = String(parsed.containerName || 'config');
+            }
 
             const containerName = parsed.containerName || data.name || "Imported Config";
 
@@ -476,7 +483,7 @@ export default function App() {
         setTimeout(() => setExported(false), 2500);
     };
 
-    const handleCopyJson = () => {
+    const handleCopyJson = async () => {
         if (!config) return;
         const { containerName, ...innerConfig } = config;
         const final = {
@@ -486,7 +493,7 @@ export default function App() {
             containerName: containerName,
             config: innerConfig
         };
-        navigator.clipboard?.writeText?.(JSON.stringify(final, null, 2))?.catch?.(() => {});
+        await copyToClipboard(JSON.stringify(final, null, 2));
         setCopiedJson(true);
         setTimeout(() => setCopiedJson(false), 2500);
     };

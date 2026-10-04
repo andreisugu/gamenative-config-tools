@@ -14,6 +14,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { formatGameNativeExport, downloadConfigJson } from '@/lib/api';
+import { copyToClipboard } from '@/lib/clipboard';
 import type { CompatibilityRun } from '@/lib/types';
 
 interface SendToPhoneModalProps {
@@ -31,7 +32,6 @@ export default function SendToPhoneModal({
   gameName,
   onToast,
 }: SendToPhoneModalProps) {
-  const [qrMode, setQrMode] = useState<'url' | 'json'>('url');
   const [qrDataUrl, setQrDataUrl] = useState<string>('');
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedJson, setCopiedJson] = useState(false);
@@ -55,27 +55,21 @@ export default function SendToPhoneModal({
     }
   }, []);
 
-  // Generate QR Code whenever mode or run changes
+  // Generate QR Code for opening configuration on phone
   useEffect(() => {
-    if (!isOpen || !run) return;
+    if (!isOpen || !run || !shareUrl) return;
 
     let cancelled = false;
     async function generateQR() {
       try {
-        let payload = shareUrl;
-        if (qrMode === 'json') {
-          const exportData = formatGameNativeExport(run!, effectiveGameName);
-          payload = JSON.stringify(exportData);
-        }
-
-        const dataUrl = await QRCode.toDataURL(payload, {
+        const dataUrl = await QRCode.toDataURL(shareUrl, {
           width: 320,
           margin: 2,
           color: {
             dark: '#06b6d4', // Cyan QR modules
             light: '#0f172a', // Slate dark background
           },
-          errorCorrectionLevel: qrMode === 'json' ? 'L' : 'M',
+          errorCorrectionLevel: 'M',
         });
 
         if (!cancelled) {
@@ -90,7 +84,7 @@ export default function SendToPhoneModal({
     return () => {
       cancelled = true;
     };
-  }, [isOpen, run, qrMode, shareUrl, effectiveGameName]);
+  }, [isOpen, run, shareUrl]);
 
   // Close on Escape
   useEffect(() => {
@@ -106,8 +100,8 @@ export default function SendToPhoneModal({
   if (!isOpen || !run) return null;
 
   const handleCopyLink = () => {
-    if (typeof navigator !== 'undefined' && shareUrl) {
-      navigator.clipboard?.writeText(shareUrl)?.catch?.(() => {});
+    if (shareUrl) {
+      copyToClipboard(shareUrl);
       setCopiedLink(true);
       onToast?.('Link copied to clipboard successfully!', 'success', 'Link Copied');
       setTimeout(() => setCopiedLink(false), 2500);
@@ -115,13 +109,12 @@ export default function SendToPhoneModal({
   };
 
   const handleCopyJson = () => {
-    if (typeof navigator !== 'undefined') {
-      const exportData = formatGameNativeExport(run, effectiveGameName);
-      navigator.clipboard?.writeText(JSON.stringify(exportData, null, 2))?.catch?.(() => {});
-      setCopiedJson(true);
-      onToast?.('Container JSON copied to clipboard successfully!', 'success', 'JSON Copied');
-      setTimeout(() => setCopiedJson(false), 2500);
-    }
+    const exportData = formatGameNativeExport(run, effectiveGameName);
+    const jsonStr = JSON.stringify(exportData, null, 2);
+    copyToClipboard(jsonStr);
+    setCopiedJson(true);
+    onToast?.('Container JSON copied to clipboard successfully!', 'success', 'JSON Copied');
+    setTimeout(() => setCopiedJson(false), 2500);
   };
 
   const handleDownload = () => {
@@ -215,34 +208,8 @@ export default function SendToPhoneModal({
           </span>
         </div>
 
-        {/* QR Mode Selector */}
-        <div className="flex rounded-xl bg-gray-800/80 p-1 border border-gray-700/60 text-xs">
-          <button
-            onClick={() => setQrMode('url')}
-            className={`flex-1 py-1.5 px-3 rounded-lg font-medium transition flex items-center justify-center gap-1.5 ${
-              qrMode === 'url'
-                ? 'bg-cyan-600 text-white shadow'
-                : 'text-gray-400 hover:text-gray-200'
-            }`}
-          >
-            <ExternalLink className="h-3.5 w-3.5" />
-            Open on Phone (URL)
-          </button>
-          <button
-            onClick={() => setQrMode('json')}
-            className={`flex-1 py-1.5 px-3 rounded-lg font-medium transition flex items-center justify-center gap-1.5 ${
-              qrMode === 'json'
-                ? 'bg-cyan-600 text-white shadow'
-                : 'text-gray-400 hover:text-gray-200'
-            }`}
-          >
-            <QrCode className="h-3.5 w-3.5" />
-            Scan JSON Directly
-          </button>
-        </div>
-
         {/* QR Code Container */}
-        <div className="flex flex-col items-center justify-center p-4 bg-slate-950/70 rounded-2xl border border-gray-800 shadow-inner">
+        <div className="flex flex-col items-center justify-center p-5 bg-slate-950/70 rounded-2xl border border-gray-800 shadow-inner">
           {qrDataUrl ? (
             <img
               src={qrDataUrl}
@@ -255,16 +222,8 @@ export default function SendToPhoneModal({
             </div>
           )}
 
-          <p className="text-xs text-gray-400 mt-3 text-center max-w-xs">
-            {qrMode === 'url' ? (
-              <>
-                Scan with your Android camera or Google Lens to view and download this config directly on your device.
-              </>
-            ) : (
-              <>
-                Scan with a QR reader to decode the raw GameNative container JSON configuration.
-              </>
-            )}
+          <p className="text-xs text-gray-300 mt-3 text-center max-w-xs font-medium">
+            Scan with your Android camera or Google Lens to open this configuration directly on your phone, where you can download or import with one tap.
           </p>
         </div>
 

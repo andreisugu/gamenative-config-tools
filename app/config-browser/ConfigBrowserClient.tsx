@@ -47,6 +47,7 @@ import {
 } from '@/lib/favorites';
 import SendToPhoneModal from '@/app/components/SendToPhoneModal';
 import Toast, { type ToastMessage } from '@/app/components/Toast';
+import { copyToClipboard } from '@/lib/clipboard';
 
 const ITEMS_PER_PAGE = 15;
 const DEBOUNCE_MS = 250;
@@ -376,21 +377,20 @@ export default function ConfigBrowserClient() {
       router.push('/config-editor');
     } catch (e) {
       console.error('Failed to store pendingConfig:', e);
+      router.push('/config-editor');
     }
   };
 
   const handleCopyRaw = (configs: any) => {
-    if (typeof navigator !== 'undefined') {
-      navigator.clipboard?.writeText?.(JSON.stringify(configs, null, 2))?.catch?.(() => {});
-      setModalCopiedRaw(true);
-      showToast('Raw configuration JSON copied to clipboard successfully!', 'success', 'JSON Copied');
-      setTimeout(() => setModalCopiedRaw(false), 2500);
-    }
+    copyToClipboard(JSON.stringify(configs, null, 2));
+    setModalCopiedRaw(true);
+    showToast('Raw configuration JSON copied to clipboard successfully!', 'success', 'JSON Copied');
+    setTimeout(() => setModalCopiedRaw(false), 2500);
   };
 
   const handleCopyShareView = () => {
     if (typeof window !== 'undefined') {
-      navigator.clipboard?.writeText?.(window.location.href)?.catch?.(() => {});
+      copyToClipboard(window.location.href);
       setCopiedShareLink(true);
       showToast('Browser view link copied to clipboard successfully!', 'success', 'Link Copied');
       setTimeout(() => setCopiedShareLink(false), 2500);
@@ -401,7 +401,7 @@ export default function ConfigBrowserClient() {
     if (typeof window === 'undefined') return;
     const gId = run.game?.id || run.gameId || selectedGame?.id || '';
     const shareUrl = `${window.location.origin}${window.location.pathname}?game=${gId}&run=${run.id}`;
-    navigator.clipboard?.writeText?.(shareUrl)?.catch?.(() => {});
+    copyToClipboard(shareUrl);
     setCopiedCardRunId(run.id);
     const title = gameName || run.game?.name || selectedGame?.name || 'Game';
     showToast(`Configuration link for ${title} copied to clipboard successfully!`, 'success', 'Link Copied');
@@ -438,7 +438,7 @@ export default function ConfigBrowserClient() {
     if (typeof window === 'undefined') return;
     const gId = run.game?.id || run.gameId || selectedGame?.id || '';
     const shareUrl = `${window.location.origin}${window.location.pathname}?game=${gId}&run=${run.id}`;
-    navigator.clipboard?.writeText?.(shareUrl)?.catch?.(() => {});
+    copyToClipboard(shareUrl);
     setModalCopiedLink(true);
     const title = gameName || run.game?.name || selectedGame?.name || 'Game';
     showToast(`Configuration link for ${title} copied to clipboard successfully!`, 'success', 'Link Copied');
@@ -924,7 +924,7 @@ export default function ConfigBrowserClient() {
 
                             {/* Edit in Visual Editor */}
                             <button
-                              onClick={() => handleLoadInEditor(run)}
+                              onClick={() => handleLoadInEditor(run, selectedGame?.name)}
                               title="Load into visual Config Editor"
                               className="px-2.5 py-1.5 bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-700/50 text-cyan-300 text-xs font-semibold rounded-lg transition flex items-center gap-1"
                             >
@@ -1350,8 +1350,7 @@ export default function ConfigBrowserClient() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => {
-                    handleLoadInEditor(activeModalRun);
-                    setActiveModalRun(null);
+                    handleLoadInEditor(activeModalRun, selectedGame?.name);
                   }}
                   className="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition"
                 >
