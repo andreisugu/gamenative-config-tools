@@ -347,6 +347,36 @@ async function main() {
     `);
     suite.assert(qrImageLoaded, 'Send to Phone modal opened with generated QR code');
 
+    // Test Copy Share Link inside Send to Phone modal
+    await bidi.evaluate(`
+      (() => {
+        const copyLinkBtn = document.querySelector('[data-testid="modal-copy-link"]');
+        if (copyLinkBtn) copyLinkBtn.click();
+      })()
+    `);
+    await sleep(400); // Allow React 19 to render state update to DOM
+
+    const qrCopyRaw = await bidi.evaluate(`
+      (() => {
+        const copyLinkBtn = document.querySelector('[data-testid="modal-copy-link"]');
+        if (!copyLinkBtn) return JSON.stringify(null);
+        return JSON.stringify({
+          text: copyLinkBtn.innerText,
+          hasEmerald: copyLinkBtn.className.includes('bg-emerald-600'),
+          hasToast: Boolean(document.querySelector('div[role="status"]'))
+        });
+      })()
+    `);
+    const qrCopyResult = qrCopyRaw ? JSON.parse(qrCopyRaw) : null;
+    suite.assert(
+      qrCopyResult && (qrCopyResult.text?.includes('Copied') || qrCopyResult.hasEmerald),
+      'QR Modal: Copy Share Link button turned emerald green with confirmation text'
+    );
+    suite.assert(
+      qrCopyResult && qrCopyResult.hasToast,
+      'QR Modal: Toast notification popped up on screen'
+    );
+
     // Close QR modal
     await bidi.evaluate(`
       (() => {
@@ -355,6 +385,78 @@ async function main() {
       })()
     `);
     await sleep(500);
+
+    // --- TEST 2b-2: Visual Confirmation States & Floating Toasts ---
+    console.log(`\n--- Test 2b-2: Visual Confirmation States & Floating Toasts ---`);
+    await bidi.evaluate(`
+      (() => {
+        const btn = document.querySelector('[data-testid="share-view-button"]');
+        if (btn) btn.click();
+      })()
+    `);
+    await sleep(400); // Allow React 19 to render state update to DOM
+
+    const shareViewRaw = await bidi.evaluate(`
+      (() => {
+        const btn = document.querySelector('[data-testid="share-view-button"]');
+        if (!btn) return JSON.stringify(null);
+        return JSON.stringify({
+          text: btn.innerText,
+          hasEmerald: btn.className.includes('bg-emerald-600'),
+          toastText: document.querySelector('div[role="status"]')?.innerText || ''
+        });
+      })()
+    `);
+    const shareViewResult = shareViewRaw ? JSON.parse(shareViewRaw) : null;
+    suite.assert(
+      shareViewResult && shareViewResult.text?.includes('Copied successfully!'),
+      'Share View button text changed to "Copied successfully!"'
+    );
+    suite.assert(
+      shareViewResult && shareViewResult.hasEmerald,
+      'Share View button changed to emerald green (bg-emerald-600)'
+    );
+    suite.assert(
+      shareViewResult && shareViewResult.toastText?.includes('copied to clipboard successfully!'),
+      'Floating Toast popup displayed confirmation for copied link'
+    );
+
+    // Click card copy link and card download buttons
+    await bidi.evaluate(`
+      (() => {
+        const copyBtn = document.querySelector('[data-testid="share-card-button"]');
+        const dlBtn = document.querySelector('[data-testid="download-card-button"]');
+        if (copyBtn) copyBtn.click();
+        if (dlBtn) dlBtn.click();
+      })()
+    `);
+    await sleep(400); // Allow React 19 to render state update to DOM
+
+    const cardActionsRaw = await bidi.evaluate(`
+      (() => {
+        const copyBtn = document.querySelector('[data-testid="share-card-button"]');
+        const dlBtn = document.querySelector('[data-testid="download-card-button"]');
+        if (!copyBtn || !dlBtn) return JSON.stringify(null);
+        return JSON.stringify({
+          copyHasEmerald: copyBtn.className.includes('bg-emerald-600'),
+          dlHasEmerald: dlBtn.className.includes('bg-emerald-600'),
+          toastCount: document.querySelectorAll('div[role="status"]').length
+        });
+      })()
+    `);
+    const cardActionsResult = cardActionsRaw ? JSON.parse(cardActionsRaw) : null;
+    suite.assert(
+      cardActionsResult && cardActionsResult.copyHasEmerald,
+      'Card Copy Link button changed to emerald green on click'
+    );
+    suite.assert(
+      cardActionsResult && cardActionsResult.dlHasEmerald,
+      'Card Download JSON button changed to emerald green on click'
+    );
+    suite.assert(
+      cardActionsResult && cardActionsResult.toastCount > 0,
+      'Floating Toast notifications rendered for card copy and download actions'
+    );
 
     // --- TEST 2c: Local Favorites (Bookmarks) ---
     console.log(`\n--- Test 2c: Local Favorites (Bookmarks) ---`);
@@ -369,6 +471,18 @@ async function main() {
       })()
     `);
     suite.assert(starClicked, 'Clicked star button to favorite configuration');
+    await sleep(400); // Allow React to render toast
+
+    const starToastRendered = await bidi.evaluate(`
+      Boolean(
+        document.body.innerText.includes('Saved Configs') ||
+        document.body.innerText.includes('Favorites')
+      )
+    `);
+    suite.assert(
+      starToastRendered,
+      'Toast notification confirmed configuration added to favorites'
+    );
     await sleep(500);
 
     // Switch to "Saved Configs" tab

@@ -369,6 +369,8 @@ export default function App() {
     const [isImporting, setIsImporting] = useState(true);
     const [error, setError] = useState("");
     const [showGuide, setShowGuide] = useState(true);
+    const [exported, setExported] = useState(false);
+    const [copiedJson, setCopiedJson] = useState(false);
 
     const converterUrl = "/config-converter";
 
@@ -470,6 +472,23 @@ export default function App() {
         a.href = url;
         a.download = `${config.id || 'config'}_export.json`;
         a.click();
+        setExported(true);
+        setTimeout(() => setExported(false), 2500);
+    };
+
+    const handleCopyJson = () => {
+        if (!config) return;
+        const { containerName, ...innerConfig } = config;
+        const final = {
+            version: 1,
+            exportedFrom: "WebEditor",
+            timestamp: Date.now(),
+            containerName: containerName,
+            config: innerConfig
+        };
+        navigator.clipboard?.writeText?.(JSON.stringify(final, null, 2))?.catch?.(() => {});
+        setCopiedJson(true);
+        setTimeout(() => setCopiedJson(false), 2500);
     };
 
     const tabs = [
@@ -572,7 +591,27 @@ export default function App() {
         <RefreshCw size={18} />
         </a>
         <button onClick={() => setIsImporting(true)} className="p-3 text-slate-600 hover:text-white transition-colors" title="Import JSON"><Upload size={18} /></button>
-        <button onClick={handleExport} className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded font-black text-[10px] uppercase tracking-[0.2em] transition-all active:scale-95 shadow-lg shadow-blue-900/10">Export JSON</button>
+        <button
+          onClick={handleCopyJson}
+          className={`${
+            copiedJson
+              ? 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-900/30'
+              : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
+          } text-white px-4 py-2.5 rounded font-black text-[10px] uppercase tracking-[0.2em] transition-all active:scale-95 shadow-lg flex items-center gap-1.5`}
+          title="Copy configuration JSON to clipboard"
+        >
+          {copiedJson ? '✓ Copied successfully!' : 'Copy JSON'}
+        </button>
+        <button
+          onClick={handleExport}
+          className={`${
+            exported
+              ? 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-900/30'
+              : 'bg-blue-600 hover:bg-blue-500 shadow-blue-900/10'
+          } text-white px-6 py-2.5 rounded font-black text-[10px] uppercase tracking-[0.2em] transition-all active:scale-95 shadow-lg flex items-center gap-1.5`}
+        >
+          {exported ? '✓ Exported successfully!' : 'Export JSON'}
+        </button>
         </div>
         </div>
         <div className="max-w-7xl mx-auto px-8">

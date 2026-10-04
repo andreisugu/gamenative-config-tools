@@ -21,6 +21,7 @@ interface SendToPhoneModalProps {
   onClose: () => void;
   run: CompatibilityRun | null;
   gameName?: string;
+  onToast?: (message: string, type?: 'success' | 'info' | 'error', title?: string) => void;
 }
 
 export default function SendToPhoneModal({
@@ -28,11 +29,13 @@ export default function SendToPhoneModal({
   onClose,
   run,
   gameName,
+  onToast,
 }: SendToPhoneModalProps) {
   const [qrMode, setQrMode] = useState<'url' | 'json'>('url');
   const [qrDataUrl, setQrDataUrl] = useState<string>('');
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedJson, setCopiedJson] = useState(false);
+  const [downloadedDirect, setDownloadedDirect] = useState(false);
   const [shareSuccess, setShareSuccess] = useState(false);
   const [canShare, setCanShare] = useState(false);
 
@@ -104,19 +107,28 @@ export default function SendToPhoneModal({
 
   const handleCopyLink = () => {
     if (typeof navigator !== 'undefined' && shareUrl) {
-      navigator.clipboard.writeText(shareUrl);
+      navigator.clipboard?.writeText(shareUrl)?.catch?.(() => {});
       setCopiedLink(true);
-      setTimeout(() => setCopiedLink(false), 2000);
+      onToast?.('Link copied to clipboard successfully!', 'success', 'Link Copied');
+      setTimeout(() => setCopiedLink(false), 2500);
     }
   };
 
   const handleCopyJson = () => {
     if (typeof navigator !== 'undefined') {
       const exportData = formatGameNativeExport(run, effectiveGameName);
-      navigator.clipboard.writeText(JSON.stringify(exportData, null, 2));
+      navigator.clipboard?.writeText(JSON.stringify(exportData, null, 2))?.catch?.(() => {});
       setCopiedJson(true);
-      setTimeout(() => setCopiedJson(false), 2000);
+      onToast?.('Container JSON copied to clipboard successfully!', 'success', 'JSON Copied');
+      setTimeout(() => setCopiedJson(false), 2500);
     }
+  };
+
+  const handleDownload = () => {
+    downloadConfigJson(run, effectiveGameName);
+    setDownloadedDirect(true);
+    onToast?.(`Downloaded ${effectiveGameName} config.json successfully!`, 'success', 'Download Complete');
+    setTimeout(() => setDownloadedDirect(false), 2500);
   };
 
   const handleNativeShare = async () => {
@@ -124,7 +136,6 @@ export default function SendToPhoneModal({
 
     const exportData = formatGameNativeExport(run, effectiveGameName);
     try {
-      // Try sharing as a downloadable JSON file if supported
       const jsonBlob = new Blob([JSON.stringify(exportData, null, 2)], {
         type: 'application/json',
       });
@@ -145,6 +156,7 @@ export default function SendToPhoneModal({
         });
       }
       setShareSuccess(true);
+      onToast?.('Configuration shared successfully!', 'success', 'Shared');
       setTimeout(() => setShareSuccess(false), 2500);
     } catch (e: any) {
       if (e?.name !== 'AbortError') {
@@ -260,23 +272,33 @@ export default function SendToPhoneModal({
         <div className="space-y-2 pt-1">
           {canShare && (
             <button
+              data-testid="modal-native-share"
               onClick={handleNativeShare}
-              className="w-full py-2.5 px-4 bg-cyan-600 hover:bg-cyan-500 text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2 transition shadow-lg shadow-cyan-600/20"
+              className={`w-full py-2.5 px-4 text-sm font-semibold rounded-xl flex items-center justify-center gap-2 transition ${
+                shareSuccess
+                  ? 'bg-emerald-600 text-white border border-emerald-400 shadow-lg shadow-emerald-600/30'
+                  : 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg shadow-cyan-600/20'
+              }`}
             >
-              <Share2 className="h-4 w-4" />
-              {shareSuccess ? 'Shared Successfully!' : 'Share via Android Sheet...'}
+              {shareSuccess ? <Check className="h-4 w-4 text-white" /> : <Share2 className="h-4 w-4" />}
+              {shareSuccess ? 'Shared successfully!' : 'Share via Android Sheet...'}
             </button>
           )}
 
           <div className="grid grid-cols-2 gap-2">
             <button
+              data-testid="modal-copy-link"
               onClick={handleCopyLink}
-              className="py-2.5 px-3 bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs font-semibold rounded-xl border border-gray-700 transition flex items-center justify-center gap-2"
+              className={`py-2.5 px-3 text-xs font-semibold rounded-xl border transition flex items-center justify-center gap-2 ${
+                copiedLink
+                  ? 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-400 shadow-lg shadow-emerald-600/30'
+                  : 'bg-gray-800 hover:bg-gray-700 text-gray-200 border-gray-700'
+              }`}
             >
               {copiedLink ? (
                 <>
-                  <Check className="h-4 w-4 text-emerald-400" />
-                  Copied URL!
+                  <Check className="h-4 w-4 text-white" />
+                  Copied successfully!
                 </>
               ) : (
                 <>
@@ -287,13 +309,18 @@ export default function SendToPhoneModal({
             </button>
 
             <button
+              data-testid="modal-copy-json"
               onClick={handleCopyJson}
-              className="py-2.5 px-3 bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs font-semibold rounded-xl border border-gray-700 transition flex items-center justify-center gap-2"
+              className={`py-2.5 px-3 text-xs font-semibold rounded-xl border transition flex items-center justify-center gap-2 ${
+                copiedJson
+                  ? 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-400 shadow-lg shadow-emerald-600/30'
+                  : 'bg-gray-800 hover:bg-gray-700 text-gray-200 border-gray-700'
+              }`}
             >
               {copiedJson ? (
                 <>
-                  <Check className="h-4 w-4 text-emerald-400" />
-                  Copied JSON!
+                  <Check className="h-4 w-4 text-white" />
+                  Copied successfully!
                 </>
               ) : (
                 <>
@@ -305,11 +332,25 @@ export default function SendToPhoneModal({
           </div>
 
           <button
-            onClick={() => downloadConfigJson(run, effectiveGameName)}
-            className="w-full py-2 px-3 bg-emerald-950/70 hover:bg-emerald-900 border border-emerald-800/60 text-emerald-300 text-xs font-semibold rounded-xl transition flex items-center justify-center gap-2"
+            data-testid="modal-download-direct"
+            onClick={handleDownload}
+            className={`w-full py-2.5 px-4 text-xs font-semibold rounded-xl border transition flex items-center justify-center gap-2 ${
+              downloadedDirect
+                ? 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-400 shadow-lg shadow-emerald-600/30'
+                : 'bg-emerald-950/70 hover:bg-emerald-900 border-emerald-800/60 text-emerald-300'
+            }`}
           >
-            <Download className="h-4 w-4" />
-            Download config.json Directly
+            {downloadedDirect ? (
+              <>
+                <Check className="h-4 w-4 text-white" />
+                Downloaded successfully!
+              </>
+            ) : (
+              <>
+                <Download className="h-4 w-4" />
+                Download config.json Directly
+              </>
+            )}
           </button>
         </div>
       </div>

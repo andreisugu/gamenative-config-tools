@@ -376,6 +376,7 @@ export default function ConfigConverterPage() {
   const [success, setSuccess] = useState('');
   const [isConverting, setIsConverting] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [downloadSuccess, setDownloadSuccess] = useState(false);
   const [convertSteamId, setConvertSteamId] = useState(false);
   const [showGuide, setShowGuide] = useState(true);
   const copyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -485,6 +486,8 @@ export default function ConfigConverterPage() {
       URL.revokeObjectURL(url);
       
       setSuccess('JSON file downloaded successfully!');
+      setDownloadSuccess(true);
+      setTimeout(() => setDownloadSuccess(false), 2500);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred during conversion');
       setJsonPreview('');
@@ -595,12 +598,12 @@ export default function ConfigConverterPage() {
                   disabled={!jsonPreview}
                   className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none ${
                     copySuccess 
-                      ? 'bg-green-600 text-white' 
+                      ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-500/30' 
                       : 'protected-button-cyan text-white shadow-md shadow-cyan-500/20'
                   }`}
                   title={jsonPreview ? 'Copy JSON to clipboard' : 'Convert configuration first'}
                 >
-                  {copySuccess ? '✓ Copied!' : 'Copy to Clipboard'}
+                  {copySuccess ? '✓ Copied successfully!' : 'Copy to Clipboard'}
                 </button>
               </div>
             </div>
@@ -630,9 +633,13 @@ export default function ConfigConverterPage() {
           <button
             onClick={handleDownload}
             disabled={isConverting}
-            className="px-6 py-3 protected-button-blue-purple text-white font-semibold rounded-lg shadow-lg shadow-blue-500/30 transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            className={`px-6 py-3 font-semibold rounded-lg shadow-lg transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none ${
+              downloadSuccess
+                ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-500/30'
+                : 'protected-button-blue-purple text-white shadow-blue-500/30'
+            }`}
           >
-            {isConverting ? 'Converting...' : 'Convert & Download'}
+            {isConverting ? 'Converting...' : downloadSuccess ? '✓ Downloaded successfully!' : 'Convert & Download'}
           </button>
         </div>
 

@@ -22,7 +22,7 @@ import {
   Share2,
   Trash2,
   QrCode,
-  Bookmark,
+  Copy,
 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
@@ -46,6 +46,7 @@ import {
   type SavedConfigItem,
 } from '@/lib/favorites';
 import SendToPhoneModal from '@/app/components/SendToPhoneModal';
+import Toast, { type ToastMessage } from '@/app/components/Toast';
 
 const ITEMS_PER_PAGE = 15;
 const DEBOUNCE_MS = 250;
@@ -104,8 +105,31 @@ export default function ConfigBrowserClient() {
     run: CompatibilityRun;
     gameName?: string;
   } | null>(null);
-  const [copiedRaw, setCopiedRaw] = useState(false);
+
+  // Confirmation feedback states
+  const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const [copiedShareLink, setCopiedShareLink] = useState(false);
+  const [downloadedRunId, setDownloadedRunId] = useState<number | null>(null);
+  const [copiedCardRunId, setCopiedCardRunId] = useState<number | null>(null);
+  const [modalCopiedRaw, setModalCopiedRaw] = useState(false);
+  const [modalDownloaded, setModalDownloaded] = useState(false);
+  const [modalCopiedLink, setModalCopiedLink] = useState(false);
+
+  // Toast Helper
+  const showToast = useCallback(
+    (message: string, type: 'success' | 'info' | 'error' = 'success', title?: string) => {
+      const id = `${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+      setToasts((prev) => [...prev, { id, message, type, title }]);
+      setTimeout(() => {
+        setToasts((prev) => prev.filter((t) => t.id !== id));
+      }, 3500);
+    },
+    []
+  );
+
+  const dismissToast = useCallback((id: string) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  }, []);
 
   // ── Load Favorites & Register Listener ──────────────────────────────
   useEffect(() => {
@@ -330,7 +354,7 @@ export default function ConfigBrowserClient() {
     fetchRuns();
   }, [fetchRuns]);
 
-  // ── Actions ────────────────────────────────────────────────────────
+  // ── Actions & Handlers with Green Confirmation ─────────────────────
   const handleSelectGame = (game: GameSuggestion) => {
     setSelectedGame(game);
     setSearchTerm(game.name);
@@ -357,22 +381,68 @@ export default function ConfigBrowserClient() {
 
   const handleCopyRaw = (configs: any) => {
     if (typeof navigator !== 'undefined') {
-      navigator.clipboard.writeText(JSON.stringify(configs, null, 2));
-      setCopiedRaw(true);
-      setTimeout(() => setCopiedRaw(false), 2000);
+      navigator.clipboard?.writeText?.(JSON.stringify(configs, null, 2))?.catch?.(() => {});
+      setModalCopiedRaw(true);
+      showToast('Raw configuration JSON copied to clipboard successfully!', 'success', 'JSON Copied');
+      setTimeout(() => setModalCopiedRaw(false), 2500);
     }
   };
 
   const handleCopyShareView = () => {
     if (typeof window !== 'undefined') {
-      navigator.clipboard.writeText(window.location.href);
+      navigator.clipboard?.writeText?.(window.location.href)?.catch?.(() => {});
       setCopiedShareLink(true);
-      setTimeout(() => setCopiedShareLink(false), 2000);
+      showToast('Browser view link copied to clipboard successfully!', 'success', 'Link Copied');
+      setTimeout(() => setCopiedShareLink(false), 2500);
     }
   };
 
+  const handleCopyCardLink = (run: CompatibilityRun, gameName?: string) => {
+    if (typeof window === 'undefined') return;
+    const gId = run.game?.id || run.gameId || selectedGame?.id || '';
+    const shareUrl = `${window.location.origin}${window.location.pathname}?game=${gId}&run=${run.id}`;
+    navigator.clipboard?.writeText?.(shareUrl)?.catch?.(() => {});
+    setCopiedCardRunId(run.id);
+    const title = gameName || run.game?.name || selectedGame?.name || 'Game';
+    showToast(`Configuration link for ${title} copied to clipboard successfully!`, 'success', 'Link Copied');
+    setTimeout(() => setCopiedCardRunId((curr) => (curr === run.id ? null : curr)), 2500);
+  };
+
+  const handleDownloadCard = (run: CompatibilityRun, gameName?: string) => {
+    const title = gameName || run.game?.name || selectedGame?.name || 'Game';
+    downloadConfigJson(run, title);
+    setDownloadedRunId(run.id);
+    showToast(`Downloaded ${title} config.json successfully!`, 'success', 'Download Complete');
+    setTimeout(() => setDownloadedRunId((curr) => (curr === run.id ? null : curr)), 2500);
+  };
+
   const handleToggleFavorite = (run: CompatibilityRun, gameName?: string) => {
-    toggleSaveConfig(run, gameName || selectedGame?.name);
+    const title = gameName || run.game?.name || selectedGame?.name || 'Game';
+    const nowSaved = toggleSaveConfig(run, title);
+    if (nowSaved) {
+      showToast(`★ Added ${title} configuration to Saved Configs!`, 'success', 'Saved to Favorites');
+    } else {
+      showToast(`Removed ${title} configuration from Saved Configs.`, 'info', 'Removed from Favorites');
+    }
+  };
+
+  const handleModalDownload = (run: CompatibilityRun, gameName?: string) => {
+    const title = gameName || run.game?.name || selectedGame?.name || 'Game';
+    downloadConfigJson(run, title);
+    setModalDownloaded(true);
+    showToast(`Downloaded ${title} config.json successfully!`, 'success', 'Download Complete');
+    setTimeout(() => setModalDownloaded(false), 2500);
+  };
+
+  const handleModalCopyLink = (run: CompatibilityRun, gameName?: string) => {
+    if (typeof window === 'undefined') return;
+    const gId = run.game?.id || run.gameId || selectedGame?.id || '';
+    const shareUrl = `${window.location.origin}${window.location.pathname}?game=${gId}&run=${run.id}`;
+    navigator.clipboard?.writeText?.(shareUrl)?.catch?.(() => {});
+    setModalCopiedLink(true);
+    const title = gameName || run.game?.name || selectedGame?.name || 'Game';
+    showToast(`Configuration link for ${title} copied to clipboard successfully!`, 'success', 'Link Copied');
+    setTimeout(() => setModalCopiedLink(false), 2500);
   };
 
   // ── Filtered Favorites for Local View ──────────────────────────────
@@ -407,12 +477,17 @@ export default function ConfigBrowserClient() {
 
           <div className="flex items-center gap-2">
             <button
+              data-testid="share-view-button"
               onClick={handleCopyShareView}
               title="Copy link to current browser search and filters"
-              className="text-xs px-3.5 py-2 bg-gray-800 hover:bg-gray-700 text-cyan-300 rounded-lg border border-gray-700 transition flex items-center gap-1.5"
+              className={`text-xs px-3.5 py-2 rounded-lg border transition flex items-center gap-1.5 font-semibold ${
+                copiedShareLink
+                  ? 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-400 shadow-lg shadow-emerald-600/30'
+                  : 'bg-gray-800 hover:bg-gray-700 text-cyan-300 border-gray-700'
+              }`}
             >
-              {copiedShareLink ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Share2 className="h-3.5 w-3.5" />}
-              {copiedShareLink ? 'Link Copied!' : 'Share View'}
+              {copiedShareLink ? <Check className="h-3.5 w-3.5 text-white" /> : <Share2 className="h-3.5 w-3.5" />}
+              {copiedShareLink ? 'Copied successfully!' : 'Share View'}
             </button>
 
             <button
@@ -683,6 +758,8 @@ export default function ConfigBrowserClient() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {runs.map((run) => {
                     const isSaved = savedRunIds.has(run.id);
+                    const isDownloaded = downloadedRunId === run.id;
+                    const isCopied = copiedCardRunId === run.id;
 
                     return (
                       <div
@@ -721,7 +798,7 @@ export default function ConfigBrowserClient() {
                                 data-testid="favorite-card-button"
                                 onClick={() => handleToggleFavorite(run)}
                                 title={isSaved ? 'Remove from saved configs' : 'Save configuration'}
-                                className={`p-1 rounded-lg transition ${
+                                className={`p-1.5 rounded-lg transition ${
                                   isSaved
                                     ? 'text-amber-400 hover:text-amber-300 bg-amber-950/40'
                                     : 'text-gray-500 hover:text-amber-400 hover:bg-gray-800'
@@ -821,6 +898,21 @@ export default function ConfigBrowserClient() {
                           </button>
 
                           <div className="flex items-center gap-1.5">
+                            {/* Copy direct link button */}
+                            <button
+                              data-testid="share-card-button"
+                              onClick={() => handleCopyCardLink(run, selectedGame?.name)}
+                              title={isCopied ? 'Link copied successfully!' : 'Copy direct link to this config'}
+                              className={`p-1.5 rounded-lg border transition ${
+                                isCopied
+                                  ? 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-400 shadow-md shadow-emerald-600/30'
+                                  : 'bg-gray-800 hover:bg-cyan-950/80 text-gray-300 hover:text-cyan-400 border-gray-700'
+                              }`}
+                            >
+                              {isCopied ? <Check className="h-4 w-4 text-white" /> : <Copy className="h-4 w-4" />}
+                            </button>
+
+                            {/* Send to Phone QR button */}
                             <button
                               data-testid="qr-button"
                               onClick={() => setPhoneModalRun({ run, gameName: selectedGame?.name })}
@@ -830,6 +922,7 @@ export default function ConfigBrowserClient() {
                               <QrCode className="h-4 w-4" />
                             </button>
 
+                            {/* Edit in Visual Editor */}
                             <button
                               onClick={() => handleLoadInEditor(run)}
                               title="Load into visual Config Editor"
@@ -839,12 +932,18 @@ export default function ConfigBrowserClient() {
                               Edit
                             </button>
 
+                            {/* Download JSON Button */}
                             <button
-                              onClick={() => downloadConfigJson(run, selectedGame?.name)}
-                              title="Download Android GameNative config.json"
-                              className="p-1.5 bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-700/50 text-emerald-300 rounded-lg transition"
+                              data-testid="download-card-button"
+                              onClick={() => handleDownloadCard(run, selectedGame?.name)}
+                              title={isDownloaded ? 'Downloaded successfully!' : 'Download Android GameNative config.json'}
+                              className={`p-1.5 rounded-lg border transition ${
+                                isDownloaded
+                                  ? 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-400 shadow-md shadow-emerald-600/30'
+                                  : 'bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-700/50 text-emerald-300'
+                              }`}
                             >
-                              <Download className="h-4 w-4" />
+                              {isDownloaded ? <Check className="h-4 w-4 text-white" /> : <Download className="h-4 w-4" />}
                             </button>
                           </div>
                         </div>
@@ -915,6 +1014,7 @@ export default function ConfigBrowserClient() {
                     onClick={() => {
                       if (confirm('Clear all saved configurations from local storage?')) {
                         clearAllSavedConfigs();
+                        showToast('All saved configurations have been cleared.', 'info');
                       }
                     }}
                     className="text-xs px-3 py-1.5 bg-red-950/40 hover:bg-red-900/60 border border-red-800/60 text-red-300 rounded-lg transition flex items-center gap-1.5"
@@ -952,6 +1052,9 @@ export default function ConfigBrowserClient() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredSavedConfigs.map((item) => {
                   const run = item.run;
+                  const isDownloaded = downloadedRunId === run.id;
+                  const isCopied = copiedCardRunId === run.id;
+
                   return (
                     <div
                       key={item.runId}
@@ -1053,6 +1156,20 @@ export default function ConfigBrowserClient() {
                         </button>
 
                         <div className="flex items-center gap-1.5">
+                          {/* Copy Link Button */}
+                          <button
+                            onClick={() => handleCopyCardLink(run, item.gameName)}
+                            title={isCopied ? 'Link copied successfully!' : 'Copy direct link to this config'}
+                            className={`p-1.5 rounded-lg border transition ${
+                              isCopied
+                                ? 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-400 shadow-md shadow-emerald-600/30'
+                                : 'bg-gray-800 hover:bg-cyan-950/80 text-gray-300 hover:text-cyan-400 border-gray-700'
+                            }`}
+                          >
+                            {isCopied ? <Check className="h-4 w-4 text-white" /> : <Copy className="h-4 w-4" />}
+                          </button>
+
+                          {/* Send to Phone QR */}
                           <button
                             onClick={() => setPhoneModalRun({ run, gameName: item.gameName })}
                             title="Send to Phone via QR Code"
@@ -1061,6 +1178,7 @@ export default function ConfigBrowserClient() {
                             <QrCode className="h-4 w-4" />
                           </button>
 
+                          {/* Edit */}
                           <button
                             onClick={() => handleLoadInEditor(run, item.gameName)}
                             title="Load in visual Config Editor"
@@ -1070,12 +1188,17 @@ export default function ConfigBrowserClient() {
                             Edit
                           </button>
 
+                          {/* Download */}
                           <button
-                            onClick={() => downloadConfigJson(run, item.gameName)}
-                            title="Download JSON"
-                            className="p-1.5 bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-700/50 text-emerald-300 rounded-lg transition"
+                            onClick={() => handleDownloadCard(run, item.gameName)}
+                            title={isDownloaded ? 'Downloaded successfully!' : 'Download JSON'}
+                            className={`p-1.5 rounded-lg border transition ${
+                              isDownloaded
+                                ? 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-400 shadow-md shadow-emerald-600/30'
+                                : 'bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-700/50 text-emerald-300'
+                            }`}
                           >
-                            <Download className="h-4 w-4" />
+                            {isDownloaded ? <Check className="h-4 w-4 text-white" /> : <Download className="h-4 w-4" />}
                           </button>
                         </div>
                       </div>
@@ -1177,10 +1300,14 @@ export default function ConfigBrowserClient() {
                   </span>
                   <button
                     onClick={() => handleCopyRaw(activeModalRun.configs)}
-                    className="text-[11px] text-cyan-400 hover:text-cyan-300 flex items-center gap-1 font-sans"
+                    className={`text-[11px] font-sans px-3 py-1 rounded-lg border transition flex items-center gap-1.5 font-semibold ${
+                      modalCopiedRaw
+                        ? 'bg-emerald-600 text-white border-emerald-400 shadow-md shadow-emerald-600/30'
+                        : 'bg-gray-800 hover:bg-gray-700 text-cyan-400 border-gray-700'
+                    }`}
                   >
-                    {copiedRaw ? <Check className="h-3 w-3 text-emerald-400" /> : null}
-                    {copiedRaw ? 'Copied!' : 'Copy Raw JSON'}
+                    {modalCopiedRaw ? <Check className="h-3.5 w-3.5 text-white" /> : <Copy className="h-3.5 w-3.5" />}
+                    {modalCopiedRaw ? 'Copied successfully!' : 'Copy Raw JSON'}
                   </button>
                 </div>
                 <pre className="bg-gray-950 p-3 rounded-xl border border-gray-800 overflow-x-auto text-[11px] text-gray-300 max-h-48">
@@ -1198,6 +1325,18 @@ export default function ConfigBrowserClient() {
                 >
                   <QrCode className="h-3.5 w-3.5" />
                   Send to Phone
+                </button>
+
+                <button
+                  onClick={() => handleModalCopyLink(activeModalRun, selectedGame?.name)}
+                  className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 border transition ${
+                    modalCopiedLink
+                      ? 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-400 shadow-md shadow-emerald-600/30'
+                      : 'bg-gray-800 hover:bg-gray-700 text-gray-200 border-gray-700'
+                  }`}
+                >
+                  {modalCopiedLink ? <Check className="h-3.5 w-3.5 text-white" /> : <Copy className="h-3.5 w-3.5" />}
+                  {modalCopiedLink ? 'Copied successfully!' : 'Copy Link'}
                 </button>
 
                 <button
@@ -1221,11 +1360,15 @@ export default function ConfigBrowserClient() {
                 </button>
 
                 <button
-                  onClick={() => downloadConfigJson(activeModalRun, selectedGame?.name)}
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition"
+                  onClick={() => handleModalDownload(activeModalRun, selectedGame?.name)}
+                  className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 border transition ${
+                    modalDownloaded
+                      ? 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-400 shadow-md shadow-emerald-600/30'
+                      : 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-500'
+                  }`}
                 >
-                  <Download className="h-3.5 w-3.5" />
-                  Download JSON
+                  {modalDownloaded ? <Check className="h-3.5 w-3.5 text-white" /> : <Download className="h-3.5 w-3.5" />}
+                  {modalDownloaded ? 'Downloaded successfully!' : 'Download JSON'}
                 </button>
               </div>
             </div>
@@ -1241,7 +1384,13 @@ export default function ConfigBrowserClient() {
         onClose={() => setPhoneModalRun(null)}
         run={phoneModalRun?.run || null}
         gameName={phoneModalRun?.gameName || selectedGame?.name}
+        onToast={showToast}
       />
+
+      {/* ═══════════════════════════════════════════════════════════════ */}
+      {/* FLOATING TOAST NOTIFICATION CONTAINER                          */}
+      {/* ═══════════════════════════════════════════════════════════════ */}
+      <Toast toasts={toasts} onDismiss={dismissToast} />
     </div>
   );
 }
