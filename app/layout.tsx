@@ -2,18 +2,21 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Sidebar from "./components/Sidebar";
 
+const isProd = process.env.NODE_ENV === 'production';
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? (isProd ? '/gamenative-config-tools' : '');
+
 export const metadata: Metadata = {
   title: "GameNative Config Tools",
   description: "Complete configuration management tools for your GameNative emulator",
-  manifest: "/gamenative-config-tools/manifest.json",
+  manifest: `${basePath}/manifest.json`,
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
     title: "GN Config",
   },
   icons: {
-    icon: "/gamenative-config-tools/icon.svg",
-    apple: "/gamenative-config-tools/icon.svg",
+    icon: `${basePath}/icon.svg`,
+    apple: `${basePath}/icon.svg`,
   },
 };
 
@@ -30,8 +33,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="antialiased">
+    <html lang="en" suppressHydrationWarning>
+      <body className="antialiased" suppressHydrationWarning>
         <Sidebar />
         {children}
       </body>

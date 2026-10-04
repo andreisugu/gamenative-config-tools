@@ -16,12 +16,14 @@ import {
 } from 'lucide-react';
 
 export default function Sidebar() {
+  const [mounted, setMounted] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false); // Default to collapsed
   const [isMobile, setIsMobile] = useState(false);
   const pathname = usePathname();
 
   // Detect mobile and persist sidebar state
   useEffect(() => {
+    setMounted(true);
     const checkMobile = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
@@ -40,6 +42,10 @@ export default function Sidebar() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  if (!mounted) {
+    return <div className="w-0 md:w-16" />;
+  }
+
   const toggleSidebar = () => {
     setIsExpanded(!isExpanded);
   };
@@ -53,7 +59,6 @@ export default function Sidebar() {
     { href: '/config-converter', icon: RefreshCw, label: 'Config Converter' },
     { href: '/config-editor', icon: FileEdit, label: 'Config Editor' },
     { href: '/config-browser', icon: Search, label: 'Config Browser' },
-    { href: '/cached-configs-browser', icon: Search, label: 'Cached Configs' },
   ];
 
   const externalLinks = [

@@ -80,11 +80,11 @@ Three complementary web tools to streamline your GameNative configuration workfl
 <details>
 <summary><strong>🔍 Config Browser</strong></summary>
 
-* **Local Filter Snapshots:** Pre-generated JSON files for instant autocomplete suggestions
-* **Smart Autocomplete:** Client-side fuzzy matching with debounced search
-* **Efficient Queries:** Separate count and data queries to minimize database load
-* **Rich Preview:** View ratings, FPS, device specs, notes, and app versions
-* **Seamless Integration:** Load directly into Editor or download as JSON
+* **Live Community Search:** Fast, debounced typeahead connected directly to `api.gamenative.app`
+* **Real-time Filtering:** Filter by tested hardware GPU, star rating, and custom sorting
+* **Rich Preview:** View ratings, FPS, device models, notes, and container specifications
+* **Seamless Integration:** Load directly into Config Editor or download as Android-ready JSON
+* **Zero Bloat:** No massive database dumps or heavy client-side databases
 
 </details>
 
@@ -179,18 +179,17 @@ Built to support the **Import/Export JSON Schema** from GameNative Android sourc
 - Real-time synchronization between related fields (GPU name ↔ renderer)
 
 ### Config Browser
+ 
+**Modern API-First Architecture:**
 
-**Performance-Optimized Architecture:**
-
-The browser balances performance with database efficiency through:
-- **Local snapshots:** Pre-generated JSON for instant autocomplete
-- **Client-side filtering:** Fuzzy matching without database queries
-- **Debounced input:** 250ms delay prevents excessive API calls
-- **Efficient queries:** Separate count/data queries with proper joins
-- **Request cancellation:** AbortController cancels outdated requests
-- **Seamless integration:** Direct Config Editor loading and JSON export with proper metadata structure
-
-</details>
+The browser connects directly to the official GameNative worker API (`api.gamenative.app`):
+- **Live Search:** Debounced instant query typeahead hitting `/api/games/search`
+- **Dynamic Hardware Filters:** Extracted hardware catalog from `/api/devices`
+- **Zod-Validated Queries:** Strict pagination, rating minimums, and sorting (`created_at`, `rating`, `avg_fps`)
+- **Seamless Integration:** Direct Config Editor loading and JSON export with Android-ready structure
+- **Zero Bloat:** Eliminates multi-megabyte JSON snapshots and client-side WebAssembly databases
+ 
+ </details>
 
 ---
 

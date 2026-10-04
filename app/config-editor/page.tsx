@@ -370,7 +370,7 @@ export default function App() {
     const [error, setError] = useState("");
     const [showGuide, setShowGuide] = useState(true);
 
-    const converterUrl = "https://andreisugu.github.io/gamenative-config-tools/config-converter";
+    const converterUrl = "/config-converter";
 
     useEffect(() => {
         document.documentElement.classList.add('dark');
