@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { X, Upload } from 'lucide-react';
 import { copyToClipboard } from '@/lib/clipboard';
 
 // TypeScript interface for the Config object
@@ -380,7 +380,22 @@ export default function ConfigConverterPage() {
   const [downloadSuccess, setDownloadSuccess] = useState(false);
   const [convertSteamId, setConvertSteamId] = useState(false);
   const [showGuide, setShowGuide] = useState(true);
+  const [isDragging, setIsDragging] = useState(false);
   const copyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileUpload = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target?.result as string;
+      if (content) {
+        setInputText(content);
+        setSuccess(`Loaded ${file.name} successfully! Click Convert to generate JSON.`);
+        setError('');
+      }
+    };
+    reader.readAsText(file);
+  };
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -560,9 +575,19 @@ export default function ConfigConverterPage() {
             <textarea
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              placeholder="wineVersion&#10;8.0&#10;graphicsDriverAdreno&#10;turnip&#10;showFPS&#10;true&#10;envVars&#10;WINE_DEBUG=warn"
+              onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+              onDragLeave={() => setIsDragging(false)}
+              onDrop={(e) => {
+                e.preventDefault();
+                setIsDragging(false);
+                const file = e.dataTransfer.files?.[0];
+                if (file) handleFileUpload(file);
+              }}
+              placeholder="wineVersion&#10;8.0&#10;graphicsDriverAdreno&#10;turnip&#10;showFPS&#10;true&#10;envVars&#10;WINE_DEBUG=warn&#10;&#10;Tip: You can also drag-and-drop any config file here."
               autoComplete="off"
-              className="flex-1 min-h-[500px] p-4 bg-gray-900/80 border-2 border-gray-700 rounded-lg font-mono text-sm text-gray-100 placeholder-gray-600 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all resize-none backdrop-blur-sm"
+              className={`flex-1 min-h-[500px] p-4 bg-gray-900/80 border-2 rounded-lg font-mono text-sm text-gray-100 placeholder-gray-600 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all resize-none backdrop-blur-sm ${
+                isDragging ? 'border-cyan-400 bg-cyan-950/20 ring-2 ring-cyan-500/30' : 'border-gray-700'
+              }`}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && e.ctrlKey) {
                   handleDownload();
@@ -618,7 +643,7 @@ export default function ConfigConverterPage() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-4 mb-6">
+        <div className="flex flex-wrap gap-4 mb-6">
           <button
             onClick={handleConvert}
             disabled={isConverting}
@@ -636,6 +661,25 @@ export default function ConfigConverterPage() {
             }`}
           >
             {isConverting ? 'Converting...' : downloadSuccess ? '✓ Downloaded successfully!' : 'Convert & Download'}
+          </button>
+
+          <input
+            type="file"
+            ref={fileInputRef}
+            accept=".txt,.json,.conf,text/plain"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) handleFileUpload(file);
+            }}
+            className="hidden"
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="px-5 py-3 bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700 font-semibold rounded-lg shadow-md transition-all flex items-center gap-2 active:scale-95 cursor-pointer"
+          >
+            <Upload className="h-4 w-4 text-cyan-400" />
+            Upload Config File
           </button>
         </div>
 

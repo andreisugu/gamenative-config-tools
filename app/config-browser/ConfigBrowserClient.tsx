@@ -23,6 +23,7 @@ import {
   Trash2,
   QrCode,
   Copy,
+  ArrowLeftRight,
 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
@@ -46,6 +47,7 @@ import {
   type SavedConfigItem,
 } from '@/lib/favorites';
 import SendToPhoneModal from '@/app/components/SendToPhoneModal';
+import { CompareConfigsModal } from '@/app/components/CompareConfigsModal';
 import Toast, { type ToastMessage } from '@/app/components/Toast';
 import { copyToClipboard } from '@/lib/clipboard';
 
@@ -106,6 +108,10 @@ export default function ConfigBrowserClient() {
     run: CompatibilityRun;
     gameName?: string;
   } | null>(null);
+
+  // Side-by-side comparison state
+  const [compareRuns, setCompareRuns] = useState<CompatibilityRun[]>([]);
+  const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
 
   // Confirmation feedback states
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
@@ -445,6 +451,43 @@ export default function ConfigBrowserClient() {
     setTimeout(() => setModalCopiedLink(false), 2500);
   };
 
+  const handleToggleCompare = (run: CompatibilityRun) => {
+    const exists = compareRuns.some((r) => r.id === run.id);
+    if (exists) {
+      setCompareRuns((prev) => prev.filter((r) => r.id !== run.id));
+      showToast(`Removed Run #${run.id} from comparison queue.`, 'info', 'Comparison');
+      return;
+    }
+    if (compareRuns.length >= 2) {
+      setCompareRuns((prev) => [prev[1], run]);
+      showToast(`Comparing up to 2 configs: replaced Run #${compareRuns[0].id} with Run #${run.id}`, 'info', 'Comparison Queue');
+      return;
+    }
+    setCompareRuns((prev) => [...prev, run]);
+    showToast(`Added Run #${run.id} to comparison queue (${compareRuns.length + 1}/2)`, 'success', 'Comparison');
+  };
+
+  const handleExportAllSaved = () => {
+    if (savedConfigs.length === 0) return;
+    const exportBundle = {
+      version: 1,
+      exportedFrom: 'GameNative Config Tools (Saved Configs Batch)',
+      timestamp: Date.now(),
+      count: savedConfigs.length,
+      configs: savedConfigs.map((item) => formatGameNativeExport(item.run, item.gameName)),
+    };
+    const blob = new Blob([JSON.stringify(exportBundle, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `gamenative-saved-configs-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast(`Exported all ${savedConfigs.length} saved configurations!`, 'success', 'Batch Export');
+  };
+
   // ── Filtered Favorites for Local View ──────────────────────────────
   const filteredSavedConfigs = useMemo(() => {
     if (!savedSearchQuery.trim()) return savedConfigs;
@@ -760,6 +803,7 @@ export default function ConfigBrowserClient() {
                     const isSaved = savedRunIds.has(run.id);
                     const isDownloaded = downloadedRunId === run.id;
                     const isCopied = copiedCardRunId === run.id;
+                    const isCompared = compareRuns.some((r) => r.id === run.id);
 
                     return (
                       <div
@@ -898,6 +942,20 @@ export default function ConfigBrowserClient() {
                           </button>
 
                           <div className="flex items-center gap-1.5">
+                            {/* Compare toggle button */}
+                            <button
+                              data-testid="compare-card-button"
+                              onClick={() => handleToggleCompare(run)}
+                              title={isCompared ? 'Remove from comparison' : 'Compare side-by-side with another config'}
+                              className={`p-1.5 rounded-lg border transition ${
+                                isCompared
+                                  ? 'bg-amber-600 hover:bg-amber-500 text-white border-amber-400 shadow-md shadow-amber-600/30'
+                                  : 'bg-gray-800 hover:bg-amber-950/80 text-gray-300 hover:text-amber-400 border-gray-700'
+                              }`}
+                            >
+                              <ArrowLeftRight className="h-4 w-4" />
+                            </button>
+
                             {/* Copy direct link button */}
                             <button
                               data-testid="share-card-button"
@@ -1010,18 +1068,29 @@ export default function ConfigBrowserClient() {
                 </span>
 
                 {savedConfigs.length > 0 && (
-                  <button
-                    onClick={() => {
-                      if (confirm('Clear all saved configurations from local storage?')) {
-                        clearAllSavedConfigs();
-                        showToast('All saved configurations have been cleared.', 'info');
-                      }
-                    }}
-                    className="text-xs px-3 py-1.5 bg-red-950/40 hover:bg-red-900/60 border border-red-800/60 text-red-300 rounded-lg transition flex items-center gap-1.5"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                    Clear All
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleExportAllSaved}
+                      className="text-xs px-3 py-1.5 bg-cyan-950/60 hover:bg-cyan-900 border border-cyan-700/60 text-cyan-300 rounded-lg transition flex items-center gap-1.5 shadow-sm"
+                      title="Download all saved configurations as a single combined JSON backup"
+                    >
+                      <Download className="h-3.5 w-3.5" />
+                      Export All (JSON)
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        if (confirm('Clear all saved configurations from local storage?')) {
+                          clearAllSavedConfigs();
+                          showToast('All saved configurations have been cleared.', 'info');
+                        }
+                      }}
+                      className="text-xs px-3 py-1.5 bg-red-950/40 hover:bg-red-900/60 border border-red-800/60 text-red-300 rounded-lg transition flex items-center gap-1.5"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      Clear All
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
@@ -1054,6 +1123,7 @@ export default function ConfigBrowserClient() {
                   const run = item.run;
                   const isDownloaded = downloadedRunId === run.id;
                   const isCopied = copiedCardRunId === run.id;
+                  const isCompared = compareRuns.some((r) => r.id === run.id);
 
                   return (
                     <div
@@ -1156,6 +1226,19 @@ export default function ConfigBrowserClient() {
                         </button>
 
                         <div className="flex items-center gap-1.5">
+                          {/* Compare toggle button */}
+                          <button
+                            data-testid="compare-saved-card-button"
+                            onClick={() => handleToggleCompare(run)}
+                            title={isCompared ? 'Remove from comparison' : 'Compare side-by-side with another config'}
+                            className={`p-1.5 rounded-lg border transition ${
+                              isCompared
+                                ? 'bg-amber-600 hover:bg-amber-500 text-white border-amber-400 shadow-md shadow-amber-600/30'
+                                : 'bg-gray-800 hover:bg-amber-950/80 text-gray-300 hover:text-amber-400 border-gray-700'
+                            }`}
+                          >
+                            <ArrowLeftRight className="h-4 w-4" />
+                          </button>
                           {/* Copy Link Button */}
                           <button
                             onClick={() => handleCopyCardLink(run, item.gameName)}
@@ -1384,6 +1467,75 @@ export default function ConfigBrowserClient() {
         run={phoneModalRun?.run || null}
         gameName={phoneModalRun?.gameName || selectedGame?.name}
         onToast={showToast}
+      />
+
+      {/* ═══════════════════════════════════════════════════════════════ */}
+      {/* FLOATING COMPARISON DOCK BAR                                    */}
+      {/* ═══════════════════════════════════════════════════════════════ */}
+      {compareRuns.length > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-gray-950/95 border border-cyan-500/50 backdrop-blur-md rounded-2xl shadow-2xl px-5 py-3 flex items-center gap-3 sm:gap-4 animate-in slide-in-from-bottom duration-200">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold text-gray-200 uppercase tracking-wider hidden sm:inline">
+              Compare:
+            </span>
+            <div className="flex items-center gap-1.5">
+              {compareRuns.map((r) => (
+                <span
+                  key={r.id}
+                  className="text-xs font-mono px-2.5 py-1 bg-cyan-950/80 border border-cyan-800/60 text-cyan-300 rounded-lg flex items-center gap-1.5"
+                >
+                  <span className="truncate max-w-[100px] sm:max-w-[140px]">
+                    #{r.id} ({r.device?.model?.split(' ')[0] || 'Device'})
+                  </span>
+                  <button
+                    onClick={() => handleToggleCompare(r)}
+                    className="hover:text-red-400 font-bold ml-1 transition"
+                    title="Remove from compare"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              data-testid="compare-now-button"
+              disabled={compareRuns.length < 2}
+              onClick={() => setIsCompareModalOpen(true)}
+              className={`px-3 sm:px-4 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider transition ${
+                compareRuns.length === 2
+                  ? 'bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white shadow-lg shadow-cyan-900/30 cursor-pointer active:scale-95'
+                  : 'bg-gray-800 text-gray-500 border border-gray-700 cursor-not-allowed'
+              }`}
+            >
+              Compare ({compareRuns.length}/2)
+            </button>
+
+            <button
+              onClick={() => setCompareRuns([])}
+              className="px-2 sm:px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white rounded-xl text-xs transition"
+              title="Clear all selections"
+            >
+              Clear
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════════ */}
+      {/* MODAL 3: SIDE-BY-SIDE CONFIGURATION COMPARISON                  */}
+      {/* ═══════════════════════════════════════════════════════════════ */}
+      <CompareConfigsModal
+        isOpen={isCompareModalOpen}
+        onClose={() => setIsCompareModalOpen(false)}
+        runs={compareRuns}
+        gameName={selectedGame?.name}
+        onLoadInEditor={(run, gName) => {
+          setIsCompareModalOpen(false);
+          handleLoadInEditor(run, gName);
+        }}
       />
 
       {/* ═══════════════════════════════════════════════════════════════ */}

@@ -12,7 +12,8 @@ import {
   Github,
   ExternalLink,
   MessageCircle,
-  X
+  X,
+  Activity,
 } from 'lucide-react';
 
 export default function Sidebar() {
@@ -56,9 +57,10 @@ export default function Sidebar() {
 
   const navItems = [
     { href: '/', icon: Home, label: 'Home' },
-    { href: '/config-converter', icon: RefreshCw, label: 'Config Converter' },
-    { href: '/config-editor', icon: FileEdit, label: 'Config Editor' },
     { href: '/config-browser', icon: Search, label: 'Config Browser' },
+    { href: '/config-editor', icon: FileEdit, label: 'Config Editor' },
+    { href: '/config-converter', icon: RefreshCw, label: 'Config Converter' },
+    { href: '/test-connection', icon: Activity, label: 'API Diagnostic' },
   ];
 
   const externalLinks = [

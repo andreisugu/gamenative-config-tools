@@ -506,6 +506,11 @@ async function main() {
     `);
     suite.assert(savedCardRendered, 'Favorited config rendered in Saved Configs view');
 
+    const hasExportAllBtn = await bidi.evaluate(`
+      Boolean(document.body.innerText.includes('Export All') || document.querySelector('button[title*="combined JSON backup"]'))
+    `);
+    suite.assert(hasExportAllBtn, 'Saved Configs: Export All (JSON) batch export button rendered');
+
     // Switch back to Live Search tab
     await bidi.evaluate(`
       (() => {
@@ -613,6 +618,70 @@ async function main() {
     `);
     suite.assert(editorCopyResult, 'Config Editor: Copy JSON button turned emerald green with confirmation text');
 
+    // --- TEST 2f: Side-by-Side Config Comparison ---
+    console.log(`\n--- Test 2f: Side-by-Side Config Comparison ---`);
+    await bidi.navigate(`${APP_URL}/config-browser?game=3405`);
+
+    // Poll until cards with compare buttons are populated
+    const startWait = Date.now();
+    let cardCount = 0;
+    while (Date.now() - startWait < 12000) {
+      cardCount = await bidi.evaluate(`document.querySelectorAll('[data-testid="compare-card-button"]').length`);
+      if (cardCount >= 2) break;
+      await sleep(500);
+    }
+    suite.assert(cardCount >= 2, `Config cards rendered with compare buttons (${cardCount} found)`);
+
+    // Select first two cards for comparison
+    await bidi.evaluate(`
+      (() => {
+        const btns = document.querySelectorAll('[data-testid="compare-card-button"]');
+        if (btns[0]) btns[0].click();
+      })()
+    `);
+    await sleep(500);
+
+    await bidi.evaluate(`
+      (() => {
+        const btns = document.querySelectorAll('[data-testid="compare-card-button"]');
+        if (btns[1]) btns[1].click();
+      })()
+    `);
+    await sleep(800);
+
+    const dockBarVisible = await bidi.evaluate(`
+      Boolean(document.querySelector('[data-testid="compare-now-button"]'))
+    `);
+    suite.assert(dockBarVisible, 'Floating Comparison Dock bar appeared with selected runs');
+
+    // Click "Compare (2/2)" button
+    await bidi.evaluate(`
+      (() => {
+        const btn = document.querySelector('[data-testid="compare-now-button"]');
+        if (btn) btn.click();
+      })()
+    `);
+    await sleep(600);
+
+    const compareModalOpen = await bidi.evaluate(`
+      Boolean(
+        document.body.innerText.toLowerCase().includes('configuration comparison') &&
+        document.body.innerText.toLowerCase().includes('wine & container runtime') &&
+        document.body.innerText.toLowerCase().includes('graphics & direct3d')
+      )
+    `);
+    suite.assert(compareModalOpen, 'Side-by-side Configuration Comparison modal opened with diff categories');
+
+    // Close comparison modal
+    await bidi.evaluate(`
+      (() => {
+        const closeBtn = document.querySelector('button[title="Close comparison"]') ||
+                         Array.from(document.querySelectorAll('button')).find(b => b.innerText && b.innerText.trim() === 'Done');
+        if (closeBtn) closeBtn.click();
+      })()
+    `);
+    await sleep(400);
+
     // --- TEST 3: Config Editor Page ---
     console.log(`\n--- Test 3: Config Editor (/config-editor) Fresh Mount ---`);
     await bidi.navigate(`${APP_URL}/config-editor`);
@@ -626,6 +695,11 @@ async function main() {
       )
     `);
     suite.assert(editorMounted, 'Config Editor mounted with configuration import view');
+
+    const editorUploadBtn = await bidi.evaluate(`
+      Boolean(document.body.innerText.includes('Open File') || document.querySelector('input[type="file"]'))
+    `);
+    suite.assert(editorUploadBtn, 'Config Editor: "Open File" upload input is present');
     suite.assert(bidi.hydrationErrors.length === 0, 'Zero hydration errors on Config Editor page');
 
     // --- TEST 4: Config Converter Page ---
@@ -641,6 +715,11 @@ async function main() {
       )
     `);
     suite.assert(converterMounted, 'Config Converter mounted with input zones');
+
+    const converterUploadBtn = await bidi.evaluate(`
+      Boolean(document.body.innerText.includes('Upload Config File') || document.querySelector('input[type="file"]'))
+    `);
+    suite.assert(converterUploadBtn, 'Config Converter: "Upload Config File" upload button is present');
     suite.assert(bidi.hydrationErrors.length === 0, 'Zero hydration errors on Config Converter page');
 
     // --- TEST 5: Custom 404 Page ---
@@ -656,6 +735,20 @@ async function main() {
     `);
     suite.assert(notFoundMounted, 'Custom 404 page rendered with Home navigation link');
     suite.assert(bidi.hydrationErrors.length === 0, 'Zero hydration errors on custom 404 page');
+
+    // --- TEST 5b: Live API Diagnostic Page ---
+    console.log(`\n--- Test 5b: Live API Diagnostic (/test-connection) ---`);
+    await bidi.navigate(`${APP_URL}/test-connection`);
+    await sleep(2500);
+
+    const diagPageMounted = await bidi.evaluate(`
+      Boolean(
+        document.body.innerText.includes('GameNative Backend Diagnostics') &&
+        (document.body.innerText.includes('Active') || document.body.innerText.includes('Operational') || document.body.innerText.includes('100% HEALTHY'))
+      )
+    `);
+    suite.assert(diagPageMounted, 'API Diagnostic page rendered live endpoint checks');
+    suite.assert(bidi.hydrationErrors.length === 0, 'Zero hydration errors on API Diagnostic page');
 
     // Test legacy subpath redirect (/gamenative-config-tools/config-browser -> /config-browser)
     console.log(`  Testing legacy subpath redirect: /gamenative-config-tools/config-browser...`);

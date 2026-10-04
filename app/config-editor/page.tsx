@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import {
     Settings,
     Monitor,
@@ -21,7 +21,11 @@ import {
     Lock,
     ExternalLink,
     Fingerprint,
-    X
+    X,
+    Sparkles,
+    AlertTriangle,
+    Info,
+    FolderOpen,
 } from 'lucide-react';
 import { copyToClipboard } from '@/lib/clipboard';
 
@@ -363,6 +367,61 @@ const CPUGrid = ({ selected, onChange, totalCores = 8, label, description }: any
     );
 };
 
+// --- SMART PRESETS ---
+
+interface SmartPreset {
+    id: string;
+    label: string;
+    desc: string;
+    apply: (prev: ContainerConfig) => ContainerConfig;
+}
+
+const SMART_PRESETS: SmartPreset[] = [
+    {
+        id: 'snapdragon-perf',
+        label: 'Snapdragon Performance',
+        desc: 'Box64 Performance, 8-core affinity, CSMT enabled, 4GB VRAM',
+        apply: (prev) => ({
+            ...prev,
+            box64Preset: 'PERFORMANCE',
+            cpuList: '0,1,2,3,4,5,6,7',
+            cpuListWoW64: '0,1,2,3,4,5,6,7',
+            csmt: true,
+            videoMemorySize: '4096',
+            offScreenRenderingMode: 'fbo',
+            showFPS: true,
+        }),
+    },
+    {
+        id: 'balanced-bigcores',
+        label: 'Balanced (Big Cores)',
+        desc: 'Box64 Intermediate, Cores 4-7, CSMT enabled, 2GB VRAM',
+        apply: (prev) => ({
+            ...prev,
+            box64Preset: 'INTERMEDIATE',
+            cpuList: '4,5,6,7',
+            cpuListWoW64: '4,5,6,7',
+            csmt: true,
+            videoMemorySize: '2048',
+            offScreenRenderingMode: 'fbo',
+        }),
+    },
+    {
+        id: 'compatibility-safe',
+        label: 'Safe Compatibility',
+        desc: 'Box64 & Box86 Safe presets, Strict Shader Math, Unrestricted Cores',
+        apply: (prev) => ({
+            ...prev,
+            box64Preset: 'SAFE',
+            box86Preset: 'SAFE',
+            csmt: false,
+            strictShaderMath: true,
+            cpuList: '',
+            cpuListWoW64: '',
+        }),
+    },
+];
+
 // --- MAIN APP ---
 
 export default function App() {
@@ -374,8 +433,96 @@ export default function App() {
     const [showGuide, setShowGuide] = useState(true);
     const [exported, setExported] = useState(false);
     const [copiedJson, setCopiedJson] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
+    const [presetFeedback, setPresetFeedback] = useState<string | null>(null);
+
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const headerFileInputRef = useRef<HTMLInputElement>(null);
 
     const converterUrl = "/config-converter";
+
+    const handleFileLoad = (file: File) => {
+        if (!file.name.toLowerCase().endsWith('.json') && file.type !== 'application/json') {
+            setError("Please upload a valid .json container file.");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const content = e.target?.result as string;
+            if (content) {
+                setRawJson(content);
+                try {
+                    const parsed = JSON.parse(content);
+                    const data = { ...(parsed.config || parsed) };
+                    if (!data.id) {
+                        data.id = String(parsed.containerName || 'config');
+                    }
+                    const containerName = parsed.containerName || data.name || file.name.replace(/\.json$/i, '');
+
+                    if (data.dxwrapperConfig) {
+                        try {
+                            const dxConfig = parseKV(data.dxwrapperConfig);
+                            const syncedValue = dxConfig.gpuName || dxConfig.renderer || "";
+                            dxConfig.renderer = syncedValue;
+                            dxConfig.gpuName = syncedValue;
+                            data.dxwrapperConfig = stringifyKV(dxConfig);
+                        } catch {}
+                    }
+
+                    setConfig({ ...data, containerName });
+                    setIsImporting(false);
+                    setRawJson("");
+                    setError("");
+                } catch {
+                    setError("File loaded into editor box. Click Load Config to review.");
+                }
+            }
+        };
+        reader.readAsText(file);
+    };
+
+    const applyPreset = (preset: SmartPreset) => {
+        if (!config) return;
+        const updated = preset.apply(config);
+        setConfig(updated);
+        setPresetFeedback(`Applied "${preset.label}" preset!`);
+        setTimeout(() => setPresetFeedback(null), 3000);
+    };
+
+    const validationWarnings = useMemo(() => {
+        if (!config) return [];
+        const warns: { type: 'warning' | 'info'; text: string; tab: string }[] = [];
+        if (config.box64Preset === 'SAFE') {
+            warns.push({
+                type: 'warning',
+                text: 'Box64 Preset is set to SAFE. While this improves compatibility for stubborn titles, it severely limits 3D framerates. Switch to PERFORMANCE unless resolving specific crashes.',
+                tab: 'emulation',
+            });
+        }
+        if (!config.cpuList || config.cpuList.trim() === '') {
+            warns.push({
+                type: 'info',
+                text: 'No CPU core affinity specified. Wine will schedule threads across all available system cores dynamically.',
+                tab: 'advanced',
+            });
+        }
+        if (!config.executablePath || config.executablePath.trim() === '') {
+            warns.push({
+                type: 'warning',
+                text: 'Executable path is empty. Specify the game .exe path (e.g. game.exe) to launch.',
+                tab: 'general',
+            });
+        }
+        if (config.wow64Mode && config.box64Preset === 'SAFE') {
+            warns.push({
+                type: 'warning',
+                text: 'WoW64 mode paired with SAFE Box64 preset may trigger high CPU latency.',
+                tab: 'emulation',
+            });
+        }
+        return warns;
+    }, [config]);
 
     useEffect(() => {
         document.documentElement.classList.add('dark');
@@ -526,10 +673,22 @@ export default function App() {
             </div>
 
             <div className="space-y-6">
-            <div className="relative">
+            <div
+              onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+              onDragLeave={() => setIsDragging(false)}
+              onDrop={(e) => {
+                e.preventDefault();
+                setIsDragging(false);
+                const file = e.dataTransfer.files?.[0];
+                if (file) handleFileLoad(file);
+              }}
+              className={`relative transition-all rounded-xl ${
+                isDragging ? 'ring-2 ring-blue-500 ring-offset-2 ring-offset-slate-900 bg-blue-950/20' : ''
+              }`}
+            >
             <textarea
             className="w-full h-80 p-6 font-mono text-[11px] bg-slate-950 border border-slate-900 rounded-xl outline-none focus:border-blue-500/50 transition-all resize-none"
-            placeholder="Paste Container JSON..."
+            placeholder="Paste Container JSON or drag-and-drop a .json file here..."
             value={rawJson}
             onChange={(e) => setRawJson(e.target.value)}
             style={{ 
@@ -545,7 +704,34 @@ export default function App() {
             </div>
             {error && <div className="text-red-500 text-[10px] font-black uppercase tracking-widest italic">{error}</div>}
             <div className="flex flex-col gap-8">
-            <button onClick={handleImport} className="bg-blue-600 hover:bg-blue-500 text-white font-black py-5 rounded-xl transition-all uppercase text-xs tracking-[0.2em] active:scale-95 shadow-xl shadow-blue-900/20">Load Config</button>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={handleImport}
+                className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-black py-5 rounded-xl transition-all uppercase text-xs tracking-[0.2em] active:scale-95 shadow-xl shadow-blue-900/20"
+              >
+                Load Config
+              </button>
+
+              <input
+                type="file"
+                ref={fileInputRef}
+                accept=".json,application/json"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleFileLoad(file);
+                }}
+                className="hidden"
+              />
+
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="px-6 py-5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-black rounded-xl transition-all uppercase text-xs tracking-[0.15em] flex items-center justify-center gap-2 active:scale-95"
+              >
+                <Upload size={16} />
+                Open File
+              </button>
+            </div>
 
             {/* Mini Guide */}
             {showGuide && (
@@ -597,6 +783,23 @@ export default function App() {
         >
         <RefreshCw size={18} />
         </a>
+        <input
+          type="file"
+          ref={headerFileInputRef}
+          accept=".json,application/json"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) handleFileLoad(file);
+          }}
+          className="hidden"
+        />
+        <button
+          onClick={() => headerFileInputRef.current?.click()}
+          className="p-3 text-slate-600 hover:text-blue-400 transition-colors"
+          title="Open config .json file"
+        >
+          <FolderOpen size={18} />
+        </button>
         <button onClick={() => setIsImporting(true)} className="p-3 text-slate-600 hover:text-white transition-colors" title="Import JSON"><Upload size={18} /></button>
         <button
           onClick={handleCopyJson}
@@ -640,6 +843,68 @@ export default function App() {
 
         <main className="flex-1 p-8 md:p-16 lg:px-24">
         <div className="max-w-4xl mx-auto">
+
+        {/* Quick Presets Bar */}
+        <div className="mb-8 bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-lg">
+          <div className="flex items-center gap-2">
+            <Sparkles size={16} className="text-blue-400" />
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-300">Quick Presets:</span>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            {SMART_PRESETS.map((p) => (
+              <button
+                key={p.id}
+                onClick={() => applyPreset(p)}
+                className="px-3 py-1.5 rounded-lg bg-slate-800/90 hover:bg-blue-600/20 hover:border-blue-500/50 border border-slate-700/60 text-slate-200 hover:text-blue-300 text-[10px] font-black uppercase tracking-wider transition-all active:scale-95 cursor-pointer"
+                title={p.desc}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Preset Feedback Notification */}
+        {presetFeedback && (
+          <div className="mb-6 p-3 rounded-xl bg-blue-950/60 border border-blue-500/40 text-blue-200 text-xs font-semibold flex items-center gap-2 animate-in fade-in">
+            <Sparkles size={14} className="text-blue-400" />
+            <span>{presetFeedback}</span>
+          </div>
+        )}
+
+        {/* Sanity Validation Alerts */}
+        {validationWarnings.length > 0 && (
+          <div className="mb-8 space-y-2">
+            {validationWarnings.map((warn, i) => (
+              <div
+                key={i}
+                className={`p-3.5 rounded-xl border text-xs flex items-start gap-2.5 transition-all ${
+                  warn.type === 'warning'
+                    ? 'bg-amber-950/30 border-amber-800/50 text-amber-200'
+                    : 'bg-blue-950/30 border-blue-800/50 text-blue-200'
+                }`}
+              >
+                {warn.type === 'warning' ? (
+                  <AlertTriangle size={16} className="text-amber-400 shrink-0 mt-0.5" />
+                ) : (
+                  <Info size={16} className="text-blue-400 shrink-0 mt-0.5" />
+                )}
+                <div className="flex-1">
+                  <p className="leading-relaxed">{warn.text}</p>
+                </div>
+                {warn.tab && (
+                  <button
+                    onClick={() => setActiveTab(warn.tab)}
+                    className="text-[10px] uppercase font-black tracking-widest underline opacity-80 hover:opacity-100"
+                  >
+                    Go to {warn.tab}
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
         <div className="mb-12 border-l-2 border-blue-600 pl-6 py-1">
         <h2 className="text-4xl font-black text-white tracking-tighter uppercase italic">{currentTab?.label}</h2>
         <p className="text-slate-600 text-[10px] font-black mt-2 uppercase tracking-[0.2em]">{currentTab?.desc}</p>

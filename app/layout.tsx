@@ -2,8 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Sidebar from "./components/Sidebar";
 
-const isProd = process.env.NODE_ENV === 'production';
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? (isProd ? '/gamenative-config-tools' : '');
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 
 export const metadata: Metadata = {
   title: "GameNative Config Tools",
@@ -11,8 +10,8 @@ export const metadata: Metadata = {
   manifest: `${basePath}/manifest.json`,
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
-    title: "GN Config",
+    statusBarStyle: "black-translucent",
+    title: "GameNative",
   },
   icons: {
     icon: `${basePath}/icon.svg`,
